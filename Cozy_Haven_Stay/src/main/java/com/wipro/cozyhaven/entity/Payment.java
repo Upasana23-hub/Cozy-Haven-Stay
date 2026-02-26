@@ -31,7 +31,7 @@ public class Payment {
 
 	@OneToOne
 	@JoinColumn(name = "booking_id", nullable = false)
-	private Booking booking;
+	private Bookings bookings;
 	
 	@Column(name = "amount", nullable = false)
 	private Double amount;
