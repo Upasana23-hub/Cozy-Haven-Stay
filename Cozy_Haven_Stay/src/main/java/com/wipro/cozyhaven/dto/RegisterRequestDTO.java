@@ -14,4 +14,6 @@ public class RegisterRequestDTO {
 	private String password;
 	private String phone;
 	private String address;
+	
+	// Getters and Setters
 }
