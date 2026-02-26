@@ -10,9 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="hotels")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Hotel {
 	
 	@Id
@@ -41,70 +47,6 @@ public class Hotel {
 	
 	@Column(name="created_Date")
 	private LocalDateTime created_Date = LocalDateTime.now();
-
-	public Long getHotelId() {
-		return hotelId;
-	}
-
-	public void setHotelId(Long hotelId) {
-		this.hotelId = hotelId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Double getRating() {
-		return rating;
-	}
-
-	public void setRating(Double rating) {
-		this.rating = rating;
-	}
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
-	public HotelOwner getOwner() {
-		return owner;
-	}
-
-	public void setOwner(HotelOwner owner) {
-		this.owner = owner;
-	}
-
-	public LocalDateTime getCreated_Date() {
-		return created_Date;
-	}
-
-	public void setCreated_Date(LocalDateTime created_Date) {
-		this.created_Date = created_Date;
-	}
 
 	
 }

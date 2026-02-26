@@ -1,6 +1,7 @@
 package com.wipro.cozyhaven.entity;
 
 import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name= "hotel_owners")
@@ -22,7 +26,7 @@ public class HotelOwner {
 	
 	@OneToOne
 	@JoinColumn(name = "user_id", nullable= false, unique=true)
-	private Long userId;
+	private User userId;
 	
 	@Column(name="buisness_name", nullable=false, length=200)
 	private String buisnessName;
@@ -39,62 +43,5 @@ public class HotelOwner {
 	@Column(name="created_Date")
 	private LocalDateTime created_Date= LocalDateTime.now();
 
-	public Long getOwnerId() {
-		return ownerId;
-	}
-
-	public void setOwnerId(Long ownerId) {
-		this.ownerId = ownerId;
-	}
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	public String getBuisnessName() {
-		return buisnessName;
-	}
-
-	public void setBuisnessName(String buisnessName) {
-		this.buisnessName = buisnessName;
-	}
-
-	public String getGstNumber() {
-		return gstNumber;
-	}
-
-	public void setGstNumber(String gstNumber) {
-		this.gstNumber = gstNumber;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public boolean isApproved() {
-		return approved;
-	}
-
-	public void setApproved(boolean approved) {
-		this.approved = approved;
-	}
-
-	public LocalDateTime getCreated_Date() {
-		return created_Date;
-	}
-
-	public void setCreated_Date(LocalDateTime created_Date) {
-		this.created_Date = created_Date;
-	}
-
 	
-		
 }
