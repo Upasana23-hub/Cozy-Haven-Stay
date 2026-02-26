@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class HotelDTO {
 	
-	private Long hotelid;
+	private Long hotelId;
 	private String name;
 	private String description;
 	private String location;
