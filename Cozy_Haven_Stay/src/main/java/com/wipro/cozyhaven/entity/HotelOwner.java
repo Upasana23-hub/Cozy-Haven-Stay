@@ -10,13 +10,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.*;
+import lombok.Setter;
+
 
 @Entity
 @Table(name= "hotel_owners")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class HotelOwner {
 	
 	@Id
@@ -40,8 +45,17 @@ public class HotelOwner {
 	@Column(name="approved")
 	private boolean approved = false;
 	
+	@Column(name="active")
+	private boolean active = true;
+	
 	@Column(name="created_Date")
-	private LocalDateTime created_Date= LocalDateTime.now();
+	private LocalDateTime createdDate= LocalDateTime.now();
 
+	public void setOwnerId(Long ownerId) {
+	
+		this.ownerId = ownerId;
+	}
+
+	
 	
 }
