@@ -1,10 +1,12 @@
-package com.wipro.cozyhaven.repository;
+package com.wipro.cozyhaven.repositories;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.wipro.cozyhaven.entity.Role;
-import com.wipro.cozyhaven.entity.User;
+
+import com.wipro.cozyhaven.entities.Role;
+import com.wipro.cozyhaven.entities.User;
+
 import java.util.List;
 
 @Repository

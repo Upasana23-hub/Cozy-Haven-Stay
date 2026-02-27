@@ -1,10 +1,10 @@
-package com.wipro.cozyhaven.repository;
+package com.wipro.cozyhaven.repositories;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.wipro.cozyhaven.entity.Hotel;
+import com.wipro.cozyhaven.entities.Hotel;
 
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
 	

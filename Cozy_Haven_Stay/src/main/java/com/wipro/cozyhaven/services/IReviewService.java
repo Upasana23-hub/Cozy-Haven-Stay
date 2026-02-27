@@ -1,10 +1,10 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
 
-import com.wipro.cozyhaven.dto.ReviewDTO;
+import com.wipro.cozyhaven.dtos.ReviewDTO;
 
-public interface ReviewService {
+public interface IReviewService {
 	ReviewDTO addReview(ReviewDTO reviewDTO);
 	List<ReviewDTO> getReviewsByHotel(Long hotelId);
 	List<ReviewDTO> getReviewsByUser(Long userId);

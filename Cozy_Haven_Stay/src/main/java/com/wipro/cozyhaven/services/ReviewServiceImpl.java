@@ -1,4 +1,4 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,18 +6,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wipro.cozyhaven.dto.ReviewDTO;
-import com.wipro.cozyhaven.entity.Hotel;
-import com.wipro.cozyhaven.entity.Review;
-import com.wipro.cozyhaven.entity.User;
+import com.wipro.cozyhaven.dtos.ReviewDTO;
+import com.wipro.cozyhaven.entities.Hotel;
+import com.wipro.cozyhaven.entities.Review;
+import com.wipro.cozyhaven.entities.User;
 import com.wipro.cozyhaven.exception.ResourceNotFoundException;
-import com.wipro.cozyhaven.repository.HotelRepository;
-import com.wipro.cozyhaven.repository.ReviewRepository;
-import com.wipro.cozyhaven.repository.UserRepository;
+import com.wipro.cozyhaven.repositories.HotelRepository;
+import com.wipro.cozyhaven.repositories.ReviewRepository;
+import com.wipro.cozyhaven.repositories.UserRepository;
 
 
 @Service
-public class ReviewServiceImpl implements ReviewService {
+public class ReviewServiceImpl implements IReviewService {
 	
 	@Autowired
     private ReviewRepository reviewRepository;

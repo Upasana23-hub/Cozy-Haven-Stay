@@ -1,4 +1,4 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,17 +7,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wipro.cozyhaven.dto.BookingsDTO;
-import com.wipro.cozyhaven.entity.Bookings;
-import com.wipro.cozyhaven.entity.Room;
-import com.wipro.cozyhaven.entity.User;
+import com.wipro.cozyhaven.dtos.BookingsDTO;
+import com.wipro.cozyhaven.entities.Bookings;
+import com.wipro.cozyhaven.entities.Room;
+import com.wipro.cozyhaven.entities.User;
 import com.wipro.cozyhaven.exception.ResourceNotFoundException;
-import com.wipro.cozyhaven.repository.BookingsRepository;
-import com.wipro.cozyhaven.repository.RoomRepository;
-import com.wipro.cozyhaven.repository.UserRepository;
+import com.wipro.cozyhaven.repositories.BookingsRepository;
+import com.wipro.cozyhaven.repositories.RoomRepository;
+import com.wipro.cozyhaven.repositories.UserRepository;
 
 @Service
-public class BookingServiceImp implements BookingService {
+public class BookingServiceImp implements IBookingService {
 
 	@Autowired
 	private BookingsRepository bookingRepository;

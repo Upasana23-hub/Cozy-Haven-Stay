@@ -1,4 +1,4 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,16 +7,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wipro.cozyhaven.dto.PaymentDTO;
-import com.wipro.cozyhaven.entity.Bookings;
-import com.wipro.cozyhaven.entity.Payment;
+import com.wipro.cozyhaven.dtos.PaymentDTO;
+import com.wipro.cozyhaven.entities.Bookings;
+import com.wipro.cozyhaven.entities.Payment;
 import com.wipro.cozyhaven.exception.ResourceNotFoundException;
-import com.wipro.cozyhaven.repository.BookingsRepository;
-import com.wipro.cozyhaven.repository.HotelRepository;
-import com.wipro.cozyhaven.repository.PaymentRepository;
+import com.wipro.cozyhaven.repositories.BookingsRepository;
+import com.wipro.cozyhaven.repositories.HotelRepository;
+import com.wipro.cozyhaven.repositories.PaymentRepository;
 
 @Service
-public class PaymentServiceImpl implements PaymentService {
+public class PaymentServiceImpl implements IPaymentService {
 
 	
 	@Autowired

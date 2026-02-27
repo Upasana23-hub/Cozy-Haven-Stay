@@ -1,7 +1,8 @@
-package com.wipro.cozyhaven.dto;
+package com.wipro.cozyhaven.dtos;
+
+import com.wipro.cozyhaven.entities.Role;
 
 import lombok.*;
-import com.wipro.cozyhaven.entity.Role;
 
 @Getter
 @Setter

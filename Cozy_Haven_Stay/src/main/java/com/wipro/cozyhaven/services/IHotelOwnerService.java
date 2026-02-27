@@ -1,9 +1,10 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
-import com.wipro.cozyhaven.entity.HotelOwner;
 
-public interface HotelOwnerService {
+import com.wipro.cozyhaven.entities.HotelOwner;
+
+public interface IHotelOwnerService {
 	HotelOwner createOwner(HotelOwner owner);
 	HotelOwner getOwnerByUserId(Long ownerId);
 	List<HotelOwner> getAllOwners();

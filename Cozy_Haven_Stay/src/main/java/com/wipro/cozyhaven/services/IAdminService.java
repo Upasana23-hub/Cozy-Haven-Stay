@@ -1,11 +1,11 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
 
-import com.wipro.cozyhaven.dto.UserResponseDTO;
-import com.wipro.cozyhaven.entity.Bookings;
+import com.wipro.cozyhaven.dtos.UserResponseDTO;
+import com.wipro.cozyhaven.entities.Bookings;
 
-public interface AdminService {
+public interface IAdminService {
 	
 	List<UserResponseDTO> getAllUsers();
 	

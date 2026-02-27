@@ -1,17 +1,17 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.wipro.cozyhaven.entity.Hotel;
-import com.wipro.cozyhaven.entity.HotelOwner;
-import com.wipro.cozyhaven.repository.HotelRepository;
+import com.wipro.cozyhaven.entities.Hotel;
+import com.wipro.cozyhaven.entities.HotelOwner;
+import com.wipro.cozyhaven.repositories.HotelRepository;
 
 
 @Service
 
-public class HotelServiceImpl implements HotelService {
+public class HotelServiceImpl implements IHotelService {
 
     private final HotelRepository hotelRepository;
     

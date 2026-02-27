@@ -1,23 +1,23 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.wipro.cozyhaven.dto.UserResponseDTO;
-import com.wipro.cozyhaven.entity.BookingStatus;
-import com.wipro.cozyhaven.entity.Bookings;
-import com.wipro.cozyhaven.entity.Role;
-import com.wipro.cozyhaven.entity.User;
-import com.wipro.cozyhaven.repository.BookingsRepository;
-import com.wipro.cozyhaven.repository.UserRepository;
+import com.wipro.cozyhaven.dtos.UserResponseDTO;
+import com.wipro.cozyhaven.entities.BookingStatus;
+import com.wipro.cozyhaven.entities.Bookings;
+import com.wipro.cozyhaven.entities.Role;
+import com.wipro.cozyhaven.entities.User;
+import com.wipro.cozyhaven.repositories.BookingsRepository;
+import com.wipro.cozyhaven.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AdminServiceImpl implements AdminService{
+public class AdminServiceImpl implements IAdminService{
 	
 	private final UserRepository userRepository;
 	private final BookingsRepository bookingsRepository;

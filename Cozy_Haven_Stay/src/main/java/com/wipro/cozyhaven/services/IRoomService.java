@@ -1,11 +1,11 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
 
-import com.wipro.cozyhaven.dto.RoomDTO;
+import com.wipro.cozyhaven.dtos.RoomDTO;
 
 
-public interface RoomService {
+public interface IRoomService {
 	
 	 RoomDTO addRoom(RoomDTO roomDTO);
 	 List<RoomDTO> getAllRooms();

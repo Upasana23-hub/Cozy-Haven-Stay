@@ -1,4 +1,4 @@
-package com.wipro.cozyhaven.dto;
+package com.wipro.cozyhaven.dtos;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

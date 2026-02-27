@@ -1,4 +1,4 @@
-package com.wipro.cozyhaven.entity;
+package com.wipro.cozyhaven.entities;
 
 public enum BookingStatus {
 	PENDING_PAYMENT,

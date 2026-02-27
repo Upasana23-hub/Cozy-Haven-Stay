@@ -1,4 +1,4 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,18 +6,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wipro.cozyhaven.dto.LoginRequestDTO;
-import com.wipro.cozyhaven.dto.RegisterRequestDTO;
-import com.wipro.cozyhaven.dto.UserResponseDTO;
-import com.wipro.cozyhaven.entity.BookingStatus;
-import com.wipro.cozyhaven.entity.Bookings;
-import com.wipro.cozyhaven.entity.Role;
-import com.wipro.cozyhaven.entity.User;
-import com.wipro.cozyhaven.repository.BookingsRepository;
-import com.wipro.cozyhaven.repository.UserRepository;
+import com.wipro.cozyhaven.dtos.LoginRequestDTO;
+import com.wipro.cozyhaven.dtos.RegisterRequestDTO;
+import com.wipro.cozyhaven.dtos.UserResponseDTO;
+import com.wipro.cozyhaven.entities.BookingStatus;
+import com.wipro.cozyhaven.entities.Bookings;
+import com.wipro.cozyhaven.entities.Role;
+import com.wipro.cozyhaven.entities.User;
+import com.wipro.cozyhaven.repositories.BookingsRepository;
+import com.wipro.cozyhaven.repositories.UserRepository;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
 
     @Autowired
     private UserRepository userRepository;

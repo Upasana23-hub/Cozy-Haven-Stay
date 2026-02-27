@@ -1,4 +1,4 @@
-package com.wipro.cozyhaven.entity;
+package com.wipro.cozyhaven.entities;
 
 
 import jakarta.persistence.*;

@@ -1,11 +1,11 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
 
-import com.wipro.cozyhaven.dto.BookingsDTO;
+import com.wipro.cozyhaven.dtos.BookingsDTO;
 
 
-public interface BookingService {
+public interface IBookingService {
 	
 	 BookingsDTO createBooking(BookingsDTO bookingDTO);
 	 List<BookingsDTO> getAllBookings();

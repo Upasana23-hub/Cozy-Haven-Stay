@@ -1,10 +1,10 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
 
-import com.wipro.cozyhaven.dto.PaymentDTO;
+import com.wipro.cozyhaven.dtos.PaymentDTO;
 
-public interface PaymentService {
+public interface IPaymentService {
     PaymentDTO addPayment(PaymentDTO paymentDTO);
     PaymentDTO getPaymentById(Long paymentId);
     List<PaymentDTO> getAllPayments();

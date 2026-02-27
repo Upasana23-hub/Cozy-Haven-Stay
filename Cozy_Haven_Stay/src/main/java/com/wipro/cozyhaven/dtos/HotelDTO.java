@@ -1,8 +1,8 @@
-package com.wipro.cozyhaven.dto;
+package com.wipro.cozyhaven.dtos;
 
 import java.time.LocalDateTime;
 
-import com.wipro.cozyhaven.entity.HotelOwner;
+import com.wipro.cozyhaven.entities.HotelOwner;
 
 import lombok.Data;
 

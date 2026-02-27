@@ -1,9 +1,9 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 import java.util.List;
 
-import com.wipro.cozyhaven.entity.Hotel;
+import com.wipro.cozyhaven.entities.Hotel;
 
-public interface HotelService {
+public interface IHotelService {
 
     Hotel addHotel(Long ownerId, Hotel hotel);
 

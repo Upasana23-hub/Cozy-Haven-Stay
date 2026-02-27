@@ -1,12 +1,12 @@
-package com.wipro.cozyhaven.service;
+package com.wipro.cozyhaven.services;
 
 import java.util.List;
 
-import com.wipro.cozyhaven.dto.LoginRequestDTO;
-import com.wipro.cozyhaven.dto.RegisterRequestDTO;
-import com.wipro.cozyhaven.dto.UserResponseDTO;
+import com.wipro.cozyhaven.dtos.LoginRequestDTO;
+import com.wipro.cozyhaven.dtos.RegisterRequestDTO;
+import com.wipro.cozyhaven.dtos.UserResponseDTO;
 
-public interface UserService {
+public interface IUserService {
 
 	UserResponseDTO register(RegisterRequestDTO request);
 
