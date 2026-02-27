@@ -66,6 +66,14 @@ public class HotelOwnerServiceImpl implements HotelOwnerService{
 	public boolean isownerActive(Long ownerId) {
 		return getOwner(ownerId).isActive();
 	}
+	
+	
+	@Override
+	public boolean canOwnerCreateHotel(Long ownerId) {
+		HotelOwner owner = getOwner(ownerId);
+		return owner.isApproved() && owner.isActive();
+	}
+
 	private HotelOwner getOwner(Long ownerId) {
 		return ownerRepository.findByUserId_UserId(ownerId).orElseThrow(() -> new RuntimeException("Hotel owner not Found"));
 	}
