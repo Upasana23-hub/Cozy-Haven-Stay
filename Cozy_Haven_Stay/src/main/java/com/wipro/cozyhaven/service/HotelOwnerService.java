@@ -12,5 +12,6 @@ public interface HotelOwnerService {
 	List<HotelOwner> getPendingsOwners();
 	boolean isOwnerApproved(Long ownerId);
 	boolean isownerActive(Long ownerId);
+	boolean canOwnerCreateHotel(Long ownerId);
 
 }
