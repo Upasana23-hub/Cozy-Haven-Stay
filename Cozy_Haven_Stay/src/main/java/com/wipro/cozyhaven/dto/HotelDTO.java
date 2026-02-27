@@ -16,7 +16,7 @@ public class HotelDTO {
 	private Double rating;
 	private boolean active;
 	private HotelOwner owner;
-	private LocalDateTime created_Date;
+	private LocalDateTime createdDate;
 	
 
 }
