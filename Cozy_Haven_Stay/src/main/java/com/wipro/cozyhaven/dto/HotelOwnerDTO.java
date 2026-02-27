@@ -13,6 +13,7 @@ public class HotelOwnerDTO {
 	private String gstNumber;
 	private String address;
 	private boolean approved;
-	private LocalDateTime created_Date;
+	private boolean active;
+	private LocalDateTime createdDate;
 
 }

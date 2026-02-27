@@ -37,8 +37,11 @@ public class HotelOwner {
 	@Column(name="approved")
 	private boolean approved = false;
 	
+	@Column(name="active")
+	private boolean active = true;
+	
 	@Column(name="created_Date")
-	private LocalDateTime created_Date= LocalDateTime.now();
+	private LocalDateTime createdDate= LocalDateTime.now();
 
 	public Long getOwnerId() {
 		return ownerId;
