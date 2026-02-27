@@ -2,6 +2,8 @@ package com.wipro.cozyhaven.dto;
 
 import java.time.LocalDateTime;
 
+import com.wipro.cozyhaven.entity.Hotel;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,15 +16,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class RoomDTO {
-	private int roomId;
-	private int roomNumber;
+	private Long roomId;
+	private String roomNumber;
 	private String roomType;
 	private String bedType;
 	private String roomSize;
 	private int maxPeople;
 	private Double baseFare;
-	private Boolean AcAvailable;
+	private Boolean acAvailable;
 	private Boolean availability;
 	private LocalDateTime addedAt;
+	private  Long hotelId;
 
 }

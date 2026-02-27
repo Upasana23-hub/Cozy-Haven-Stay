@@ -1,6 +1,7 @@
 package com.wipro.cozyhaven.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import lombok.Setter;
 public class BookingsDTO {
 	private Long bookingId;
 	
-	private LocalDate chekckIn;
+	private LocalDate checkIn;
 	private LocalDate checkOut;
 	
 	private int noOfRooms;
@@ -24,8 +25,12 @@ public class BookingsDTO {
 	private int children;
 	
 	private Double totalAmount;
-	private String status;    
-	private LocalDate bookedAt;
+	private String bookingStatus; 
+	private String paymentStatus;    
+	private LocalDateTime bookedAt;
+	
+	private Long userId;
+	private Long roomId;
 	
 
 }
