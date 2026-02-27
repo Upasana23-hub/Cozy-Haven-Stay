@@ -27,10 +27,10 @@ public class Room {
 	@Id
 	@GeneratedValue(strategy =GenerationType.IDENTITY)
 	@Column(name="Room_id",nullable=false)
-	private int roomId;
+	private Long roomId;
 	
-	@Column(name="Room_number",length=15,nullable=false)
-	private int roomNumber;
+	@Column(name="Room_number",length=15,nullable=false,unique=true)
+	private String roomNumber;
 	
 	@Column(name="Room_type",nullable=false)
 	private String roomType;
@@ -48,7 +48,7 @@ public class Room {
 	private Double baseFare;
 	
 	@Column(name="Ac_available")
-	private Boolean AcAvailable;
+	private Boolean acAvailable;
 	
 	@Column(name="Availability")
 	private Boolean availability;

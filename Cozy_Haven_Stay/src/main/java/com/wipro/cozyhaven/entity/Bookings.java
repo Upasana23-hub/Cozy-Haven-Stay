@@ -1,6 +1,7 @@
 package com.wipro.cozyhaven.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,7 +32,7 @@ public class Bookings {
 	private Long bookingId;
 	
 	@Column(name="Check_in",nullable=false)
-	private LocalDate chekckIn;
+	private LocalDate checkIn;
 	
 	@Column(name="Check_out",nullable=false)
 	private LocalDate checkOut;
@@ -39,20 +40,24 @@ public class Bookings {
 	@Column(name="No_of_rooms")
 	private int noOfRooms;
 	
-	@Column(name="Adults")
+	@Column(name="Adults",nullable=false)
 	private int adults;
 	
-	@Column(name="Children")
+	@Column(name="Children",nullable=false)
 	private int children;
 	
 	@Column(name="Total_amount",nullable=false)
 	private Double totalAmount;
 	
-	@Column(name="Status",length=20,nullable=false)
-	private String status;    //booked or cancelled
+	@Column(name="Booking_status",length=20,nullable=false)
+	private String bookingStatus;    
+	
+	@Column(name="Payment_status",length=20,nullable=false)
+	private String paymentStatus;    
+
 	
 	@Column(name="Booked_at",nullable=false)
-	private LocalDate bookedAt;
+	private LocalDateTime bookedAt;
 	
 	@ManyToOne
 	@JoinColumn(name="user_id",nullable=false)
