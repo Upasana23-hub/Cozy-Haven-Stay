@@ -13,6 +13,7 @@ import com.wipro.cozyhaven.entity.User;
 import com.wipro.cozyhaven.exception.ResourceNotFoundException;
 import com.wipro.cozyhaven.repository.HotelRepository;
 import com.wipro.cozyhaven.repository.ReviewRepository;
+import com.wipro.cozyhaven.repository.UserRepository;
 
 
 @Service

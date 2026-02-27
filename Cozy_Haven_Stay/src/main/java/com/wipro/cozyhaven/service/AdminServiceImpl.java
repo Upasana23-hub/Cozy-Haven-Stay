@@ -58,7 +58,7 @@ public class AdminServiceImpl implements AdminService{
 		 Bookings booking = bookingsRepository.findById(bookingId)
 	                .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-	        booking.BookingStatus(BookingStatus.CANCELLED);
+		 booking.setBookingStatus(BookingStatus.CANCELLED.name());
 	        bookingsRepository.save(booking);
 		
 	}

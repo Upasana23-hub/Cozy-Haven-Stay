@@ -26,7 +26,7 @@ import lombok.ToString;
 public class Room {
 	@Id
 	@GeneratedValue(strategy =GenerationType.IDENTITY)
-	@Column(name="Room_id",nullable=false)
+	@Column(name="room_id",nullable=false)
 	private Long roomId;
 	
 	@Column(name="Room_number",length=15,nullable=false,unique=true)
