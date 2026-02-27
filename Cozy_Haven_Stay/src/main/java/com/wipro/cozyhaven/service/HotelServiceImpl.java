@@ -2,6 +2,7 @@ package com.wipro.cozyhaven.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wipro.cozyhaven.entity.Hotel;
@@ -12,7 +13,7 @@ import com.wipro.cozyhaven.repository.HotelRepository;
 @Service
 
 public class HotelServiceImpl implements HotelService {
-
+@Autowired
     private final HotelRepository hotelRepository;
     
 
