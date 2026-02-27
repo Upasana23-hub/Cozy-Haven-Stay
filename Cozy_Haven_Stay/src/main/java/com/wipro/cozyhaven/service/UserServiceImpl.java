@@ -1,25 +1,29 @@
 package com.wipro.cozyhaven.service;
 
-import com.wipro.cozyhaven.dto.*;
-import com.wipro.cozyhaven.entity.*;
-import com.wipro.cozyhaven.repository.*;
-import com.wipro.cozyhaven.service.UserService;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.wipro.cozyhaven.dto.LoginRequestDTO;
+import com.wipro.cozyhaven.dto.RegisterRequestDTO;
+import com.wipro.cozyhaven.dto.UserResponseDTO;
+import com.wipro.cozyhaven.entity.BookingStatus;
+import com.wipro.cozyhaven.entity.Bookings;
+import com.wipro.cozyhaven.entity.Role;
+import com.wipro.cozyhaven.entity.User;
+import com.wipro.cozyhaven.repository.BookingsRepository;
+import com.wipro.cozyhaven.repository.UserRepository;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final BookingsRepository bookingRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BookingsRepository bookingRepository;
 
     @Override
     public UserResponseDTO register(RegisterRequestDTO request) {
@@ -31,7 +35,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(request.getPassword())
                 .phone(request.getPhone())
                 .address(request.getAddress())
                 .role(Role.USER)
@@ -39,21 +43,15 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         User savedUser = userRepository.save(user);
-
         return mapToResponse(savedUser);
     }
 
     @Override
     public String login(LoginRequestDTO request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
+        userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        // Later replace with JWT token
         return "Login Successful";
     }
 
@@ -68,8 +66,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Bookings> getMyBookings(Long userId) {
-
-        return bookingRepository.findByUserId(userId);
+        return bookingRepository.findAll()
+                .stream()
+                .filter(b -> b.getUser().getUserId().equals(userId))
+                .toList();
     }
 
     @Override
@@ -82,12 +82,11 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Unauthorized action");
         }
 
-        booking.setStatus(BookingStatus.CANCELLED);
+        booking.setBookingStatus(BookingStatus.CANCELLED.name());
         bookingRepository.save(booking);
     }
 
     private UserResponseDTO mapToResponse(User user) {
-
         return UserResponseDTO.builder()
                 .userId(user.getUserId())
                 .name(user.getName())
