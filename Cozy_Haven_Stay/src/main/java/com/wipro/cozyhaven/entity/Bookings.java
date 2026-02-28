@@ -28,35 +28,35 @@ public class Bookings {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="Booking_id",nullable=false)
+	@Column(name="booking_id",nullable=false)
 	private Long bookingId;
 	
-	@Column(name="Check_in",nullable=false)
+	@Column(name="check_in",nullable=false)
 	private LocalDate checkIn;
 	
-	@Column(name="Check_out",nullable=false)
+	@Column(name="check_out",nullable=false)
 	private LocalDate checkOut;
 	
-	@Column(name="No_of_rooms")
+	@Column(name="no_of_rooms")
 	private int noOfRooms;
 	
-	@Column(name="Adults",nullable=false)
+	@Column(name="adults",nullable=false)
 	private int adults;
 	
-	@Column(name="Children",nullable=false)
+	@Column(name="children",nullable=false)
 	private int children;
 	
-	@Column(name="Total_amount",nullable=false)
+	@Column(name="total_amount",nullable=false)
 	private Double totalAmount;
 	
-	@Column(name="Booking_status",length=20,nullable=false)
+	@Column(name="booking_status",length=20,nullable=false)
 	private String bookingStatus;    
 	
-	@Column(name="Payment_status",length=20,nullable=false)
+	@Column(name="payment_status",length=20,nullable=false)
 	private String paymentStatus;    
 
 	
-	@Column(name="Booked_at",nullable=false)
+	@Column(name="booked_at",nullable=false)
 	private LocalDateTime bookedAt;
 	
 	@ManyToOne

@@ -29,31 +29,31 @@ public class Room {
 	@Column(name="room_id",nullable=false)
 	private Long roomId;
 	
-	@Column(name="Room_number",length=15,nullable=false,unique=true)
+	@Column(name="room_number",length=15,nullable=false,unique=true)
 	private String roomNumber;
 	
-	@Column(name="Room_type",nullable=false)
+	@Column(name="room_type",nullable=false)
 	private String roomType;
 
-	@Column(name="Bed_type")
+	@Column(name="bed_type")
 	private String bedType;
 	
-	@Column(name="Room_size")
+	@Column(name="room_size")
 	private String roomSize;
 	
-	@Column(name="Max_people")
+	@Column(name="max_people")
 	private int maxPeople;
 	
-	@Column(name="Base_fare",nullable=false)
+	@Column(name="base_fare",nullable=false)
 	private Double baseFare;
 	
-	@Column(name="Ac_available")
+	@Column(name="ac_available")
 	private Boolean acAvailable;
 	
-	@Column(name="Availability")
+	@Column(name="availability")
 	private Boolean availability;
 	
-	@Column(name="Added_at",nullable=false)
+	@Column(name="added_at",nullable=false)
 	private LocalDateTime addedAt;
 	
 	@ManyToOne
