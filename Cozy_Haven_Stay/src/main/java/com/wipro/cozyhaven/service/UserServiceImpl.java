@@ -16,14 +16,15 @@ import com.wipro.cozyhaven.entity.User;
 import com.wipro.cozyhaven.repository.BookingsRepository;
 import com.wipro.cozyhaven.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private BookingsRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final BookingsRepository bookingRepository;
 
     @Override
     public UserResponseDTO register(RegisterRequestDTO request) {
@@ -66,10 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Bookings> getMyBookings(Long userId) {
-        return bookingRepository.findAll()
-                .stream()
-                .filter(b -> b.getUser().getUserId().equals(userId))
-                .toList();
+    	return bookingRepository.findByUserUserId(userId);
     }
 
     @Override

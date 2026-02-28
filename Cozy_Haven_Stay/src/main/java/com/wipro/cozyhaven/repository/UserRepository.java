@@ -3,6 +3,8 @@ package com.wipro.cozyhaven.repository;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.wipro.cozyhaven.entity.Bookings;
 import com.wipro.cozyhaven.entity.Role;
 import com.wipro.cozyhaven.entity.User;
 import java.util.List;
