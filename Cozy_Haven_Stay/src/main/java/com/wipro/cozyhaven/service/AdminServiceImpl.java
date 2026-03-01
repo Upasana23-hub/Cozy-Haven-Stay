@@ -3,6 +3,7 @@ package com.wipro.cozyhaven.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wipro.cozyhaven.dto.UserResponseDTO;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService{
+	
 	
 	private final UserRepository userRepository;
 	private final BookingsRepository bookingsRepository;
