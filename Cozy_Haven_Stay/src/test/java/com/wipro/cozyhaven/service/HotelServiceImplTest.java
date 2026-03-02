@@ -1,40 +1,54 @@
-package com.example.cozyhaven;
+package com.wipro.cozyhaven.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import com.wipro.cozyhaven.entity.User;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.List;
 import com.wipro.cozyhaven.entity.Hotel;
 import com.wipro.cozyhaven.entity.HotelOwner;
-import com.wipro.cozyhaven.service.HotelOwnerService;
-import com.wipro.cozyhaven.service.HotelService;
-import jakarta.transaction.Transactional;
+import com.wipro.cozyhaven.entity.User;
+import com.wipro.cozyhaven.repository.UserRepository;
+
 @SpringBootTest
-@Transactional
-class HotelServiceTest {
-	
+class HotelServiceImplTest {
+
 	@Autowired
 	private HotelService hotelService;
 	
 	@Autowired
 	private HotelOwnerService ownerService;
-
+	
+	@Autowired
+	private UserRepository userRepository; 
+	
+	
 	@Test
 	void testCreatehotel() {
+		User user = new User();
+	    user.setName("Test User");
+	    user.setEmail("test@example.com");
+	    user.setPassword("Test");
+	    user = userRepository.save(user);
+
+	   
+	    HotelOwner owner = new HotelOwner();
+	    owner.setUserId(user); // FK to user
+	    owner.setBuisnessName("JW Marriot");
+	    owner.setGstNumber("GST999");
+	    owner.setAddress("Kolkata");
+	    owner = ownerService.createOwner(owner); 
 		Hotel hotel = new Hotel();
 		hotel.setName("Cozy Haven");
 		hotel.setLocation("Kolkata");
 		hotel.setDescription("It is a luxury and affordable stay");
 		hotel.setRating(4.8);
 		
-		Hotel savedHotel = hotelService.addHotel(1L, hotel);
-		assertNotNull(savedHotel);
-		assertEquals("Cozy Haven", savedHotel.getName());
-		
+		Hotel savedHotel = hotelService.addHotel(owner.getOwnerId(), hotel); 
+	    assertNotNull(savedHotel);
+	    assertEquals("Cozy Haven", savedHotel.getName());
 	}
 	
 	@Test
@@ -66,14 +80,14 @@ class HotelServiceTest {
 		 Hotel hotel = new Hotel();
 	     hotel.setName("Delete Hotel");
 	     hotel.setLocation("Kolkata");
-	     hotel.setDescription("Desc");
+	     hotel.setDescription("Test");
 
 	        Hotel saved = hotelService.addHotel(owner.getOwnerId(), hotel);
 
 	        hotelService.deleteHotel(owner.getOwnerId(), saved.getHotelId());
 
-	        assertThrows(RuntimeException.class,
-	                () -> hotelService.getHotelById(saved.getHotelId()));
+	        List<Hotel> hotels= hotelService.getHotelByOwner(owner.getOwnerId());
+	        assertTrue(hotels.isEmpty());
 	}
 	
 	 @Test
@@ -95,18 +109,21 @@ class HotelServiceTest {
 	                hotelService.seachHotelsByLocationAndRating("Pune", 4.0);
 	        assertNotNull(hotels);
 	}
-	 
 	 private HotelOwner createOwner() {
-	        User user = new User();
-	        user.setUserId(2001L);
+		 User user = new User();
+		    user.setName("Test User");
+		    user.setEmail("test@example.com");
+		    user.setPassword("Test");
+		    user = userRepository.save(user);
 
-	        HotelOwner owner = new HotelOwner();
-	        owner.setUserId(user);
-	        owner.setBuisnessName("Hotel Owner");
-	        owner.setGstNumber("GST999");
-	        owner.setAddress("Pune");
-
-	        return ownerService.createOwner(owner);
+		   
+		    HotelOwner owner = new HotelOwner();
+		    owner.setUserId(user); // FK to user
+		    owner.setBuisnessName("JW Marriot");
+		    owner.setGstNumber("GST999");
+		    owner.setAddress("Kolkata");
+		    return owner = ownerService.createOwner(owner); 
+	 }
+	 
 	 }
 
-}

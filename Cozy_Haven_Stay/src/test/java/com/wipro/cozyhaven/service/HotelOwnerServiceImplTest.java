@@ -1,23 +1,28 @@
-package com.example.cozyhaven;
+package com.wipro.cozyhaven.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import com.wipro.cozyhaven.entity.User;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.List;
+
 import com.wipro.cozyhaven.entity.HotelOwner;
-import com.wipro.cozyhaven.service.HotelOwnerService;
-import jakarta.transaction.Transactional;
+import com.wipro.cozyhaven.entity.User;
+import com.wipro.cozyhaven.repository.UserRepository;
+
 @SpringBootTest
-@Transactional
-class HotelOwnerServiceTest {
-	
+class HotelOwnerServiceImplTest {
+
 	@Autowired
 	private HotelOwnerService ownerService;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@Test
 	void testCreateOwner() {
@@ -35,7 +40,7 @@ class HotelOwnerServiceTest {
 	
 	@Test
 	void tstGetAllOwners() {
-		HotelOwner owner = createOwner(2002L);
+		createOwner(2002L);
 		List<HotelOwner> owners= ownerService.getAllOwners();
 		assertFalse(owners.isEmpty());
 	}
@@ -57,7 +62,7 @@ class HotelOwnerServiceTest {
 	 
 	 @Test
 	 void testGetPendingOwners() {
-	     HotelOwner owner= createOwner(2005L);
+		 createOwner(2005L);
 	     List<HotelOwner> pending = ownerService.getPendingsOwners();
 	     assertNotNull(pending);
 	 }
@@ -84,20 +89,21 @@ class HotelOwnerServiceTest {
 	    }
 	 
 	 private HotelOwner createOwner(Long userId) {
-	        User user = new User();
-	        user.setUserId(userId);
+		    // 1️⃣ Persist a User first
+		    User user = new User();
+		    user.setName("Test User " + userId);
+		    user.setEmail("test@example.com");
+		    user.setPassword("Test");
+		    user = userRepository.save(user);  
 
-	        HotelOwner owner = new HotelOwner();
-	        owner.setUserId(user);
-	        owner.setBuisnessName("Test Business");
-	        owner.setGstNumber("GST123");
-	        owner.setAddress("Kolkata");
+		   
+		    HotelOwner owner = new HotelOwner();
+		    owner.setUserId(user); 
+		    owner.setBuisnessName("JW Marriot");
+		    owner.setGstNumber("GST" + userId);
+		    owner.setAddress("Kolkata");
 
-	        return ownerService.createOwner(owner);
-	    }
-	 
-	 
-	 }
+		    return ownerService.createOwner(owner);
+		}
 
-
-
+}

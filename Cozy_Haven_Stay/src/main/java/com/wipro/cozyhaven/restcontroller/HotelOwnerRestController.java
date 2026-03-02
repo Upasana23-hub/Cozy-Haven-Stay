@@ -31,7 +31,7 @@ public class HotelOwnerRestController {
 	}
 
 
-	@PostMapping
+	@PostMapping("/add")
 	public ResponseEntity<HotelOwner> createOwner(@Valid @RequestBody HotelOwnerDTO dto) {
 		HotelOwner owner = mapToEntity(dto);
 		HotelOwner savedOwner = ownerService.createOwner(owner);
