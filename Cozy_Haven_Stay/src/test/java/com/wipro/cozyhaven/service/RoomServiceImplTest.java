@@ -1,6 +1,7 @@
 package com.wipro.cozyhaven.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,10 +20,9 @@ import com.wipro.cozyhaven.repository.HotelOwnerRepository;
 import com.wipro.cozyhaven.repository.HotelRepository;
 import com.wipro.cozyhaven.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
 
 @SpringBootTest
-@Transactional
+
 class RoomServiceImplTest {
 	
 	@Autowired
