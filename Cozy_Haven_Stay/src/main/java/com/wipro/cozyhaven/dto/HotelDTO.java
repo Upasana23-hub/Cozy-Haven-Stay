@@ -2,8 +2,6 @@ package com.wipro.cozyhaven.dto;
 
 import java.time.LocalDateTime;
 
-import com.wipro.cozyhaven.entity.HotelOwner;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -24,8 +22,8 @@ public class HotelDTO {
 	@PositiveOrZero(message= "Rating cannot be negetive")
 	private Double rating;
 	private boolean active;
-	@NotNull(message= "Owner cannot be null")
-	private HotelOwner owner;
+	@NotNull(message= "OwnerId cannot be null")
+	private Long ownerId;
 	private LocalDateTime createdDate;
 	
 
