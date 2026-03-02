@@ -33,7 +33,7 @@ public class HotelRestController {
 		this.hotelService = hotelService;
 	}
 	
-	@PostMapping
+	@PostMapping("/add")
 	public ResponseEntity<Hotel> addHotel(@Valid @RequestBody HotelDTO dto) {
 		Hotel hotel = new Hotel();
 		hotel.setName(dto.getName());
