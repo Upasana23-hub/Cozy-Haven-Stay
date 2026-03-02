@@ -17,7 +17,7 @@ import com.wipro.cozyhaven.repository.RoomRepository;
 import com.wipro.cozyhaven.repository.UserRepository;
 
 @Service
-public class BookingServiceImp implements BookingService {
+public class BookingServiceImpl implements BookingService {
 
 	@Autowired
 	private BookingsRepository bookingRepository;

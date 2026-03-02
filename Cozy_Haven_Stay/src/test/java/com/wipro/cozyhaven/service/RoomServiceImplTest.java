@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import com.wipro.cozyhaven.dto.RoomDTO;
 
-class RoomServiceImpTest {
+class RoomServiceImplTest {
 
 	@Test
 	void testAddRoom() {
