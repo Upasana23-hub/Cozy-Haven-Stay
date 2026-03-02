@@ -90,9 +90,9 @@ public class RoomServiceImp implements RoomService {
 
 	  
 	    @Override
-	    public RoomDTO getRoomById(int roomId) {
+	    public RoomDTO getRoomById(Long roomId) {
 
-	        Room room = roomRepository.findById(Long.valueOf(roomId))
+	        Room room = roomRepository.findById(roomId)
 	                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
 	        RoomDTO dto = new RoomDTO();
@@ -113,7 +113,7 @@ public class RoomServiceImp implements RoomService {
 
 	   
 	    @Override
-	    public RoomDTO updateRoom(int roomId, RoomDTO roomDTO) {
+	    public RoomDTO updateRoom(Long roomId, RoomDTO roomDTO) {
 
 	        Room room = roomRepository.findById(Long.valueOf(roomId))
 	                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
@@ -146,7 +146,7 @@ public class RoomServiceImp implements RoomService {
 
 	   
 	    @Override
-	    public void deleteRoom(int roomId) {
+	    public void deleteRoom(Long roomId) {
 
 	        Room room = roomRepository.findById(Long.valueOf(roomId))
 	                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));

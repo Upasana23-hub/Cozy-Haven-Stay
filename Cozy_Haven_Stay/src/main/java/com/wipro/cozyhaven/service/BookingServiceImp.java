@@ -38,7 +38,7 @@ public class BookingServiceImp implements BookingService {
                 .orElseThrow(() -> 
                         new ResourceNotFoundException("Room not found"));
         Bookings booking = new Bookings();
-        booking.setUser(user);
+        booking.setUser(user); 
         booking.setRoom(room);
         booking.setHotel(room.getHotel());
         booking.setBookedAt(LocalDateTime.now());
@@ -48,8 +48,10 @@ public class BookingServiceImp implements BookingService {
         booking.setTotalAmount(bookingDTO.getTotalAmount());
 
         Bookings savedBooking = bookingRepository.save(booking);
+       
 
         BookingsDTO savedDTO = new BookingsDTO();
+   
 
         savedDTO.setBookingId(savedBooking.getBookingId());
         savedDTO.setUserId(savedBooking.getUser().getUserId());
