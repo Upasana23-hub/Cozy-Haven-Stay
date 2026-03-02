@@ -1,0 +1,103 @@
+package com.example.cozyhaven;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.wipro.cozyhaven.entity.User;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import java.util.List;
+import com.wipro.cozyhaven.entity.HotelOwner;
+import com.wipro.cozyhaven.service.HotelOwnerService;
+import jakarta.transaction.Transactional;
+@SpringBootTest
+@Transactional
+class HotelOwnerServiceTest {
+	
+	@Autowired
+	private HotelOwnerService ownerService;
+
+	@Test
+	void testCreateOwner() {
+		HotelOwner owner = createOwner(1999L);
+		assertNotNull(owner.getOwnerId());
+		
+	}
+	
+	@Test
+	void testGetOwnerByUserId() {
+		HotelOwner owner = createOwner(2001L);
+		HotelOwner fetched = ownerService.getOwnerByUserId(owner.getUserId().getUserId());
+		assertEquals(owner.getOwnerId(), fetched.getOwnerId());
+	}
+	
+	@Test
+	void tstGetAllOwners() {
+		HotelOwner owner = createOwner(2002L);
+		List<HotelOwner> owners= ownerService.getAllOwners();
+		assertFalse(owners.isEmpty());
+	}
+	
+	 @Test
+	 void testApproveOwner() {
+	     HotelOwner owner = createOwner(2003L);
+	     HotelOwner approved = ownerService.approvedOwner(owner.getOwnerId());
+	     assertTrue(approved.isApproved());
+	}
+	 
+	 @Test
+	 void testActiveOwner() {
+		 HotelOwner owner = createOwner(2004L);
+		 owner.setActive(false);
+		 HotelOwner activated = ownerService.activateOwner(owner.getOwnerId());
+		 assertTrue(activated.isActive());
+	 }
+	 
+	 @Test
+	 void testGetPendingOwners() {
+	     HotelOwner owner= createOwner(2005L);
+	     List<HotelOwner> pending = ownerService.getPendingsOwners();
+	     assertNotNull(pending);
+	 }
+	 
+	 @Test
+	 void testIsOwnerActive() {
+		 HotelOwner owner= createOwner(2006L);
+		 assertTrue(ownerService.isownerActive(owner.getOwnerId()));
+		 
+	 }
+	 
+	 @Test
+	 void testIsOwnerApproved() {
+		 HotelOwner owner = createOwner(2007L);
+		 assertFalse(ownerService.isOwnerApproved(owner.getOwnerId()));
+	 
+	 }
+	 
+	 @Test
+	 void testCanOwnerCreateHotel() {
+	     HotelOwner owner = createOwner(1009L);
+	     ownerService.approvedOwner(owner.getOwnerId());
+	     assertTrue(ownerService.canOwnerCreateHotel(owner.getOwnerId()));
+	    }
+	 
+	 private HotelOwner createOwner(Long userId) {
+	        User user = new User();
+	        user.setUserId(userId);
+
+	        HotelOwner owner = new HotelOwner();
+	        owner.setUserId(user);
+	        owner.setBuisnessName("Test Business");
+	        owner.setGstNumber("GST123");
+	        owner.setAddress("Kolkata");
+
+	        return ownerService.createOwner(owner);
+	    }
+	 
+	 
+	 }
+
+
+
