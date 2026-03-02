@@ -10,11 +10,11 @@ public interface RoomService {
 	 RoomDTO addRoom(RoomDTO roomDTO);
 	 List<RoomDTO> getAllRooms();
 	
-	 RoomDTO getRoomById(int roomId);
+	 RoomDTO getRoomById(Long roomId);
 	
-	 RoomDTO updateRoom(int roomId,RoomDTO roomDTO );
+	 RoomDTO updateRoom(Long roomId,RoomDTO roomDTO );
 	
-	 void deleteRoom(int roomId);
+	 void deleteRoom(Long roomId);
 	List<RoomDTO> getAvailableRooms( );
 	
 

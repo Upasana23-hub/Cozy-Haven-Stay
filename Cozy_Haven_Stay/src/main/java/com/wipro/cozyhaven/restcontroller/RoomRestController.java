@@ -1,0 +1,71 @@
+package com.wipro.cozyhaven.restcontroller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.wipro.cozyhaven.dto.RoomDTO;
+import com.wipro.cozyhaven.service.RoomService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/rooms")
+public class RoomRestController {
+	
+	@Autowired
+	RoomService roomService;
+	
+	@PostMapping("/add")
+	public ResponseEntity<RoomDTO> addRoom(@Valid @RequestBody RoomDTO roomDTO)
+	{
+        RoomDTO savedRoom = roomService.addRoom(roomDTO);
+        return new ResponseEntity<>(savedRoom, HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/getall")
+	public ResponseEntity<List<RoomDTO>> getAllRooms() {
+        List<RoomDTO> rooms = roomService.getAllRooms();
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
+    }
+
+	
+	@GetMapping("/getbyid/{id}")
+	public ResponseEntity<RoomDTO> getRoomById(@PathVariable Long roomId) {
+        RoomDTO room = roomService.getRoomById(roomId);
+        return new ResponseEntity<>(room, HttpStatus.OK);
+    }
+	
+	@PutMapping("/update/{id}")
+	public ResponseEntity<RoomDTO> updateRoom(@PathVariable Long roomId,
+                                       @Valid @RequestBody RoomDTO roomDTO) 
+	{
+
+        RoomDTO updatedRoom = roomService.updateRoom(roomId, roomDTO);
+        return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
+    }
+	
+	@DeleteMapping("/delete/{id}")
+	 public ResponseEntity<String> deleteRoom(@PathVariable Long roomId) 
+	{
+		roomService.deleteRoom(roomId);
+        return new ResponseEntity<>("Room deleted successfully", HttpStatus.OK);
+    }
+	
+	@GetMapping("/available")
+	public ResponseEntity<List<RoomDTO>> getAvailableRooms() {
+        List<RoomDTO> rooms = roomService.getAvailableRooms();
+        return new ResponseEntity<>(rooms, HttpStatus.OK);
+    }
+
+}
