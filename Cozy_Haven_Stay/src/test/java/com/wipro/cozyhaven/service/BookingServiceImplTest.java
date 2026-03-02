@@ -14,8 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.wipro.cozyhaven.dto.BookingsDTO;
 import com.wipro.cozyhaven.entity.Hotel;
+import com.wipro.cozyhaven.entity.HotelOwner;
 import com.wipro.cozyhaven.entity.Room;
 import com.wipro.cozyhaven.entity.User;
+import com.wipro.cozyhaven.repository.HotelOwnerRepository;
 import com.wipro.cozyhaven.repository.HotelRepository;
 import com.wipro.cozyhaven.repository.RoomRepository;
 import com.wipro.cozyhaven.repository.UserRepository;
@@ -30,6 +32,9 @@ class BookingServiceImplTest {
 	    private UserRepository userRepository;
 
 	    @Autowired
+	    private HotelOwnerRepository hotelOwnerRepository;
+
+	    @Autowired
 	    private HotelRepository hotelRepository;
 
 	    @Autowired
@@ -38,17 +43,37 @@ class BookingServiceImplTest {
 	    private User createUser() {
 	        User user = new User();
 	        user.setName("Test User");
-	        user.setEmail("testuser@example.com"); 
+	        user.setEmail("testuser@example.com");
 	        user.setPassword("12345");
 	        user.setCreatedAt(LocalDateTime.now());
 	        return userRepository.save(user);
 	    }
 
+	    private HotelOwner createOwner() {
+	        User ownerUser = new User();
+	        ownerUser.setName("Owner User");
+	        ownerUser.setEmail("owner@example.com");
+	        ownerUser.setPassword("owner123");
+	        ownerUser.setCreatedAt(LocalDateTime.now());
+	        ownerUser = userRepository.save(ownerUser);
+
+	        HotelOwner owner = new HotelOwner();
+	        owner.setUserId(ownerUser);
+	        owner.setBuisnessName("Test Business");
+	        owner.setActive(true);
+	        owner.setApproved(true);
+	        owner.setCreatedDate(LocalDateTime.now());
+	        return hotelOwnerRepository.save(owner);
+	    }
 	    private Hotel createHotel() {
+	        HotelOwner owner = createOwner(); 
 	        Hotel hotel = new Hotel();
 	        hotel.setName("Test Hotel");
 	        hotel.setLocation("Chennai");
 	        hotel.setDescription("Test Description");
+	        hotel.setOwner(owner);        
+	        hotel.setActive(true);
+	        hotel.setCreatedDate(LocalDateTime.now());
 	        return hotelRepository.save(hotel);
 	    }
 
@@ -154,3 +179,4 @@ class BookingServiceImplTest {
 	        assertEquals("PAID", paidBookings.get(0).getPaymentStatus());
 	    }
 	}
+	   
