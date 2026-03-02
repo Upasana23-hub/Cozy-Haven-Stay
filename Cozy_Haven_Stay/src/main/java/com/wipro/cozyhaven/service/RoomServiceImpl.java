@@ -15,7 +15,7 @@ import com.wipro.cozyhaven.repository.HotelRepository;
 import com.wipro.cozyhaven.repository.RoomRepository;
 
 @Service
-public class RoomServiceImp implements RoomService {
+public class RoomServiceImpl implements RoomService {
 
 
 	    @Autowired
