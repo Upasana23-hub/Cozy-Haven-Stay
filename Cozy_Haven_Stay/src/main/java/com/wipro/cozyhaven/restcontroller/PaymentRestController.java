@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class PaymentRestController {
 	@Autowired
     private PaymentService paymentService;
 	
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/bookings/payments/{bookingId}")
     public ResponseEntity<PaymentDTO> addPayment(@PathVariable Long bookingId, @Valid @RequestBody PaymentDTO paymentDTO) {
         paymentDTO.setBookingId(bookingId);
@@ -32,39 +34,45 @@ public class PaymentRestController {
         return new ResponseEntity<>(createdPayment, HttpStatus.CREATED);
     }
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/payments/{paymentId}")
     public ResponseEntity<PaymentDTO> getPaymentById(@PathVariable Long paymentId) {
         PaymentDTO payment = paymentService.getPaymentById(paymentId);
         return new ResponseEntity<>(payment, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/payments")
     public ResponseEntity<List<PaymentDTO>> getAllPayments() {
         List<PaymentDTO> payments = paymentService.getAllPayments();
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/bookings/getpayment/{bookingId}")
     public ResponseEntity<PaymentDTO> getPaymentByBooking(@PathVariable Long bookingId) {
         PaymentDTO payment = paymentService.getPaymentByBookingId(bookingId);
         return new ResponseEntity<>(payment, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("/users/payments/{userId}")
     public ResponseEntity<List<PaymentDTO>> getPaymentsByUser(@PathVariable Long userId) {
         List<PaymentDTO> payments = paymentService.getPaymentsByUserId(userId);
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAuthority('ROLE_OWNER')")
 	@GetMapping("/owners/payments/{ownerId}")
     public ResponseEntity<List<PaymentDTO>> getPaymentsByOwner(@PathVariable Long ownerId) {
         List<PaymentDTO> payments = paymentService.getPaymentsByOwnerId(ownerId);
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_OWNER')")
 	@PatchMapping("/payments/status/{paymentId}")
-    public ResponseEntity<PaymentDTO> updatePaymentStatus(@PathVariable Long paymentId,@RequestParam String status) {       
-        PaymentDTO updatedPayment = paymentService.updatePaymentStatus(paymentId, status);
-        return new ResponseEntity<>(updatedPayment, HttpStatus.OK);
-    }
+	public ResponseEntity<PaymentDTO> updatePaymentStatus(@PathVariable Long paymentId, @RequestParam String status) {
+	    PaymentDTO updatedPayment = paymentService.updatePaymentStatus(paymentId, status);
+	    return new ResponseEntity<>(updatedPayment, HttpStatus.OK);
+	}
 }

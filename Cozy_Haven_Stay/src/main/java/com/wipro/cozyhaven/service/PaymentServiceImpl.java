@@ -165,6 +165,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO updatePaymentStatus(Long paymentId, String status) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found"));
+
         payment.setPaymentStatus(status);
         Payment updated = paymentRepository.save(payment);
 
