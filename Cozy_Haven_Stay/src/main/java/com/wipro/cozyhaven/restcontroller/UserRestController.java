@@ -1,6 +1,5 @@
 package com.wipro.cozyhaven.restcontroller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wipro.cozyhaven.dto.LoginRequestDTO;
-import com.wipro.cozyhaven.dto.RegisterRequestDTO;
 import com.wipro.cozyhaven.dto.UserResponseDTO;
 import com.wipro.cozyhaven.entity.Bookings;
 import com.wipro.cozyhaven.service.UserService;
@@ -24,54 +22,54 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
-
 public class UserRestController {
-	
-	@Autowired
-	private UserService userService;
 
-	// 1. Register
-	@PostMapping("/register")
-	public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody RegisterRequestDTO request) {
+    @Autowired
+    private UserService userService;
 
-		return ResponseEntity.ok(userService.register(request));
+    // ================= REGISTER =================
+    @PostMapping("/register")
+    public ResponseEntity<UserResponseDTO> register(
+            @Valid @RequestBody UserResponseDTO userDTO) {
 
-	}
+        return ResponseEntity.ok(userService.register(userDTO));
+    }
 
-	// 2. Login
-	@PostMapping("/login")
-	public ResponseEntity<String> login(@Valid @RequestBody LoginRequestDTO request) {
+    // ================= LOGIN =================
+    @PostMapping("/login")
+    public ResponseEntity<String> login(
+            @Valid @RequestBody LoginRequestDTO loginDTO) {
+        return ResponseEntity.ok(
+            userService.login(loginDTO.getEmail(), loginDTO.getPassword())
+        );
+    }
 
-		return ResponseEntity.ok(userService.login(request));
+    // ================= GET PROFILE =================
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponseDTO> getProfile(
+            @PathVariable Long userId) {
 
-	}
+        return ResponseEntity.ok(userService.getProfile(userId));
+    }
 
-	// 3. Get Profile
-	@PreAuthorize("hasRole('USER')")
-	@GetMapping("/{userId}")
-	public ResponseEntity<UserResponseDTO> getProfile(@PathVariable Long userId) {
+    // ================= MY BOOKINGS =================
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{userId}/bookings")
+    public ResponseEntity<List<Bookings>> getMyBookings(
+            @PathVariable Long userId) {
 
-		return ResponseEntity.ok(userService.getProfile(userId));
+        return ResponseEntity.ok(userService.getMyBookings(userId));
+    }
 
-	}
+    // ================= CANCEL BOOKING =================
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/{userId}/bookings/{bookingId}/cancel")
+    public ResponseEntity<String> cancelBooking(
+            @PathVariable Long userId,
+            @PathVariable Long bookingId) {
 
-	// 4. Get My Bookings
-	@PreAuthorize("hasRole('USER')")
-	@GetMapping("/{userId}/bookings")
-	public ResponseEntity<List<Bookings>> getMyBookings(@PathVariable Long userId) {
-
-		return ResponseEntity.ok(userService.getMyBookings(userId));
-
-	}
-
-	// 5. Cancel Booking
-	 @PreAuthorize("hasRole('USER')")
-	 @PutMapping("/{userId}/bookings/{bookingId}/cancel")
-	public ResponseEntity<String> cancelBooking(@PathVariable Long userId, @PathVariable Long bookingId) {
-		
-		userService.cancelMyBooking(userId, bookingId);
-		return ResponseEntity.ok("Booking cancelled successfully");
-
-	}
-
+        userService.cancelMyBooking(userId, bookingId);
+        return ResponseEntity.ok("Booking cancelled successfully");
+    }
 }

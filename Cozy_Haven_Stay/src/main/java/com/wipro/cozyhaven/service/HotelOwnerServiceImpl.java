@@ -1,85 +1,87 @@
 package com.wipro.cozyhaven.service;
 
-
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wipro.cozyhaven.entity.HotelOwner;
 import com.wipro.cozyhaven.repository.HotelOwnerRepository;
 
-
-
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
+public class HotelOwnerServiceImpl implements HotelOwnerService {
 
-public class HotelOwnerServiceImpl implements HotelOwnerService{
-	@Autowired
-	private final HotelOwnerRepository ownerRepository;
+    private final HotelOwnerRepository ownerRepository;
 
-	public HotelOwnerServiceImpl(HotelOwnerRepository ownerRepository) {
-		super();
-		this.ownerRepository = ownerRepository;
-	}
+    // ================= CREATE OWNER =================
+    @Override
+    public HotelOwner createOwner(HotelOwner owner) {
+        return ownerRepository.save(owner);
+    }
 
-	@Override
-	public HotelOwner createOwner(HotelOwner owner) {
-		return ownerRepository.save(owner);
-		
-	}
+    // ================= GET OWNER BY USER ID =================
+    @Override
+    public HotelOwner getOwnerByUserId(Long userId) {
+        return ownerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new RuntimeException("Hotel owner not found for userId: " + userId));
+    }
 
-	@Override
-	public HotelOwner getOwnerByUserId(Long ownerId) {
-		return ownerRepository.findById(ownerId).orElseThrow();
-	}
-	
+    // ================= GET ALL OWNERS =================
+    @Override
+    public List<HotelOwner> getAllOwners() {
+        return ownerRepository.findAll();
+    }
 
-	@Override
-	public List<HotelOwner> getAllOwners() {
-		return ownerRepository.findAll();
-	}
+    // ================= APPROVE OWNER (ADMIN) =================
+    @Override
+    public HotelOwner approveOwner(Long ownerId) {
+        HotelOwner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-	@Override
-	public HotelOwner approvedOwner(Long ownerId) {
-		HotelOwner owner= getOwnerByUserId(ownerId);
-		return ownerRepository.save(owner);
-	}
+        owner.setApproved(true);
+        return ownerRepository.save(owner);
+    }
 
-	@Override
-	public HotelOwner activateOwner(Long ownerId) {
-		HotelOwner owner= getOwner(ownerId);
-		owner.setActive(true);
-		return ownerRepository.save(owner);
-	}
+    // ================= ACTIVATE OWNER =================
+    @Override
+    public HotelOwner activateOwner(Long ownerId) {
+        HotelOwner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-	@Override
-	public List<HotelOwner> getPendingsOwners() {
-		return ownerRepository.findByApprovedFalse();
-	}
+        owner.setActive(true);
+        return ownerRepository.save(owner);
+    }
 
-	@Override
-	public boolean isOwnerApproved(Long ownerId) {
-		return getOwner(ownerId).isApproved();
-	}
+    // ================= PENDING OWNERS =================
+    @Override
+    public List<HotelOwner> getPendingsOwners() {
+        return ownerRepository.findByApprovedFalse();
+    }
 
-	@Override
-	public boolean isownerActive(Long ownerId) {
-		return getOwner(ownerId).isActive();
-	}
-	
-	
-	@Override
-	public boolean canOwnerCreateHotel(Long ownerId) {
-		HotelOwner owner = getOwner(ownerId);
-		return owner.isApproved() && owner.isActive();
-	}
+    // ================= CHECK APPROVAL =================
+    @Override
+    public boolean isOwnerApproved(Long ownerId) {
+        return ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"))
+                .isApproved();
+    }
 
-	private HotelOwner getOwner(Long ownerId) {
-		return ownerRepository.findByUserId_UserId(ownerId).orElseThrow(() -> new RuntimeException("Hotel owner not Found"));
-	}
-	
-	
-	
+    // ================= CHECK ACTIVE =================
+    @Override
+    public boolean isOwnerActive(Long ownerId) {
+        return ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"))
+                .isActive();
+    }
 
+    // ================= CAN OWNER CREATE HOTEL =================
+    @Override
+    public boolean canOwnerCreateHotel(Long ownerId) {
+        HotelOwner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
+
+        return owner.isApproved() && owner.isActive();
+    }
 }

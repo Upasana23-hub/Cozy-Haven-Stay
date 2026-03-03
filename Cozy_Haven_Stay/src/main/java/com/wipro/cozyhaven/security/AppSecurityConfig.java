@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class AppSecurityConfig {
 
     @Autowired
@@ -33,16 +31,14 @@ public class AppSecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .headers(headers -> headers.frameOptions(frame -> frame.disable()))
-            .authenticationProvider(authProvider())
+            .authenticationProvider(authProvider()) 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/register").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/owner/**").hasRole("OWNER")
-                .requestMatchers("/api/user/**").hasRole("USER")
+                .requestMatchers(
+                		"/api/users/register","/api/users/login"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
-            .httpBasic();
-
+            .httpBasic(); 
         return http.build();
     }
 }

@@ -3,11 +3,8 @@ package com.wipro.cozyhaven.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wipro.cozyhaven.dto.LoginRequestDTO;
-import com.wipro.cozyhaven.dto.RegisterRequestDTO;
 import com.wipro.cozyhaven.dto.UserResponseDTO;
 import com.wipro.cozyhaven.entity.BookingStatus;
 import com.wipro.cozyhaven.entity.Bookings;
@@ -25,20 +22,25 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BookingsRepository bookingRepository;
 
+    // ================= REGISTER =================
     @Override
-    public UserResponseDTO register(RegisterRequestDTO request) {
+    public UserResponseDTO register(UserResponseDTO userDTO) {
 
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
             throw new RuntimeException("Email already registered");
         }
 
         User user = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .password(request.getPassword())
-                .phone(request.getPhone())
-                .address(request.getAddress())
-                .role(Role.USER)
+                .name(userDTO.getName())
+                .email(userDTO.getEmail())
+                .password(userDTO.getPassword())
+                .phone(userDTO.getPhone())
+                .address(userDTO.getAddress())
+                .role(
+                    userDTO.getRole() != null 
+                    ? userDTO.getRole() 
+                    : Role.USER
+                )
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -46,15 +48,21 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(savedUser);
     }
 
+    // ================= LOGIN =================
     @Override
-    public String login(LoginRequestDTO request) {
+    public String login(String email, String password) {
 
-        userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid email"));
+
+        if (!user.getPassword().equals(password)) {
+            throw new RuntimeException("Invalid password");
+        }
 
         return "Login Successful";
     }
 
+    // ================= PROFILE =================
     @Override
     public UserResponseDTO getProfile(Long userId) {
 
@@ -64,11 +72,13 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(user);
     }
 
+    // ================= MY BOOKINGS =================
     @Override
     public List<Bookings> getMyBookings(Long userId) {
-    	return bookingRepository.findByUserUserId(userId);
+        return bookingRepository.findByUserUserId(userId);
     }
 
+    // ================= CANCEL BOOKING =================
     @Override
     public void cancelMyBooking(Long userId, Long bookingId) {
 
@@ -82,13 +92,22 @@ public class UserServiceImpl implements UserService {
         booking.setBookingStatus(BookingStatus.CANCELLED.name());
         bookingRepository.save(booking);
     }
+    
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
 
+    // ================= MAPPER =================
     private UserResponseDTO mapToResponse(User user) {
         return UserResponseDTO.builder()
                 .userId(user.getUserId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .phone(user.getPhone())
+                .address(user.getAddress())
                 .build();
     }
 }

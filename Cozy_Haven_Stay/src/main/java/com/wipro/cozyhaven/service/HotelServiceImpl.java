@@ -84,9 +84,8 @@ public class HotelServiceImpl implements HotelService {
 	}
 
 	@Override
-	public List<Hotel> seachHotelsByLocationAndRating(String location, Double minRating) {
-		return hotelRepository.findByLocationIgnoreCaseAndRatingGreaterThanEqualAndActiveTrue(location, minRating);
-	}
-	
+    public List<Hotel> searchHotelsByLocationAndRating(String location, Double minRating) {
+        return hotelRepository.searchByLocationAndMinRating(location, minRating);
+    }
 	
 }

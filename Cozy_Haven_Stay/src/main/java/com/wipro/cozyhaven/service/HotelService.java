@@ -19,7 +19,7 @@ public interface HotelService {
     
     List<Hotel> searchHotelsByLocation(String location);
     
-    List<Hotel> seachHotelsByLocationAndRating(String location, Double minRating);
+    List<Hotel> searchHotelsByLocationAndRating(String location, Double minRating);
 }
 
 

@@ -31,7 +31,7 @@ public class HotelOwner {
 	
 	@OneToOne
 	@JoinColumn(name = "user_id", nullable= false, unique=true)
-	private User userId;
+	private User user;
 	
 	@Column(name="buisness_name", nullable=false, length=200)
 	private String buisnessName;

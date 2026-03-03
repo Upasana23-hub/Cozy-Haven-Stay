@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wipro.cozyhaven.dto.HotelOwnerDTO;
 import com.wipro.cozyhaven.entity.HotelOwner;
+import com.wipro.cozyhaven.entity.Role;
 import com.wipro.cozyhaven.entity.User;
+import com.wipro.cozyhaven.repository.UserRepository;
 import com.wipro.cozyhaven.service.HotelOwnerService;
 
 import jakarta.validation.Valid;
@@ -24,68 +28,92 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/owners")
 public class HotelOwnerRestController {
-	
+
 	@Autowired
-	public final HotelOwnerService ownerService;
+    private final HotelOwnerService ownerService;
+    
+    @Autowired
+    private UserRepository userRepository;
 
-	public HotelOwnerRestController(HotelOwnerService ownerService) {
-		super();
-		this.ownerService = ownerService;
-	}
-
-	@PreAuthorize("hasAuthority('ROLE_USER')")
-	@PostMapping("/add")
-	public ResponseEntity<HotelOwner> createOwner(@Valid @RequestBody HotelOwnerDTO dto) {
-		HotelOwner owner = mapToEntity(dto);
-		HotelOwner savedOwner = ownerService.createOwner(owner);
-		return new ResponseEntity<>(savedOwner, HttpStatus.CREATED);
-	}
-	
-	@PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
-	@GetMapping("/user/{userId}")
-	public ResponseEntity<HotelOwner> getOwnerByUserId(@PathVariable Long userId) {
-		HotelOwner owner = ownerService.getOwnerByUserId(userId);
-		return ResponseEntity.ok(owner);
-	}
-	
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@GetMapping
-	public ResponseEntity<List<HotelOwner>> getAllOwners() {
-		return ResponseEntity.ok(ownerService.getAllOwners());
-	}
-	
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@PutMapping("/{ownerId}/approve")
-    public ResponseEntity<HotelOwner> approveOwner(@PathVariable Long ownerId) {
-		return ResponseEntity.ok(ownerService.approvedOwner(ownerId));
-	
-	}
-	
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@PutMapping("/{ownerId}/activate")
-    public ResponseEntity<HotelOwner> activateOwner(@PathVariable Long ownerId) {
-		return ResponseEntity.ok(ownerService.activateOwner(ownerId));
+    public HotelOwnerRestController(HotelOwnerService ownerService, UserRepository userRepository) {
+        this.ownerService = ownerService;
+        this.userRepository = userRepository;
     }
-	
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@GetMapping("/pending")
-	 public ResponseEntity<List<HotelOwner>> getPendingOwners() {
-	     return ResponseEntity.ok(ownerService.getPendingsOwners());
-	 }
-	 
-	 
-	 private HotelOwner mapToEntity(HotelOwnerDTO dto) {
-	        HotelOwner owner = new HotelOwner();
-	        User user = new User();
-	        user.setUserId(dto.getUserId());
-	        owner.setBuisnessName(dto.getBuisnessName());
-	        owner.setGstNumber(dto.getGstNumber());
-	        owner.setAddress(dto.getAddress());
-	        return owner;
-	    }
-	 
-	 
 
-	
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    @PostMapping("/add")
+    public ResponseEntity<HotelOwner> createOwner(@Valid @RequestBody HotelOwnerDTO dto) {
+        // Get logged-in user's email
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
 
+        // Fetch User entity
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Logged-in user not found"));
+
+        // Extra safety check
+        if (!user.getRole().equals(Role.OWNER)) {
+            throw new RuntimeException("Only users with ROLE_OWNER can create hotel owner record");
+        }
+
+        // Map DTO → Entity
+        HotelOwner owner = new HotelOwner();
+        owner.setUser(user); // assign the logged-in user automatically
+        owner.setBuisnessName(dto.getBuisnessName());
+        owner.setGstNumber(dto.getGstNumber());
+        owner.setAddress(dto.getAddress());
+
+        HotelOwner savedOwner = ownerService.createOwner(owner);
+        return new ResponseEntity<>(savedOwner, HttpStatus.CREATED);
+    }
+    
+
+   
+    @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<HotelOwner> getOwnerByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(ownerService.getOwnerByUserId(userId));
+    }
+
+   
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/getall")
+    public ResponseEntity<List<HotelOwner>> getAllOwners() {
+        return ResponseEntity.ok(ownerService.getAllOwners());
+    }
+
+    
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/{ownerId}/approve")
+    public ResponseEntity<HotelOwner> approveOwner(@PathVariable Long ownerId) {
+        return ResponseEntity.ok(ownerService.approveOwner(ownerId));
+    }
+
+   
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/{ownerId}/activate")
+    public ResponseEntity<HotelOwner> activateOwner(@PathVariable Long ownerId) {
+        return ResponseEntity.ok(ownerService.activateOwner(ownerId));
+    }
+
+    // ================= PENDING OWNERS =================
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/pending")
+    public ResponseEntity<List<HotelOwner>> getPendingOwners() {
+        return ResponseEntity.ok(ownerService.getPendingsOwners());
+    }
+
+    // ================= DTO → ENTITY =================
+    private HotelOwner mapToEntity(HotelOwnerDTO dto) {
+
+        HotelOwner owner = new HotelOwner();
+        User user = new User();
+        user.setUserId(dto.getUserId());  
+        owner.setUser(user);               
+        owner.setBuisnessName(dto.getBuisnessName());
+        owner.setGstNumber(dto.getGstNumber());
+        owner.setAddress(dto.getAddress());
+
+        return owner;
+    }
 }

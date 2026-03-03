@@ -9,7 +9,7 @@ import com.wipro.cozyhaven.entity.HotelOwner;
 
 public interface HotelOwnerRepository extends JpaRepository<HotelOwner, Long> {
 
-    Optional<HotelOwner> findByUserId_UserId(Long userId);
+	Optional<HotelOwner> findByUser_UserId(Long userId);
     
     List<HotelOwner> findByApprovedFalse();
     

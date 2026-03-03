@@ -10,20 +10,15 @@ import com.wipro.cozyhaven.entity.User;
 import com.wipro.cozyhaven.repository.UserRepository;
 
 @Service
-public class UserDetailsServiceImp implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
-	@Autowired
-	UserRepository repo;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-	    User user = repo.findByEmail(email)
-	            .orElseThrow(() ->
-	                new UsernameNotFoundException("User not found with email: " + email)
-	            );
-
-	    return new UserDetailsImp(user);
-	}
-
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+        return new UserDetailsImpl(user);
+    }
 }
