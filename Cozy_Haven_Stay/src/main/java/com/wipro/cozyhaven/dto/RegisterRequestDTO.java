@@ -1,5 +1,7 @@
 package com.wipro.cozyhaven.dto;
 
+import com.wipro.cozyhaven.entity.Role;
+
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -25,7 +27,11 @@ public class RegisterRequestDTO {
 	private String phone;
 	
 	@NotBlank(message = "Address is required")
+	
 	private String address;
+	
+	@NotBlank(message = "Role is required")
+	private Role role;
 	
 	// Getters and Setters
 }
