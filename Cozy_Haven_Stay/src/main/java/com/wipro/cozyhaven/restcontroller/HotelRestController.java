@@ -1,9 +1,11 @@
 package com.wipro.cozyhaven.restcontroller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +34,7 @@ public class HotelRestController {
 		super();
 		this.hotelService = hotelService;
 	}
-	
+	@PreAuthorize("hasAuthority('ROLE_OWNER')")
 	@PostMapping("/add")
 	public ResponseEntity<Hotel> addHotel(@Valid @RequestBody HotelDTO dto) {
 		Hotel hotel = new Hotel();
@@ -49,17 +51,17 @@ public class HotelRestController {
 		Hotel savedHotel = hotelService.addHotel(dto.getOwnerId(), hotel);
 		return new ResponseEntity<>(savedHotel, HttpStatus.CREATED);
 	}
-	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{hotelId}")
 	public ResponseEntity<Hotel> getHotelById(@PathVariable Long hotelId) {
 		return ResponseEntity.ok(hotelService.getHotelById(hotelId));
 	}
-	
+	@PreAuthorize("hasAuthority('ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/owner/{ownerId}")
 	public ResponseEntity<List<Hotel>> getHotelByOwner(@PathVariable Long ownerId) {
 		return ResponseEntity.ok(hotelService.getHotelByOwner(ownerId));
 	}
-	
+	@PreAuthorize("hasAuthority('ROLE_OWNER')")
 	@PutMapping("/{hotelId}/owner/{ownerId}")
 	public ResponseEntity<Hotel> updateHotel(@PathVariable Long ownerId, @PathVariable Long hotelId, @Valid @RequestBody HotelDTO dto) {
 		Hotel updateHotel = new Hotel();
@@ -70,7 +72,7 @@ public class HotelRestController {
 		
 		return ResponseEntity.ok(hotelService.updateHotel(ownerId, hotelId, updateHotel));
 	}
-	
+	@PreAuthorize("hasAuthority('ROLE_OWNER')")
 	@DeleteMapping("/{hotelId}/owner/{ownerId}")
 	public ResponseEntity<Void> deleteHotel(@PathVariable Long ownerId, @PathVariable Long hotelId) {
 		hotelService.deleteHotel(ownerId, hotelId);
