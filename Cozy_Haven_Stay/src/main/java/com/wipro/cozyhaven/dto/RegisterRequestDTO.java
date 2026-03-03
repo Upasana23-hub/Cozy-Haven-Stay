@@ -30,8 +30,5 @@ public class RegisterRequestDTO {
 	
 	private String address;
 	
-	@NotBlank(message = "Role is required")
-	private Role role;
-	
 	// Getters and Setters
 }
