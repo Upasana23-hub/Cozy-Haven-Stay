@@ -1,10 +1,11 @@
 package com.wipro.cozyhaven.restcontroller;
 
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +47,7 @@ public class UserRestController {
 	}
 
 	// 3. Get Profile
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/{userId}")
 	public ResponseEntity<UserResponseDTO> getProfile(@PathVariable Long userId) {
 
@@ -54,6 +56,7 @@ public class UserRestController {
 	}
 
 	// 4. Get My Bookings
+	@PreAuthorize("hasRole('USER')")
 	@GetMapping("/{userId}/bookings")
 	public ResponseEntity<List<Bookings>> getMyBookings(@PathVariable Long userId) {
 
@@ -62,7 +65,8 @@ public class UserRestController {
 	}
 
 	// 5. Cancel Booking
-	@PutMapping("/{userId}/bookings/{bokkingId}/cancel")
+	 @PreAuthorize("hasRole('USER')")
+	 @PutMapping("/{userId}/bookings/{bookingId}/cancel")
 	public ResponseEntity<String> cancelBooking(@PathVariable Long userId, @PathVariable Long bookingId) {
 		
 		userService.cancelMyBooking(userId, bookingId);
