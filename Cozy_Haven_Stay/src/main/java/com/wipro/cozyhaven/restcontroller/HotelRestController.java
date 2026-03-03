@@ -56,7 +56,7 @@ public class HotelRestController {
 	public ResponseEntity<Hotel> getHotelById(@PathVariable Long hotelId) {
 		return ResponseEntity.ok(hotelService.getHotelById(hotelId));
 	}
-	@PreAuthorize("hasAuthority('ROLE_OWNER','ROLE_ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/owner/{ownerId}")
 	public ResponseEntity<List<Hotel>> getHotelByOwner(@PathVariable Long ownerId) {
 		return ResponseEntity.ok(hotelService.getHotelByOwner(ownerId));

@@ -41,7 +41,7 @@ public class HotelOwnerRestController {
 		return new ResponseEntity<>(savedOwner, HttpStatus.CREATED);
 	}
 	
-	@PreAuthorize("hasAuthority('ROLE_OWNER','ROLE_ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<HotelOwner> getOwnerByUserId(@PathVariable Long userId) {
 		HotelOwner owner = ownerService.getOwnerByUserId(userId);
