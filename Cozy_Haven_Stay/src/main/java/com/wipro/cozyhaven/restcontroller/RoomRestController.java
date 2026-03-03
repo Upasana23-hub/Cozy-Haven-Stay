@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class RoomRestController {
 	@Autowired
 	RoomService roomService;
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
 	@PostMapping("/add")
 	public ResponseEntity<RoomDTO> addRoom(@Valid @RequestBody RoomDTO roomDTO)
 	{
@@ -33,19 +35,21 @@ public class RoomRestController {
         return new ResponseEntity<>(savedRoom, HttpStatus.CREATED);
 	}
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/getall")
 	public ResponseEntity<List<RoomDTO>> getAllRooms() {
         List<RoomDTO> rooms = roomService.getAllRooms();
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
-	
+	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/getbyid/{id}")
 	public ResponseEntity<RoomDTO> getRoomById(@PathVariable Long roomId) {
         RoomDTO room = roomService.getRoomById(roomId);
         return new ResponseEntity<>(room, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
 	@PutMapping("/update/{id}")
 	public ResponseEntity<RoomDTO> updateRoom(@PathVariable Long roomId,
                                        @Valid @RequestBody RoomDTO roomDTO) 
@@ -55,6 +59,7 @@ public class RoomRestController {
         return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@DeleteMapping("/delete/{id}")
 	 public ResponseEntity<String> deleteRoom(@PathVariable Long roomId) 
 	{
@@ -62,6 +67,7 @@ public class RoomRestController {
         return new ResponseEntity<>("Room deleted successfully", HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/available")
 	public ResponseEntity<List<RoomDTO>> getAvailableRooms() {
         List<RoomDTO> rooms = roomService.getAvailableRooms();
