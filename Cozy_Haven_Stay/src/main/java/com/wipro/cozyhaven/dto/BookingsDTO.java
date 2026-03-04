@@ -19,7 +19,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class BookingsDTO {
-	@NotNull(message = "BookingId is required")
+
 	private Long bookingId;
 	
 	@NotNull(message = "Check-in date is required")

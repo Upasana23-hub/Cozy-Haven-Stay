@@ -44,6 +44,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setBookedAt(LocalDateTime.now());
         booking.setCheckIn(bookingDTO.getCheckIn());
         booking.setCheckOut(bookingDTO.getCheckOut());
+        booking.setBookingStatus(bookingDTO.getBookingStatus());
         booking.setPaymentStatus(bookingDTO.getPaymentStatus());
         booking.setTotalAmount(bookingDTO.getTotalAmount());
 

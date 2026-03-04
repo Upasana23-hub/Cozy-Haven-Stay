@@ -16,6 +16,6 @@ public interface RoomService {
 	
 	 void deleteRoom(Long roomId);
 	List<RoomDTO> getAvailableRooms( );
-	
+	void deleteRoomByUser(Long roomId, Long userId, String role);
 
 }

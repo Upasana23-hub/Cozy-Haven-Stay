@@ -48,7 +48,7 @@ public class ReviewRestController {
     }
 	
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@DeleteMapping("/{reviewId}")
+	@DeleteMapping("/delete/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

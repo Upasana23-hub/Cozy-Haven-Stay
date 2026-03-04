@@ -26,7 +26,7 @@ public class BookingRestController {
 	@Autowired
 	BookingService bookingService;
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ROLE_USER')")
 	@PostMapping("/create")
 	public ResponseEntity<BookingsDTO> createBooking(
                                  @Valid @RequestBody BookingsDTO bookingDTO) 
@@ -44,22 +44,22 @@ public class BookingRestController {
     }
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
-	@GetMapping("/getbyid/{id}")
+	@GetMapping("/getbyid/{bookingId}")
 	 public ResponseEntity<BookingsDTO> getBookingById(@PathVariable Long bookingId) {
         BookingsDTO booking = bookingService.getBookingById(bookingId);
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-	@PutMapping("/cancel/{id}")
+	@PutMapping("/cancel/{bookingId}")
     public ResponseEntity<BookingsDTO> cancelBooking(@PathVariable Long bookingId) {
         BookingsDTO cancelledBooking = bookingService.cancelBooking(bookingId);
         return new ResponseEntity<>(cancelledBooking, HttpStatus.OK);
     }
 	
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@GetMapping("/payment/{status}")
-    public ResponseEntity<List<BookingsDTO>> getBookingByPaymentStatus(
+	@PreAuthorize("hasAuthority('ROLE_OWNER')")
+    @GetMapping("/paymentstatus/{paymentStatus}")
+    public ResponseEntity<List<BookingsDTO>> getBookingsByPaymentStatus(
             @PathVariable String paymentStatus) {
 
         List<BookingsDTO> bookings = bookingService.getBookingByPaymentStatus(paymentStatus);
