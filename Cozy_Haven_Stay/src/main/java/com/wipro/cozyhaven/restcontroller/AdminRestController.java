@@ -18,19 +18,21 @@ import com.wipro.cozyhaven.service.AdminService;
 
 @RestController
 @RequestMapping("/api/admin")
-@PreAuthorize("hasRole('ADMIN')")
+
 public class AdminRestController {
 
 	@Autowired
 	private AdminService adminService;
 
 	// 1. Get All Users
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/users")
 	public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
 		return ResponseEntity.ok(adminService.getAllUsers());
 	}
 
 	// 2. Delete User
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/users/{userId}")
 	public ResponseEntity<String> getAllUser(@PathVariable Long userId) {
 		adminService.deleteUser(userId);
@@ -38,12 +40,14 @@ public class AdminRestController {
 	}
 
 	// 3. Get All Bookings
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/bookings")
 	public ResponseEntity<List<Bookings>> getAllBookings() {
 		return ResponseEntity.ok(adminService.getAllBookings());
 	}
 
 	// 4. Cancel Bookings
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/bookings/{bookingId}/cancel")
 	public ResponseEntity<String> cancelBookings(@PathVariable Long bookingId) {
 		adminService.cancelBooking(bookingId);

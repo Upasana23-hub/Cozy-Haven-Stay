@@ -19,7 +19,6 @@ import lombok.ToString;
 @ToString
 public class RoomDTO {
 	
-	@NotBlank(message = "Room type cannot be empty")
 	private Long roomId;
 	
 	@NotBlank(message = "Room number cannot be empty")

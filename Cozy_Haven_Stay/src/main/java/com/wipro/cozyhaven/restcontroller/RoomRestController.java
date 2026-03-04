@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wipro.cozyhaven.dto.RoomDTO;
+import com.wipro.cozyhaven.repository.HotelRepository;
 import com.wipro.cozyhaven.service.RoomService;
 
 import jakarta.validation.Valid;
@@ -27,7 +28,10 @@ public class RoomRestController {
 	@Autowired
 	RoomService roomService;
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
+	@Autowired 
+	HotelRepository hotelRepository;
+	
+	@PreAuthorize("hasAuthority('ROLE_OWNER')")
 	@PostMapping("/add")
 	public ResponseEntity<RoomDTO> addRoom(@Valid @RequestBody RoomDTO roomDTO)
 	{
@@ -43,14 +47,14 @@ public class RoomRestController {
     }
 
 	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
-	@GetMapping("/getbyid/{id}")
+	@GetMapping("/getbyid/{roomId}")
 	public ResponseEntity<RoomDTO> getRoomById(@PathVariable Long roomId) {
         RoomDTO room = roomService.getRoomById(roomId);
         return new ResponseEntity<>(room, HttpStatus.OK);
     }
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
-	@PutMapping("/update/{id}")
+	@PutMapping("/update/{roomId}")
 	public ResponseEntity<RoomDTO> updateRoom(@PathVariable Long roomId,
                                        @Valid @RequestBody RoomDTO roomDTO) 
 	{
@@ -59,13 +63,15 @@ public class RoomRestController {
         return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
     }
 	
+	
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("/delete/{roomId}")
 	 public ResponseEntity<String> deleteRoom(@PathVariable Long roomId) 
 	{
 		roomService.deleteRoom(roomId);
         return new ResponseEntity<>("Room deleted successfully", HttpStatus.OK);
     }
+	
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
 	@GetMapping("/available")

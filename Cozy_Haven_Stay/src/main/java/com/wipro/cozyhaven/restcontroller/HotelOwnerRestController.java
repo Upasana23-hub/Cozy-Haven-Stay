@@ -43,15 +43,13 @@ public class HotelOwnerRestController {
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
     @PostMapping("/add")
     public ResponseEntity<HotelOwner> createOwner(@Valid @RequestBody HotelOwnerDTO dto) {
-        // Get logged-in user's email
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
 
-        // Fetch User entity
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Logged-in user not found"));
 
-        // Extra safety check
         if (!user.getRole().equals(Role.OWNER)) {
             throw new RuntimeException("Only users with ROLE_OWNER can create hotel owner record");
         }

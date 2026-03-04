@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.wipro.cozyhaven.dto.RoomDTO;
 import com.wipro.cozyhaven.entity.Hotel;
+import com.wipro.cozyhaven.entity.HotelOwner;
 import com.wipro.cozyhaven.entity.Room;
 import com.wipro.cozyhaven.exception.ResourceNotFoundException;
 import com.wipro.cozyhaven.repository.HotelRepository;
@@ -187,5 +188,19 @@ public class RoomServiceImpl implements RoomService {
 	        }
 
 	        return dtos;
+	    }
+	    
+	    @Override
+	    public void deleteRoomByUser(Long roomId, Long userId, String role) {
+	        Room room = roomRepository.findById(roomId)
+	                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+
+	        HotelOwner owner = room.getHotel().getOwner();
+
+	        if (!role.equals("ROLE_ADMIN") && !userId.equals(owner.getUser().getUserId())) {
+	            throw new RuntimeException("Not authorized to delete this room");
+	        }
+
+	        roomRepository.delete(room);
 	    }
 	}
