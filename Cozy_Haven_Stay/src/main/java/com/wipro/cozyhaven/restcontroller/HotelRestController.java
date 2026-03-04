@@ -29,7 +29,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/hotels")
-@Validated
 public class HotelRestController {
 
     private final HotelService hotelService;
@@ -65,10 +64,10 @@ public class HotelRestController {
 
     @GetMapping("/{hotelId}")
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
-    public ResponseEntity<HotelDTO> getHotelById(@PathVariable Long hotelId) {
+    public ResponseEntity<HotelDTO> getHotelById( @PathVariable Long hotelId) {
         Hotel hotel = hotelService.getHotelById(hotelId);
 
-        // check if the logged-in user is the owner
+   
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String loggedInEmail = auth.getName(); 
 
