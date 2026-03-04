@@ -88,4 +88,9 @@ public class HotelServiceImpl implements HotelService {
         return hotelRepository.searchByLocationAndMinRating(location, minRating);
     }
 	
+	@Override
+    public List<Hotel> getAllHotels() {
+        return hotelRepository.findAll();
+    }
+	
 }

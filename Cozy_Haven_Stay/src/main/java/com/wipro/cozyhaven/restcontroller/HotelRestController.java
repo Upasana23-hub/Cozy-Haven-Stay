@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +29,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/hotels")
+@CrossOrigin(origins = "*") 
 public class HotelRestController {
 
     private final HotelService hotelService;
@@ -140,5 +141,12 @@ public class HotelRestController {
             @PathVariable String location,
             @PathVariable Double minRating) {
         return ResponseEntity.ok(hotelService.searchHotelsByLocationAndRating(location, minRating));
+    }
+    
+    
+    @PreAuthorize("permitAll()")
+    @GetMapping("/getall")
+    public ResponseEntity<List<Hotel>> getAllHotels() {
+        return ResponseEntity.ok(hotelService.getAllHotels());
     }
 }
