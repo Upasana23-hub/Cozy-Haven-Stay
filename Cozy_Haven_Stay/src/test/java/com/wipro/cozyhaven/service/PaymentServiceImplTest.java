@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.wipro.cozyhaven.dto.PaymentDTO;
 import com.wipro.cozyhaven.entity.Bookings;
@@ -25,9 +26,10 @@ import com.wipro.cozyhaven.repository.RoomRepository;
 import com.wipro.cozyhaven.repository.UserRepository;
 
 @SpringBootTest
+@Transactional
 class PaymentServiceImplTest {
 
-	@Autowired
+    @Autowired
     private PaymentService paymentService;
 
     @Autowired
@@ -47,403 +49,216 @@ class PaymentServiceImplTest {
 
     @Autowired
     private RoomRepository roomRepository;
+
     
-	@Test
-	void testAddPayment() {
-		User ownerUser = new User();
-        ownerUser.setName("Owner User");
-        ownerUser.setEmail("owner@example.com");
-        ownerUser.setPassword("password");
-        ownerUser = userRepository.save(ownerUser);
+    private User createUser(String name, String email) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword("password");
+        user.setCreatedAt(LocalDateTime.now());
+        return userRepository.save(user);
+    }
 
+    private HotelOwner createOwner(User user) {
         HotelOwner owner = new HotelOwner();
-        owner.setUserId(ownerUser);
-        owner.setBuisnessName("Owner Business");
-        owner = hotelOwnerRepository.save(owner);
-        
-        Hotel hotel = new Hotel();
-        hotel.setName("Test Hotel");
-        hotel.setLocation("Test Location");
-        hotel.setDescription("Nice hotel for testing");
-        hotel.setOwner(owner);
-        hotel = hotelRepository.save(hotel);
+        owner.setUser(user);
+        owner.setBuisnessName(user.getName() + " Business");
+        owner.setActive(true);
+        owner.setApproved(true);
+        owner.setCreatedDate(LocalDateTime.now());
+        return hotelOwnerRepository.save(owner);
+    }
 
+    private Hotel createHotel(HotelOwner owner) {
+        Hotel hotel = new Hotel();
+        hotel.setName(owner.getBuisnessName() + " Hotel");
+        hotel.setLocation("Test Location");
+        hotel.setDescription("Test hotel description");
+        hotel.setOwner(owner);
+        hotel.setActive(true);
+        hotel.setCreatedDate(LocalDateTime.now());
+        return hotelRepository.save(hotel);
+    }
+
+    private Room createRoom(Hotel hotel, String roomNumber) {
         Room room = new Room();
-        room.setRoomNumber("101A");
+        room.setRoomNumber(roomNumber);
         room.setRoomType("Deluxe");
         room.setBedType("Queen");
-        room.setRoomSize("350 sqft");
-        room.setMaxPeople(2);
-        room.setBaseFare(1500.0);
-        room.setAcAvailable(true);
+        room.setBaseFare(2000.0);
         room.setAvailability(true);
         room.setAddedAt(LocalDateTime.now());
         room.setHotel(hotel);
-        room = roomRepository.save(room);
-        
-        User user = new User();
-        user.setName("Test User");
-        user.setEmail("user@example.com");
-        user.setPassword("password");
-        user = userRepository.save(user);
-        
+        return roomRepository.save(room);
+    }
+
+    private Bookings createBooking(User user, Hotel hotel, Room room) {
         Bookings booking = new Bookings();
-        booking.setHotel(hotel);
         booking.setUser(user);
+        booking.setHotel(hotel);
         booking.setRoom(room);
         booking.setCheckIn(LocalDate.now().plusDays(1));
         booking.setCheckOut(LocalDate.now().plusDays(2));
         booking.setNoOfRooms(1);
         booking.setAdults(2);
         booking.setChildren(0);
-        booking.setTotalAmount(3000.0);
+        booking.setTotalAmount(room.getBaseFare());
         booking.setBookingStatus("Confirmed");
         booking.setPaymentStatus("Pending");
         booking.setBookedAt(LocalDateTime.now());
-        booking = bookingRepository.save(booking);
-        
-        PaymentDTO paymentDTO = new PaymentDTO();
-        paymentDTO.setBookingId(booking.getBookingId());
-        paymentDTO.setAmount(3000.0);
-        paymentDTO.setPaymentMode("Credit Card");
-        paymentDTO.setPaymentStatus("Completed");
+        return bookingRepository.save(booking);
+    }
 
-        PaymentDTO savedPayment = paymentService.addPayment(paymentDTO);
-        assertNotNull(savedPayment.getPaymentId(), "Payment ID should not be null");
-	}
+   
 
-	@Test
-	void testGetPaymentById() {
-		User ownerUser = new User();
-	    ownerUser.setName("Owner2");
-	    ownerUser.setEmail("owner2@example.com");
-	    ownerUser.setPassword("password");
-	    ownerUser = userRepository.save(ownerUser);
+    @Test
+    void testAddPayment() {
+        User ownerUser = createUser("Owner1", "owner1@test.com");
+        HotelOwner owner = createOwner(ownerUser);
+        Hotel hotel = createHotel(owner);
+        Room room = createRoom(hotel, "101A");
+        User user = createUser("User1", "user1@test.com");
+        Bookings booking = createBooking(user, hotel, room);
 
-	    HotelOwner owner = new HotelOwner();
-	    owner.setUserId(ownerUser);
-	    owner.setBuisnessName("Owner Business 2");
-	    owner = hotelOwnerRepository.save(owner);
+        PaymentDTO dto = new PaymentDTO();
+        dto.setBookingId(booking.getBookingId());
+        dto.setAmount(booking.getTotalAmount());
+        dto.setPaymentMode("Credit Card");
+        dto.setPaymentStatus("Completed");
 
-	    Hotel hotel = new Hotel();
-	    hotel.setName("Hotel 2");
-	    hotel.setLocation("Location 2");
-	    hotel.setDescription("Description 2");
-	    hotel.setOwner(owner);
-	    hotel = hotelRepository.save(hotel);
+        PaymentDTO saved = paymentService.addPayment(dto);
+        assertNotNull(saved.getPaymentId());
+        assertEquals("Completed", saved.getPaymentStatus());
+        assertEquals(booking.getBookingId(), saved.getBookingId());
+    }
 
-	    Room room = new Room();
-	    room.setRoomNumber("102B");
-	    room.setRoomType("Standard");
-	    room.setBedType("Twin");
-	    room.setRoomSize("250 sqft");
-	    room.setMaxPeople(2);
-	    room.setBaseFare(1200.0);
-	    room.setAcAvailable(false);
-	    room.setAvailability(true);
-	    room.setAddedAt(LocalDateTime.now());
-	    room.setHotel(hotel);
-	    room = roomRepository.save(room);
-	    
-	    User user = new User();
-	    user.setName("User2");
-	    user.setEmail("user2@example.com");
-	    user.setPassword("password");
-	    user = userRepository.save(user);
+    @Test
+    void testGetPaymentById() {
+        User ownerUser = createUser("Owner2", "owner2@test.com");
+        HotelOwner owner = createOwner(ownerUser);
+        Hotel hotel = createHotel(owner);
+        Room room = createRoom(hotel, "102B");
+        User user = createUser("User2", "user2@test.com");
+        Bookings booking = createBooking(user, hotel, room);
 
-	    Bookings booking = new Bookings();
-	    booking.setHotel(hotel);
-	    booking.setUser(user);
-	    booking.setRoom(room);
-	    booking.setCheckIn(LocalDate.now().plusDays(3));
-	    booking.setCheckOut(LocalDate.now().plusDays(5));
-	    booking.setNoOfRooms(1);
-	    booking.setAdults(1);
-	    booking.setChildren(1);
-	    booking.setTotalAmount(2400.0);
-	    booking.setBookingStatus("Confirmed");
-	    booking.setPaymentStatus("Pending");
-	    booking.setBookedAt(LocalDateTime.now());
-	    booking = bookingRepository.save(booking);
-	    
-	    PaymentDTO paymentDTO = new PaymentDTO();
-	    paymentDTO.setBookingId(booking.getBookingId());
-	    paymentDTO.setAmount(2400.0);
-	    paymentDTO.setPaymentMode("Debit Card");
-	    paymentDTO.setPaymentStatus("Completed");
-	    PaymentDTO savedPayment = paymentService.addPayment(paymentDTO);
-	    
-	    PaymentDTO fetchedPayment = paymentService.getPaymentById(savedPayment.getPaymentId());
-	    assertEquals(savedPayment.getPaymentId(), fetchedPayment.getPaymentId());
-	}
+        PaymentDTO dto = new PaymentDTO();
+        dto.setBookingId(booking.getBookingId());
+        dto.setAmount(booking.getTotalAmount());
+        dto.setPaymentMode("Debit Card");
+        dto.setPaymentStatus("Completed");
+        PaymentDTO saved = paymentService.addPayment(dto);
 
-	@Test
-	void testGetAllPayments() {
-		List<PaymentDTO> payments = paymentService.getAllPayments();
-	    assertNotNull(payments, "Payments list should not be null");
-	}
+        PaymentDTO fetched = paymentService.getPaymentById(saved.getPaymentId());
+        assertNotNull(fetched);
+        assertEquals(saved.getPaymentId(), fetched.getPaymentId());
+    }
 
-	@Test
-	void testGetPaymentByBookingId() {
-		User ownerUser = new User();
-	    ownerUser.setName("Owner3");
-	    ownerUser.setEmail("owner3@example.com");
-	    ownerUser.setPassword("password");
-	    ownerUser = userRepository.save(ownerUser);
+    @Test
+    void testGetAllPayments() {
+        List<PaymentDTO> paymentsBefore = paymentService.getAllPayments();
+        assertNotNull(paymentsBefore);
 
-	    HotelOwner owner = new HotelOwner();
-	    owner.setUserId(ownerUser);
-	    owner.setBuisnessName("Owner Business 3");
-	    owner = hotelOwnerRepository.save(owner);
+        // Add a payment
+        User ownerUser = createUser("Owner3", "owner3@test.com");
+        HotelOwner owner = createOwner(ownerUser);
+        Hotel hotel = createHotel(owner);
+        Room room = createRoom(hotel, "103C");
+        User user = createUser("User3", "user3@test.com");
+        Bookings booking = createBooking(user, hotel, room);
 
-	    Hotel hotel = new Hotel();
-	    hotel.setName("Hotel 3");
-	    hotel.setLocation("Location 3");
-	    hotel.setDescription("Description 3");
-	    hotel.setOwner(owner);
-	    hotel = hotelRepository.save(hotel);
-	    
-	    Room room = new Room();
-	    room.setRoomNumber("103C");
-	    room.setRoomType("Suite");
-	    room.setBedType("King");
-	    room.setRoomSize("500 sqft");
-	    room.setMaxPeople(3);
-	    room.setBaseFare(2500.0);
-	    room.setAcAvailable(true);
-	    room.setAvailability(true);
-	    room.setAddedAt(LocalDateTime.now());
-	    room.setHotel(hotel);
-	    room = roomRepository.save(room);
-	    
-	    User user = new User();
-	    user.setName("User3");
-	    user.setEmail("user3@example.com");
-	    user.setPassword("password");
-	    user = userRepository.save(user);
-	    
-	    Bookings booking = new Bookings();
-	    booking.setHotel(hotel);
-	    booking.setUser(user);
-	    booking.setRoom(room);
-	    booking.setCheckIn(LocalDate.now().plusDays(1));
-	    booking.setCheckOut(LocalDate.now().plusDays(3));
-	    booking.setNoOfRooms(1);
-	    booking.setAdults(2);
-	    booking.setChildren(0);
-	    booking.setTotalAmount(5000.0);
-	    booking.setBookingStatus("Confirmed");
-	    booking.setPaymentStatus("Pending");
-	    booking.setBookedAt(LocalDateTime.now());
-	    booking = bookingRepository.save(booking);
+        PaymentDTO dto = new PaymentDTO();
+        dto.setBookingId(booking.getBookingId());
+        dto.setAmount(booking.getTotalAmount());
+        dto.setPaymentMode("UPI");
+        dto.setPaymentStatus("Completed");
+        paymentService.addPayment(dto);
 
-	    PaymentDTO paymentDTO = new PaymentDTO();
-	    paymentDTO.setBookingId(booking.getBookingId());
-	    paymentDTO.setAmount(5000.0);
-	    paymentDTO.setPaymentMode("UPI");
-	    paymentDTO.setPaymentStatus("Completed");
-	    paymentService.addPayment(paymentDTO);
+        List<PaymentDTO> paymentsAfter = paymentService.getAllPayments();
+        assertNotNull(paymentsAfter);
+        assertEquals(paymentsBefore.size() + 1, paymentsAfter.size());
+    }
 
-	    PaymentDTO fetched = paymentService.getPaymentByBookingId(booking.getBookingId());
-	    assertNotNull(fetched);
-	    assertEquals(booking.getBookingId(), fetched.getBookingId());
-	}
+    @Test
+    void testGetPaymentByBookingId() {
+        User ownerUser = createUser("Owner4", "owner4@test.com");
+        HotelOwner owner = createOwner(ownerUser);
+        Hotel hotel = createHotel(owner);
+        Room room = createRoom(hotel, "104D");
+        User user = createUser("User4", "user4@test.com");
+        Bookings booking = createBooking(user, hotel, room);
 
-	@Test
-	void testGetPaymentsByUserId() {
-		User ownerUser = new User();
-	    ownerUser.setName("OwnerUser4");
-	    ownerUser.setEmail("owner4@example.com");
-	    ownerUser.setPassword("password");
-	    ownerUser = userRepository.save(ownerUser);
+        PaymentDTO dto = new PaymentDTO();
+        dto.setBookingId(booking.getBookingId());
+        dto.setAmount(booking.getTotalAmount());
+        dto.setPaymentMode("Cash");
+        dto.setPaymentStatus("Completed");
+        paymentService.addPayment(dto);
 
-	    HotelOwner owner = new HotelOwner();
-	    owner.setUserId(ownerUser);
-	    owner.setBuisnessName("Owner Business 4");
-	    owner = hotelOwnerRepository.save(owner);
+        PaymentDTO fetched = paymentService.getPaymentByBookingId(booking.getBookingId());
+        assertNotNull(fetched);
+        assertEquals(booking.getBookingId(), fetched.getBookingId());
+    }
 
-	    Hotel hotel = new Hotel();
-	    hotel.setName("Hotel 4");
-	    hotel.setLocation("Loc 4");
-	    hotel.setDescription("Desc 4");
-	    hotel.setOwner(owner);
-	    hotel = hotelRepository.save(hotel);
-	    
-	    Room room = new Room();
-	    room.setRoomNumber("104D");
-	    room.setRoomType("Deluxe");
-	    room.setBedType("Queen");
-	    room.setRoomSize("350 sqft");
-	    room.setMaxPeople(2);
-	    room.setBaseFare(1800.0);
-	    room.setAcAvailable(true);
-	    room.setAvailability(true);
-	    room.setAddedAt(LocalDateTime.now());
-	    room.setHotel(hotel);
-	    room = roomRepository.save(room);
-	    
-	    User user = new User();
-	    user.setName("User4");
-	    user.setEmail("user4@example.com");
-	    user.setPassword("password");
-	    user = userRepository.save(user);
-	    
-	    Bookings booking = new Bookings();
-	    booking.setHotel(hotel);
-	    booking.setUser(user);
-	    booking.setRoom(room);
-	    booking.setCheckIn(LocalDate.now().plusDays(1));
-	    booking.setCheckOut(LocalDate.now().plusDays(2));
-	    booking.setNoOfRooms(1);
-	    booking.setAdults(2);
-	    booking.setChildren(0);
-	    booking.setTotalAmount(1800.0);
-	    booking.setBookingStatus("Confirmed");
-	    booking.setPaymentStatus("Pending");
-	    booking.setBookedAt(LocalDateTime.now());
-	    booking = bookingRepository.save(booking);
-	    
-	    PaymentDTO paymentDTO = new PaymentDTO();
-	    paymentDTO.setBookingId(booking.getBookingId());
-	    paymentDTO.setAmount(1800.0);
-	    paymentDTO.setPaymentMode("Credit Card");
-	    paymentDTO.setPaymentStatus("Completed");
-	    paymentService.addPayment(paymentDTO);
-	    
-	    List<PaymentDTO> payments = paymentService.getPaymentsByUserId(user.getUserId());
-	    assertNotNull(payments);
-	    assertEquals(user.getUserId(), payments.get(0).getUserId());
-	}
+    @Test
+    void testGetPaymentsByUserId() {
+        User ownerUser = createUser("Owner5", "owner5@test.com");
+        HotelOwner owner = createOwner(ownerUser);
+        Hotel hotel = createHotel(owner);
+        Room room = createRoom(hotel, "105E");
+        User user = createUser("User5", "user5@test.com");
+        Bookings booking = createBooking(user, hotel, room);
 
-	@Test
-	void testGetPaymentsByOwnerId() {
-		User ownerUser = new User();
-	    ownerUser.setName("OwnerUser5");
-	    ownerUser.setEmail("owner5@example.com");
-	    ownerUser.setPassword("password");
-	    ownerUser = userRepository.save(ownerUser);
+        PaymentDTO dto = new PaymentDTO();
+        dto.setBookingId(booking.getBookingId());
+        dto.setAmount(booking.getTotalAmount());
+        dto.setPaymentMode("Credit Card");
+        dto.setPaymentStatus("Completed");
+        paymentService.addPayment(dto);
 
-	    HotelOwner owner = new HotelOwner();
-	    owner.setUserId(ownerUser);
-	    owner.setBuisnessName("Owner Business 5");
-	    owner = hotelOwnerRepository.save(owner);
+        List<PaymentDTO> payments = paymentService.getPaymentsByUserId(user.getUserId());
+        assertNotNull(payments);
+        assertEquals(user.getUserId(), payments.get(0).getUserId());
+    }
 
-	    Hotel hotel = new Hotel();
-	    hotel.setName("Hotel 5");
-	    hotel.setLocation("Loc 5");
-	    hotel.setDescription("Desc 5");
-	    hotel.setOwner(owner);
-	    hotel = hotelRepository.save(hotel);
-	    
-	    Room room = new Room();
-	    room.setRoomNumber("105E");
-	    room.setRoomType("Suite");
-	    room.setBedType("King");
-	    room.setRoomSize("500 sqft");
-	    room.setMaxPeople(3);
-	    room.setBaseFare(3000.0);
-	    room.setAcAvailable(true);
-	    room.setAvailability(true);
-	    room.setAddedAt(LocalDateTime.now());
-	    room.setHotel(hotel);
-	    room = roomRepository.save(room);
+    @Test
+    void testGetPaymentsByOwnerId() {
+        User ownerUser = createUser("Owner6", "owner6@test.com");
+        HotelOwner owner = createOwner(ownerUser);
+        Hotel hotel = createHotel(owner);
+        Room room = createRoom(hotel, "106F");
+        User user = createUser("User6", "user6@test.com");
+        Bookings booking = createBooking(user, hotel, room);
 
-	    User user = new User();
-	    user.setName("User5");
-	    user.setEmail("user5@example.com");
-	    user.setPassword("password");
-	    user = userRepository.save(user);
-	    
-	    Bookings booking = new Bookings();
-	    booking.setHotel(hotel);
-	    booking.setUser(user);
-	    booking.setRoom(room);
-	    booking.setCheckIn(LocalDate.now().plusDays(2));
-	    booking.setCheckOut(LocalDate.now().plusDays(4));
-	    booking.setNoOfRooms(1);
-	    booking.setAdults(2);
-	    booking.setChildren(1);
-	    booking.setTotalAmount(3000.0);
-	    booking.setBookingStatus("Confirmed");
-	    booking.setPaymentStatus("Pending");
-	    booking.setBookedAt(LocalDateTime.now());
-	    booking = bookingRepository.save(booking);
+        PaymentDTO dto = new PaymentDTO();
+        dto.setBookingId(booking.getBookingId());
+        dto.setAmount(booking.getTotalAmount());
+        dto.setPaymentMode("UPI");
+        dto.setPaymentStatus("Completed");
+        paymentService.addPayment(dto);
 
-	    PaymentDTO paymentDTO = new PaymentDTO();
-	    paymentDTO.setBookingId(booking.getBookingId());
-	    paymentDTO.setAmount(3000.0);
-	    paymentDTO.setPaymentMode("UPI");
-	    paymentDTO.setPaymentStatus("Completed");
-	    paymentService.addPayment(paymentDTO);
+        List<PaymentDTO> payments = paymentService.getPaymentsByOwnerId(owner.getOwnerId());
+        assertNotNull(payments);
+    }
 
-	    List<PaymentDTO> payments = paymentService.getPaymentsByOwnerId(owner.getOwnerId());
-	    assertNotNull(payments);
-	}
+    @Test
+    void testUpdatePaymentStatus() {
+        User ownerUser = createUser("Owner7", "owner7@test.com");
+        HotelOwner owner = createOwner(ownerUser);
+        Hotel hotel = createHotel(owner);
+        Room room = createRoom(hotel, "107G");
+        User user = createUser("User7", "user7@test.com");
+        Bookings booking = createBooking(user, hotel, room);
 
-	@Test
-	void testUpdatePaymentStatus() {
-		User ownerUser = new User();
-	    ownerUser.setName("OwnerUser6");
-	    ownerUser.setEmail("owner6@example.com");
-	    ownerUser.setPassword("password");
-	    ownerUser = userRepository.save(ownerUser);
+        PaymentDTO dto = new PaymentDTO();
+        dto.setBookingId(booking.getBookingId());
+        dto.setAmount(booking.getTotalAmount());
+        dto.setPaymentMode("Credit Card");
+        dto.setPaymentStatus("Completed");
+        PaymentDTO saved = paymentService.addPayment(dto);
 
-	    HotelOwner owner = new HotelOwner();
-	    owner.setUserId(ownerUser);
-	    owner.setBuisnessName("Owner Business 6");
-	    owner = hotelOwnerRepository.save(owner);
-
-	    Hotel hotel = new Hotel();
-	    hotel.setName("Hotel 6");
-	    hotel.setLocation("Loc 6");
-	    hotel.setDescription("Desc 6");
-	    hotel.setOwner(owner);
-	    hotel = hotelRepository.save(hotel);
-	    
-	    Room room = new Room();
-	    room.setRoomNumber("106F");
-	    room.setRoomType("Standard");
-	    room.setBedType("Queen");
-	    room.setRoomSize("300 sqft");
-	    room.setMaxPeople(2);
-	    room.setBaseFare(1500.0);
-	    room.setAcAvailable(false);
-	    room.setAvailability(true);
-	    room.setAddedAt(LocalDateTime.now());
-	    room.setHotel(hotel);
-	    room = roomRepository.save(room);
-
-	    User user = new User();
-	    user.setName("User6");
-	    user.setEmail("user6@example.com");
-	    user.setPassword("password");
-	    user = userRepository.save(user);
-	    
-	    Bookings booking = new Bookings();
-	    booking.setHotel(hotel);
-	    booking.setUser(user);
-	    booking.setRoom(room);
-	    booking.setCheckIn(LocalDate.now().plusDays(1));
-	    booking.setCheckOut(LocalDate.now().plusDays(2));
-	    booking.setNoOfRooms(1);
-	    booking.setAdults(2);
-	    booking.setChildren(0);
-	    booking.setTotalAmount(1500.0);
-	    booking.setBookingStatus("Confirmed");
-	    booking.setPaymentStatus("Pending");
-	    booking.setBookedAt(LocalDateTime.now());
-	    booking = bookingRepository.save(booking);
-
-	    PaymentDTO paymentDTO = new PaymentDTO();
-	    paymentDTO.setBookingId(booking.getBookingId());
-	    paymentDTO.setAmount(1500.0);
-	    paymentDTO.setPaymentMode("Credit Card");
-	    paymentDTO.setPaymentStatus("Completed");
-	    PaymentDTO savedPayment = paymentService.addPayment(paymentDTO);
-
-	    
-	    PaymentDTO updated = paymentService.updatePaymentStatus(savedPayment.getPaymentId(), "Refunded");
-	    assertNotNull(updated);
-	}
-
+        PaymentDTO updated = paymentService.updatePaymentStatus(saved.getPaymentId(), "Refunded");
+        assertNotNull(updated);
+        assertEquals("Refunded", updated.getPaymentStatus());
+    }
 }
