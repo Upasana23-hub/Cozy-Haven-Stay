@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -20,11 +22,17 @@ public class AppSecurityConfig {
     @Autowired
     UserDetailsService userDetailsService;
 
+    @Bean    
+    public PasswordEncoder passwordEncoder() {          
+        return new BCryptPasswordEncoder();
+    }
+
+    
     @Bean
     public AuthenticationProvider authProvider() {
         DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
         dao.setUserDetailsService(userDetailsService);
-        dao.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        dao.setPasswordEncoder(passwordEncoder());
         return dao;
     }
 

@@ -35,7 +35,7 @@ public class UserRestController {
     private UserRepository userRepository;
     
 
-    // ================= REGISTER =================
+
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(
             @Valid @RequestBody UserResponseDTO userDTO) {
@@ -43,7 +43,7 @@ public class UserRestController {
         return ResponseEntity.ok(userService.register(userDTO));
     }
 
-    // ================= LOGIN =================
+ 
     @PostMapping("/login")
     public ResponseEntity<String> login(
             @Valid @RequestBody LoginRequestDTO loginDTO) {
@@ -52,16 +52,16 @@ public class UserRestController {
         );
     }
 
- // ================= GET PROFILE =================
+
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDTO> getProfile(@PathVariable Long userId) {
-        // Get logged-in user's ID
+      
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User loggedInUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Logged-in user not found"));
 
-        // Check if the requested userId matches logged-in user
+      
         if (!loggedInUser.getUserId().equals(userId)) {
             throw new RuntimeException("Access denied: You can only access your own profile");
         }
@@ -69,7 +69,6 @@ public class UserRestController {
         return ResponseEntity.ok(userService.getProfile(userId));
     }
 
-    // ================= MY BOOKINGS =================
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{userId}/bookings")
     public ResponseEntity<List<Bookings>> getMyBookings(@PathVariable Long userId) {
@@ -84,7 +83,7 @@ public class UserRestController {
         return ResponseEntity.ok(userService.getMyBookings(userId));
     }
 
-    // ================= CANCEL BOOKING =================
+    
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/{userId}/bookings/{bookingId}/cancel")
     public ResponseEntity<String> cancelBooking(
