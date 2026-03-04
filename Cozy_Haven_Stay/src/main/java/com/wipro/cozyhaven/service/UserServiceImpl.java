@@ -3,6 +3,8 @@ package com.wipro.cozyhaven.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.wipro.cozyhaven.dto.UserResponseDTO;
@@ -21,8 +23,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BookingsRepository bookingRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // ================= REGISTER =================
+   
     @Override
     public UserResponseDTO register(UserResponseDTO userDTO) {
 
@@ -33,7 +38,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .name(userDTO.getName())
                 .email(userDTO.getEmail())
-                .password(userDTO.getPassword())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .phone(userDTO.getPhone())
                 .address(userDTO.getAddress())
                 .role(
@@ -48,21 +53,21 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(savedUser);
     }
 
-    // ================= LOGIN =================
+    
     @Override
     public String login(String email, String password) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid email"));
 
-        if (!user.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
 
         return "Login Successful";
     }
 
-    // ================= PROFILE =================
+  
     @Override
     public UserResponseDTO getProfile(Long userId) {
 
@@ -72,13 +77,13 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(user);
     }
 
-    // ================= MY BOOKINGS =================
+   
     @Override
     public List<Bookings> getMyBookings(Long userId) {
         return bookingRepository.findByUserUserId(userId);
     }
 
-    // ================= CANCEL BOOKING =================
+  
     @Override
     public void cancelMyBooking(Long userId, Long bookingId) {
 
@@ -99,7 +104,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
-    // ================= MAPPER =================
+   
     private UserResponseDTO mapToResponse(User user) {
         return UserResponseDTO.builder()
                 .userId(user.getUserId())

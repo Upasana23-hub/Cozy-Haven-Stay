@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.wipro.cozyhaven.dto.ReviewDTO;
 import com.wipro.cozyhaven.entity.Hotel;
@@ -20,9 +21,10 @@ import com.wipro.cozyhaven.repository.ReviewRepository;
 import com.wipro.cozyhaven.repository.UserRepository;
 
 @SpringBootTest
+@Transactional
 class ReviewServiceImplTest {
-    
-	@Autowired
+
+    @Autowired
     private ReviewService reviewService;
 
     @Autowired
@@ -33,173 +35,113 @@ class ReviewServiceImplTest {
 
     @Autowired
     private ReviewRepository reviewRepository;
-    
+
     @Autowired
     private HotelOwnerRepository hotelOwnerRepository;
-    
-    @Test
-    void testAddReview() {
-    	User ownerUser = new User();
-        ownerUser.setName("Owner User");
-        ownerUser.setEmail("owneruser@example.com");
-        ownerUser.setPassword("password");
-        ownerUser = userRepository.save(ownerUser);
-        
-        HotelOwner owner = new HotelOwner();
-        owner.setUserId(ownerUser);
-        owner.setBuisnessName("Owner Business");
-        owner = hotelOwnerRepository.save(owner);
-        
-        
-        User reviewUser = new User();
-        reviewUser.setName("Test User");
-        reviewUser.setEmail("testuser@example.com");
-        reviewUser.setPassword("password");
-        reviewUser = userRepository.save(reviewUser);
-        
-        Hotel testHotel = new Hotel();
-        testHotel.setName("Test Hotel");
-        testHotel.setLocation("Test Location");
-        testHotel.setDescription("Nice hotel for testing");
-        testHotel.setOwner(owner); 
-        testHotel = hotelRepository.save(testHotel);
-        
-        ReviewDTO reviewDTO = new ReviewDTO();
-        reviewDTO.setUserId(reviewUser.getUserId());
-        reviewDTO.setHotelId(testHotel.getHotelId());
-        reviewDTO.setRating(5);
-        reviewDTO.setComment("Excellent stay!");
-        
-        ReviewDTO savedReview = reviewService.addReview(reviewDTO);
-        
-        assertNotNull(savedReview.getReviewId(), "Review ID should not be null");
+
+    // Utility method to create a user
+    private User createUser(String name, String email) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword("password");
+        return userRepository.save(user);
     }
 
-	@Test
-	void testGetReviewsByHotel() {
-		User ownerUser = new User();
-	    ownerUser.setName("Owner1");
-	    ownerUser.setEmail("owneruser1@example.com");
-	    ownerUser.setPassword("owner");
-	    ownerUser = userRepository.save(ownerUser);
-	    
-	    HotelOwner owner = new HotelOwner();
-	    owner.setUserId(ownerUser); 
-	    owner.setBuisnessName("Owner Business1");
-	    owner = hotelOwnerRepository.save(owner);
-	    
-	    Hotel testHotel = new Hotel();
-	    testHotel.setName("Test Hotel1");
-	    testHotel.setLocation("Test Location1");
-	    testHotel.setDescription("Nice hotel for testing1");
-	    testHotel.setOwner(owner);
-	    testHotel = hotelRepository.save(testHotel);
-	    
-	    User reviewUser = new User();
-	    reviewUser.setName("Review User");
-	    reviewUser.setEmail("reviewuser1@example.com");
-	    reviewUser.setPassword("password1");
-	    reviewUser = userRepository.save(reviewUser);
-	    
-	    ReviewDTO reviewDTO = new ReviewDTO();
-	    reviewDTO.setUserId(reviewUser.getUserId());
-	    reviewDTO.setHotelId(testHotel.getHotelId());
-	    reviewDTO.setRating(4);
-	    reviewDTO.setComment("Very good stay!");
-	    reviewService.addReview(reviewDTO);
-	    
-	    List<ReviewDTO> reviews = reviewService.getReviewsByHotel(testHotel.getHotelId());
-	    
-	    assertNotNull(reviews, "Review list should not be null");
-	}
-	
+    // Utility method to create hotel owner
+    private HotelOwner createOwner(User user, String businessName) {
+        HotelOwner owner = new HotelOwner();
+        owner.setUser(user);
+        owner.setBuisnessName(businessName);
+        return hotelOwnerRepository.save(owner);
+    }
 
-	@Test
-	void testGetReviewsByUser() {
-	    
-	    User ownerUser = new User();
-	    ownerUser.setName("Owner2");
-	    ownerUser.setEmail("owner2@example.com");
-	    ownerUser.setPassword("owner2");
-	    ownerUser = userRepository.save(ownerUser);
-	    
-	    HotelOwner owner = new HotelOwner();
-	    owner.setUserId(ownerUser);
-	    owner.setBuisnessName("Owner Business2");
-	    owner = hotelOwnerRepository.save(owner);
-	    
-	    Hotel testHotel = new Hotel();
-	    testHotel.setName("Test Hotel2");
-	    testHotel.setLocation("Test Location2");
-	    testHotel.setDescription("Nice hotel for testing2");
-	    testHotel.setOwner(owner);
-	    testHotel = hotelRepository.save(testHotel);
-	    
-	    
-	    User reviewUser = new User();
-	    reviewUser.setName("Review User2");
-	    reviewUser.setEmail("reviewuser2@example.com");
-	    reviewUser.setPassword("password2");
-	    reviewUser = userRepository.save(reviewUser);
-	    
-	    
-	    ReviewDTO reviewDTO = new ReviewDTO();
-	    reviewDTO.setUserId(reviewUser.getUserId());
-	    reviewDTO.setHotelId(testHotel.getHotelId());
-	    reviewDTO.setRating(3);
-	    reviewDTO.setComment("It was okay");
-	    reviewService.addReview(reviewDTO);
-	    
-	    
-	    List<ReviewDTO> reviews = reviewService.getReviewsByUser(reviewUser.getUserId());
-	    
-	    assertNotNull(reviews, "Review list should not be null");
-	
-	}
+    // Utility method to create hotel
+    private Hotel createHotel(HotelOwner owner, String hotelName) {
+        Hotel hotel = new Hotel();
+        hotel.setName(hotelName);
+        hotel.setLocation("Test Location");
+        hotel.setDescription("Test Description");
+        hotel.setOwner(owner);
+        return hotelRepository.save(hotel);
+    }
 
-	@Test
-	void testDeleteReview() {
-	    
-	    User ownerUser = new User();
-	    ownerUser.setName("Owner3");
-	    ownerUser.setEmail("owner3@example.com");
-	    ownerUser.setPassword("owner3");
-	    ownerUser = userRepository.save(ownerUser);
-	    
-	    HotelOwner owner = new HotelOwner();
-	    owner.setUserId(ownerUser);
-	    owner.setBuisnessName("Owner Business3");
-	    owner = hotelOwnerRepository.save(owner);
-	    
-	    Hotel testHotel = new Hotel();
-	    testHotel.setName("Test Hotel3");
-	    testHotel.setLocation("Test Location3");
-	    testHotel.setDescription("Nice hotel for testing3");
-	    testHotel.setOwner(owner);
-	    testHotel = hotelRepository.save(testHotel);
-	    
-	    
-	    User reviewUser = new User();
-	    reviewUser.setName("Review User3");
-	    reviewUser.setEmail("reviewuser3@example.com");
-	    reviewUser.setPassword("password3");
-	    reviewUser = userRepository.save(reviewUser);
-	    
-	    
-	    ReviewDTO reviewDTO = new ReviewDTO();
-	    reviewDTO.setUserId(reviewUser.getUserId());
-	    reviewDTO.setHotelId(testHotel.getHotelId());
-	    reviewDTO.setRating(2);
-	    reviewDTO.setComment("Not good");
-	    ReviewDTO savedReview = reviewService.addReview(reviewDTO);
-	    
-	    Long reviewId = savedReview.getReviewId();
-	    
-	    
-	    reviewService.deleteReview(reviewId);
-	    
-	    
-	    assertThrows(ResourceNotFoundException.class, () -> reviewService.deleteReview(reviewId));
-	}
+    @Test
+    void testAddReview() {
+        User ownerUser = createUser("OwnerUser", "owner@example.com");
+        HotelOwner owner = createOwner(ownerUser, "Owner Business");
+        User reviewUser = createUser("ReviewUser", "reviewuser@example.com");
+        Hotel hotel = createHotel(owner, "Test Hotel");
 
+        ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setUserId(reviewUser.getUserId());
+        reviewDTO.setHotelId(hotel.getHotelId());
+        reviewDTO.setRating(5);
+        reviewDTO.setComment("Excellent stay!");
+
+        ReviewDTO savedReview = reviewService.addReview(reviewDTO);
+        assertNotNull(savedReview.getReviewId(), "Review ID should not be null");
+        assertNotNull(savedReview.getCreatedAt(), "CreatedAt should not be null");
+    }
+
+    @Test
+    void testGetReviewsByHotel() {
+        User ownerUser = createUser("Owner1", "owner1@example.com");
+        HotelOwner owner = createOwner(ownerUser, "Owner Business1");
+        User reviewUser = createUser("ReviewUser1", "reviewuser1@example.com");
+        Hotel hotel = createHotel(owner, "Test Hotel1");
+
+        ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setUserId(reviewUser.getUserId());
+        reviewDTO.setHotelId(hotel.getHotelId());
+        reviewDTO.setRating(4);
+        reviewDTO.setComment("Very good stay!");
+        reviewService.addReview(reviewDTO);
+
+        List<ReviewDTO> reviews = reviewService.getReviewsByHotel(hotel.getHotelId());
+        assertNotNull(reviews, "Review list should not be null");
+        assert(reviews.size() > 0);
+    }
+
+    @Test
+    void testGetReviewsByUser() {
+        User ownerUser = createUser("Owner2", "owner2@example.com");
+        HotelOwner owner = createOwner(ownerUser, "Owner Business2");
+        User reviewUser = createUser("ReviewUser2", "reviewuser2@example.com");
+        Hotel hotel = createHotel(owner, "Test Hotel2");
+
+        ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setUserId(reviewUser.getUserId());
+        reviewDTO.setHotelId(hotel.getHotelId());
+        reviewDTO.setRating(3);
+        reviewDTO.setComment("It was okay");
+        reviewService.addReview(reviewDTO);
+
+        List<ReviewDTO> reviews = reviewService.getReviewsByUser(reviewUser.getUserId());
+        assertNotNull(reviews, "Review list should not be null");
+        assert(reviews.size() > 0);
+    }
+
+    @Test
+    void testDeleteReview() {
+        User ownerUser = createUser("Owner3", "owner3@example.com");
+        HotelOwner owner = createOwner(ownerUser, "Owner Business3");
+        User reviewUser = createUser("ReviewUser3", "reviewuser3@example.com");
+        Hotel hotel = createHotel(owner, "Test Hotel3");
+
+        ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setUserId(reviewUser.getUserId());
+        reviewDTO.setHotelId(hotel.getHotelId());
+        reviewDTO.setRating(2);
+        reviewDTO.setComment("Not good");
+
+        ReviewDTO savedReview = reviewService.addReview(reviewDTO);
+        Long reviewId = savedReview.getReviewId();
+
+        // Delete review
+        reviewService.deleteReview(reviewId);
+
+        // Should throw exception when deleting again
+        assertThrows(ResourceNotFoundException.class, () -> reviewService.deleteReview(reviewId));
+    }
 }
