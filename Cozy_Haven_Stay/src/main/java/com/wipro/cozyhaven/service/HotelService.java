@@ -20,6 +20,8 @@ public interface HotelService {
     List<Hotel> searchHotelsByLocation(String location);
     
     List<Hotel> searchHotelsByLocationAndRating(String location, Double minRating);
+    
+    List<Hotel> getAllHotels();
 }
 
 
