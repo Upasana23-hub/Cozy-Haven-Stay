@@ -55,23 +55,30 @@ public class UserRestController {
     }
 
 
-    @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{userId}")
+    @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN','ROLE_USER')")
     public ResponseEntity<UserResponseDTO> getProfile(@PathVariable Long userId) {
-      
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User loggedInUser = userRepository.findByEmail(email)
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        User loggedInUser = userRepository
+                .findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new RuntimeException("Logged-in user not found"));
 
-      
         if (!loggedInUser.getUserId().equals(userId)) {
-            throw new RuntimeException("Access denied: You can only access your own profile");
+            return ResponseEntity.status(403)
+                    .body(null);
         }
 
-        return ResponseEntity.ok(userService.getProfile(userId));
+        UserResponseDTO profile = userService.getProfile(userId);
+
+        return ResponseEntity.ok(profile);
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{userId}/bookings")
     public ResponseEntity<List<Bookings>> getMyBookings(@PathVariable Long userId) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -86,7 +93,7 @@ public class UserRestController {
     }
 
     
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PutMapping("/{userId}/bookings/{bookingId}/cancel")
     public ResponseEntity<String> cancelBooking(
             @PathVariable Long userId,
@@ -119,5 +126,14 @@ public class UserRestController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         }
+    }
+    
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+
+        User user = userService.getUserByEmail(email);
+
+        return ResponseEntity.ok(user);
     }
 }

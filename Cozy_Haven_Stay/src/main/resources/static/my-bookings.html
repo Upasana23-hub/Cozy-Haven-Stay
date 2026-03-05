@@ -154,14 +154,44 @@
             <p><strong>Price:</strong> ₹<span id="roomPrice"></span> / night</p>
             <hr style="border-color:#f5e0ee;" />
             <form id="bookingForm">
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Check-in Date</label>
-                    <input type="date" id="checkIn" class="form-control" required />
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Check-in Date</label>
+                        <input type="date" id="checkIn" class="form-control" required />
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Check-out Date</label>
+                        <input type="date" id="checkOut" class="form-control" required />
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Check-out Date</label>
-                    <input type="date" id="checkOut" class="form-control" required />
+
+                <div class="row g-3 mb-3">
+                    <div class="col-4">
+                        <label class="form-label fw-bold">Rooms</label>
+                        <input type="number" id="noOfRooms" class="form-control" value="1" min="1" required />
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label fw-bold">Adults</label>
+                        <input type="number" id="adults" class="form-control" value="1" min="1" required />
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label fw-bold">Children</label>
+                        <input type="number" id="children" class="form-control" value="0" min="0" required />
+                    </div>
                 </div>
+
+                <!-- Payment Option -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Payment Method</label>
+                    <select id="paymentMethod" class="form-select"
+                        style="border: 1.5px solid #f5e0ee; box-shadow: none;" required>
+                        <option value="CARD"><i class="fa fa-credit-card"></i> Credit / Debit Card</option>
+                        <option value="UPI"><i class="fa fa-mobile-alt"></i> UPI</option>
+                        <option value="NETBANKING"><i class="fa fa-university"></i> Net Banking</option>
+                        <option value="PAY_AT_HOTEL"><i class="fa fa-money-bill"></i> Pay at Hotel</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn btn-pink w-100 rounded-pill py-3 fw-bold" style="font-size:1.05rem;">
                     <i class="fa fa-check me-2"></i> Confirm Booking
                 </button>
@@ -187,9 +217,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/booking.js"></script>
     <script>
+        // ============================================================
+        // CONSOLIDATED BOOKING LOGIC (my-bookings.html)
+        // ============================================================
+
+        const BOOK_API = 'http://localhost:8080/api';
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookRoomId = urlParams.get('roomId');
+        const bookRoomName = urlParams.get('room');
+        const bookBedType = urlParams.get('bed');
+        const bookRoomPrice = urlParams.get('price');
+
         document.addEventListener('DOMContentLoaded', async () => {
+            // 1. Auth check
             const user = JSON.parse(sessionStorage.getItem('user') || 'null');
             if (!user) {
                 sessionStorage.setItem('redirectAfterLogin', window.location.href);
@@ -197,12 +238,14 @@
                 return;
             }
 
-            const params = new URLSearchParams(window.location.search);
-            const hasRoom = params.get('roomId') || params.get('room');
+            // 2. Decide View: Booking Form OR Bookings List
+            const hasRoom = bookRoomId || bookRoomName;
 
             if (hasRoom) {
                 // Show booking form
                 document.getElementById('bookingFormSection').style.display = 'block';
+                await initRoom();
+                initBookingForm();
             } else {
                 // Show list of user's bookings
                 document.getElementById('myBookingsSection').style.display = 'block';
@@ -210,11 +253,121 @@
             }
         });
 
+        // ── Fill UI with room info ──
+        function fillRoom(room) {
+            const nameEl = document.getElementById('roomName');
+            const bedEl = document.getElementById('bedType');
+            const priceEl = document.getElementById('roomPrice');
+            if (nameEl) nameEl.innerText = `Book ${room.roomType ?? room.roomSize ?? room.name ?? bookRoomName ?? ''} Room`;
+            if (bedEl) bedEl.innerText = room.bedType ?? bookBedType ?? '';
+            if (priceEl) priceEl.innerText = room.baseFare ?? room.price ?? bookRoomPrice ?? '';
+        }
+
+        // ── Fetch room details from backend if roomId given ──
+        async function initRoom() {
+            if (bookRoomId) {
+                try {
+                    const res = await fetch(`${BOOK_API}/rooms/getbyid/${bookRoomId}`, { credentials: 'include' });
+                    if (res.ok) {
+                        const room = await res.json();
+                        fillRoom(room);
+                        return;
+                    }
+                } catch (err) {
+                    console.error('Room fetch failed:', err);
+                }
+            }
+            // Fallback to URL params
+            fillRoom({ roomType: bookRoomName, bedType: bookBedType, baseFare: bookRoomPrice });
+        }
+
+        // ── Handle Booking Form Submit ──
+        function initBookingForm() {
+            const form = document.getElementById('bookingForm');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const user = JSON.parse(sessionStorage.getItem('user') || 'null');
+                if (!user) {
+                    alert('Please sign in to make a booking.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const checkIn = document.getElementById('checkIn')?.value;
+                const checkOut = document.getElementById('checkOut')?.value;
+                const noOfRooms = parseInt(document.getElementById('noOfRooms')?.value || '1', 10);
+                const adults = parseInt(document.getElementById('adults')?.value || '1', 10);
+                const children = parseInt(document.getElementById('children')?.value || '0', 10);
+                const paymentMethod = document.getElementById('paymentMethod')?.value || 'PAY_AT_HOTEL';
+
+                if (!checkIn || !checkOut) {
+                    alert('Please select both check-in and check-out dates.');
+                    return;
+                }
+
+                const dateIn = new Date(checkIn);
+                const dateOut = new Date(checkOut);
+                if (dateOut <= dateIn) {
+                    alert('Check-out date must be after check-in date.');
+                    return;
+                }
+
+                // Calculate nights and total amount
+                const timeDiff = dateOut.getTime() - dateIn.getTime();
+                const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                const pricePerNight = parseFloat(document.getElementById('roomPrice')?.innerText || bookRoomPrice || '0');
+                const totalAmount = (nights * noOfRooms * pricePerNight) || 1; 
+
+                const paymentStatus = paymentMethod === 'PAY_AT_HOTEL' ? 'PENDING' : 'PAID';
+
+                // Matches BookingsDTO.java
+                const bookingPayload = {
+                    userId: user.userId ?? user.id,
+                    roomId: bookRoomId ? parseInt(bookRoomId, 10) : null,
+                    checkIn: checkIn,
+                    checkOut: checkOut,
+                    noOfRooms: noOfRooms,
+                    adults: adults,
+                    children: children,
+                    totalAmount: totalAmount,
+                    bookingStatus: 'CONFIRMED',
+                    paymentStatus: paymentStatus
+                };
+
+                try {
+                    const res = await fetch(`${BOOK_API}/bookings/create`, {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bookingPayload)
+                    });
+
+                    if (!res.ok) {
+                        const err = await res.text();
+                        throw new Error(err || 'Booking failed');
+                    }
+
+                    document.getElementById('bookingSuccess').style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = 'my-bookings.html';
+                    }, 1800);
+
+                } catch (err) {
+                    alert('Booking failed: ' + err.message);
+                    console.error(err);
+                }
+            });
+        }
+
+        // ── Load Bookings List ──
         async function loadMyBookings(user) {
             const list = document.getElementById('bookingsList');
             try {
                 const userId = user.userId ?? user.id;
-                const res = await fetch(`http://localhost:8080/api/users/${userId}`, { credentials: 'include' });
+                const res = await fetch(`${BOOK_API}/users/getbyid/${userId}`, { credentials: 'include' });
                 const userData = await res.json();
                 const bookings = userData.bookings ?? [];
 
@@ -231,14 +384,19 @@
                 <div class="booking-row">
                     <div class="booking-info">
                         <h6>Booking #${b.bookingId ?? b.id}</h6>
-                        <p>Room ID: ${b.roomId ?? '-'} &nbsp;|&nbsp;
-                           Check-in: ${b.checkInDate ?? '-'} &nbsp;|&nbsp;
-                           Check-out: ${b.checkOutDate ?? '-'}
+                        <p>
+                           <strong>Check-in:</strong> ${b.checkIn ?? b.checkInDate ?? '-'} &nbsp;|&nbsp;
+                           <strong>Check-out:</strong> ${b.checkOut ?? b.checkOutDate ?? '-'} &nbsp;|&nbsp;
+                           <strong>Total:</strong> ₹${b.totalAmount ?? '-'}
                         </p>
+                        <small class="text-muted">Rooms: ${b.noOfRooms ?? 1} | Guests: ${b.adults ?? 1}A, ${b.children ?? 0}C</small>
                     </div>
                     <div class="d-flex align-items-center gap-3">
-                        <span class="bstatus ${b.bookingStatus ?? 'PENDING'}">${b.bookingStatus ?? 'PENDING'}</span>
-                        ${b.bookingStatus !== 'CANCELLED' ? `
+                        <div class="text-end me-2">
+                             <span class="bstatus ${b.bookingStatus ?? 'PENDING'}">${b.bookingStatus ?? 'PENDING'}</span>
+                             <div class="small mt-1 text-muted" style="font-size: 0.7rem;">Payment: ${b.paymentStatus ?? '-'}</div>
+                        </div>
+                        ${(b.bookingStatus && b.bookingStatus !== 'CANCELLED') ? `
                             <button class="cancel-btn" onclick="cancelMyBooking(${b.bookingId ?? b.id})">
                                 Cancel
                             </button>` : ''}
@@ -246,22 +404,23 @@
                 </div>`).join('');
 
             } catch (err) {
-                list.innerHTML = '<div class="text-center text-danger py-4">Failed to load bookings.</div>';
+                list.innerHTML = '<div class="text-center text-danger py-4">Failed to load bookings. Check backend connection.</div>';
                 console.error(err);
             }
         }
 
+        // ── Cancel Booking ──
         async function cancelMyBooking(id) {
             if (!confirm('Cancel this booking? This cannot be undone.')) return;
             try {
-                const res = await fetch(`http://localhost:8080/api/bookings/cancel/${id}`, {
+                const res = await fetch(`${BOOK_API}/bookings/cancel/${id}`, {
                     method: 'DELETE', credentials: 'include'
                 });
                 if (!res.ok) throw new Error('Cancel failed');
                 alert('Booking cancelled.');
                 window.location.reload();
             } catch (err) {
-                alert(err.message);
+                alert('Error: ' + err.message);
             }
         }
     </script>

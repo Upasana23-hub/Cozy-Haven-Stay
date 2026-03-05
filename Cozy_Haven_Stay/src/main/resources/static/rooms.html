@@ -109,6 +109,17 @@
         </div>
     </div>
 
+    <!-- REVIEWS SECTION -->
+    <section class="container py-5" id="reviewsSection">
+        <h3 class="fw-bold mb-4">Guest Reviews</h3>
+        <div id="reviewsList" class="row g-4">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border" style="color: var(--pink)"></div>
+                <p class="mt-2 text-muted">Fetching reviews...</p>
+            </div>
+        </div>
+    </section>
+
     <!-- FOOTER -->
     <footer style="background: #1a0a24; color: #cbb; padding: 40px 0; margin-top: 40px;">
         <div class="container">
@@ -153,8 +164,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             loadRooms();
+            loadReviews();
         });
 
+        // --- ROOMS ---
         async function loadRooms() {
             const container = document.getElementById('roomsList');
             try {
@@ -188,7 +201,8 @@
                                 </div>
                                 <p class="text-secondary small mb-4">Spacious and well-appointed room with all modern amenities for a comfortable stay.</p>
                                 <div class="mt-auto">
-                                    <a href="my-bookings.html?roomId=${room.roomId || room.id}&room=${encodeURIComponent(room.roomSize || room.roomType)}&bed=${encodeURIComponent(room.bedType)}&price=${room.baseFare || room.price}" 
+                                    <!-- Redirect all "Book Now" buttons to my-bookings.html -->
+                                    <a href="my-bookings.html" 
                                        class="btn btn-pink w-100 rounded-pill py-2 fw-bold shadow-sm">
                                        Book Now
                                     </a>
@@ -201,6 +215,61 @@
             } catch (err) {
                 console.error('Error fetching rooms:', err);
                 container.innerHTML = '<div class="col-12 text-center text-danger py-5">Failed to load rooms. Check your backend/server.</div>';
+            }
+        }
+
+        // --- REVIEWS ---
+        function getHotelIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('hotelId');
+        }
+
+        async function loadReviews() {
+            const hotelId = getHotelIdFromUrl();
+            const container = document.getElementById('reviewsList');
+
+            if (!hotelId) {
+                container.innerHTML = '<div class="col-12 text-center text-danger py-5">Hotel ID not found in URL.</div>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:8080/api/reviews/hotel/${hotelId}`, { credentials: 'include' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const reviews = await res.json();
+
+                if (!reviews || reviews.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="fa fa-star mb-3" style="font-size:3rem; color:#f5e0ee;"></i>
+                            <h5 class="text-muted">No reviews yet for this hotel.</h5>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = reviews.map(review => `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card p-3 h-100" style="border:1px solid #f5e0ee; border-radius:16px; box-shadow:0 4px 20px rgba(233,30,140,0.06);">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="me-2">
+                                    <i class="fa fa-user-circle" style="font-size:2rem;color:#e91e8c;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold">${review.userName || review.email || 'Anonymous'}</h6>
+                                    <small class="text-muted">${review.date || ''}</small>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                ${'★'.repeat(review.rating || 5)}${'☆'.repeat(5 - (review.rating || 5))}
+                            </div>
+                            <p class="text-secondary small mb-0">${review.comment || ''}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error('Error fetching reviews:', err);
+                container.innerHTML = '<div class="col-12 text-center text-danger py-5">Failed to load reviews.</div>';
             }
         }
     </script>

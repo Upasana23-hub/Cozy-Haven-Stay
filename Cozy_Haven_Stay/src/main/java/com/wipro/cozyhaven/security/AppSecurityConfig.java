@@ -50,6 +50,7 @@ public class AppSecurityConfig {
                     "/api/hotels/getall",
                     "/api/rooms/getall",
                     "/api/hotels/search/**",
+                    "/api/reviews/hotel/**",
                     "/index.html",
                     "/hotels.html",
                     "/rooms.html",
@@ -59,12 +60,13 @@ public class AppSecurityConfig {
                     "/owner-dashboard.html",
                     "/admin-dashboard.html",
                     "/user-profile.html",
+                    "/my-bookings.html",
                     "/css/**",
                     "/js/**",
                     "/images/**"
                 ).permitAll()
                 .anyRequest().authenticated()
-            );
+            ).httpBasic();
 
         return http.build();
     }
