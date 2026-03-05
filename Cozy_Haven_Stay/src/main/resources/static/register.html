@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register — Cozy Haven Stay</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .register-wrapper {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('images/back.png') no-repeat center center;
+      background-size: cover;
+      padding: 40px 15px;
+    }
+
+    .register-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(233, 30, 140, 0.65) 0%, rgba(192, 132, 252, 0.65) 100%);
+      z-index: 1;
+    }
+
+    .register-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .auth-card-custom-reg {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(8px);
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .alert-err {
+      color: red;
+      display: none;
+    }
+
+    .alert-ok {
+      color: green;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="register-wrapper">
+    <div class="register-container">
+      <div class="row justify-content-center m-0">
+        <div class="col-12">
+          <div class="auth-card-custom-reg p-4 p-md-5">
+
+            <div class="text-center mb-4">
+              <div class="auth-logo mb-3"><a href="index.html"><img src="images/cozy.png" height="52" alt="logo" /></a></div>
+              <h2 class="fw-bold mb-1">Create Account</h2>
+              <p class="sub text-muted">Join Cozy Haven Stay today</p>
+            </div>
+
+            <div id="registerErr" class="alert-err mb-3"></div>
+            <div id="registerOk" class="alert-ok mb-3"></div>
+
+            <form id="registerForm" novalidate>
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" id="name" class="form-control" placeholder="Your full name" required />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Email</label>
+                  <input type="email" id="email" class="form-control" placeholder="you@email.com" required />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Phone</label>
+                  <input type="tel" id="phone" class="form-control" placeholder="+91 00000 00000" required />
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label">Address</label>
+                  <input type="text" id="address" class="form-control" placeholder="Your address" required />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Password</label>
+                  <div class="input-group mb-3">
+                    <input type="password" id="password" class="form-control" placeholder="Create password" required />
+                    <span class="input-group-text bg-white" id="togglePwd" style="cursor: pointer;"><i class="fa fa-eye"></i></span>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Confirm Password</label>
+                  <div class="input-group mb-3">
+                    <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm password" required />
+                    <span class="input-group-text bg-white" id="toggleConfirm" style="cursor: pointer;"><i class="fa fa-eye"></i></span>
+                  </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                  <label class="form-label fw-bold mb-2">I am signing up as a</label>
+                  <div class="row g-2">
+                    <div class="col-4 role-option">
+                      <input type="radio" name="role" id="roleUser" value="USER" checked />
+                      <label for="roleUser" class="py-2 h-100 d-flex flex-column justify-content-center align-items-center">
+                        <i class="fa fa-user fs-5 mb-1"></i><span style="font-size: 0.8rem;">Guest</span>
+                      </label>
+                    </div>
+                    <div class="col-4 role-option">
+                      <input type="radio" name="role" id="roleOwner" value="OWNER" />
+                      <label for="roleOwner" class="py-2 h-100 d-flex flex-column justify-content-center align-items-center">
+                        <i class="fa fa-home fs-5 mb-1"></i><span style="font-size: 0.8rem;">Owner</span>
+                      </label>
+                    </div>
+                    <div class="col-4 role-option">
+                      <input type="radio" name="role" id="roleAdmin" value="ADMIN" />
+                      <label for="roleAdmin" class="py-2 h-100 d-flex flex-column justify-content-center align-items-center">
+                        <i class="fa fa-shield-alt fs-5 mb-1"></i><span style="font-size: 0.8rem;">Admin</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 mt-4 d-flex justify-content-center">
+                  <button type="submit" class="btn btn-pink py-3 px-5 rounded-pill fw-bold"
+                    style="font-size: 1.05rem; letter-spacing: 0.5px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(233, 30, 140, 0.2); min-width: 250px;">Create
+                    Account</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="text-center mt-4 pt-3 border-top" style="font-size:.92rem; color: #555;">
+              Already have an account? <a href="login.html" class="ms-1 fw-bold" style="color:var(--pink); text-decoration: none; transition: 0.2s;">Sign In</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('registerForm');
+      const errAlert = document.getElementById('registerErr');
+      const okAlert = document.getElementById('registerOk');
+
+      const togglePwd = document.getElementById('togglePwd');
+      const toggleConfirm = document.getElementById('toggleConfirm');
+
+      if (togglePwd) togglePwd.addEventListener('click', () => {
+        const input = document.getElementById('password');
+        const icon = togglePwd.querySelector('i');
+        input.type = input.type === 'password' ? 'text' : 'password';
+        icon.className = input.type === 'password' ? 'fa fa-eye' : 'fa fa-eye-slash';
+      });
+
+      if (toggleConfirm) toggleConfirm.addEventListener('click', () => {
+        const input = document.getElementById('confirmPassword');
+        const icon = toggleConfirm.querySelector('i');
+        input.type = input.type === 'password' ? 'text' : 'password';
+        icon.className = input.type === 'password' ? 'fa fa-eye' : 'fa fa-eye-slash';
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errAlert.style.display = 'none';
+        okAlert.style.display = 'none';
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!name || !email || !phone || !password || !address) {
+          errAlert.innerText = 'Please fill all required fields';
+          errAlert.style.display = 'block';
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          errAlert.innerText = 'Passwords do not match';
+          errAlert.style.display = 'block';
+          return;
+        }
+
+        let role = 'USER';
+        document.getElementsByName('role').forEach(r => {
+          if (r.checked) role = r.value;
+        });
+
+        // Payload for backend
+        const payload = { name, email, phone, address, password, role };
+
+        try {
+          const res = await fetch('http://localhost:8080/api/users/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            credentials: 'include'
+          });
+
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || 'Registration failed');
+          }
+
+          okAlert.innerText = 'Registration successful!';
+          okAlert.style.display = 'block';
+          setTimeout(() => window.location.href = 'login.html', 1500);
+
+        } catch (err) {
+          errAlert.innerText = err.message;
+          errAlert.style.display = 'block';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

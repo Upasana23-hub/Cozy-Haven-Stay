@@ -1,6 +1,7 @@
 package com.wipro.cozyhaven.restcontroller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wipro.cozyhaven.dto.LoginRequestDTO;
@@ -53,7 +55,7 @@ public class UserRestController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDTO> getProfile(@PathVariable Long userId) {
       
@@ -100,5 +102,22 @@ public class UserRestController {
 
         userService.cancelMyBooking(userId, bookingId);
         return ResponseEntity.ok("Booking cancelled successfully");
+    }
+    
+
+    @GetMapping("/getRoleByEmail")
+    public ResponseEntity<?> getRoleByEmail(@RequestParam String email) {
+        try {
+            User user = userService.getUserByEmail(email);
+            // return JSON with name and role
+            return ResponseEntity.ok(
+                Map.of(
+                    "role", user.getRole().name(),
+                    "name", user.getName()
+                )
+            );
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        }
     }
 }

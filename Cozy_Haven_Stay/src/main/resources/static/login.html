@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sign In — Cozy Haven Stay</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .login-wrapper {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('images/back.png') no-repeat center center;
+      background-size: cover;
+    }
+
+    .login-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(233, 30, 140, 0.65) 0%, rgba(192, 132, 252, 0.65) 100%);
+      z-index: 1;
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 450px;
+      padding: 0 15px;
+    }
+
+    .auth-card-custom {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      backdrop-filter: blur(8px);
+      width: 100%;
+    }
+
+    .auth-card-custom h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .auth-card-custom .sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+    }
+
+    .btn-login {
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(233, 30, 140, 0.2);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(233, 30, 140, 0.3);
+    }
+
+    .alert-err {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-wrapper">
+    <div class="login-container">
+      <div class="auth-card-custom text-center">
+        <div class="auth-logo mb-4">
+          <a href="index.html"><img src="images/cozy.png" height="52" alt="logo" /></a>
+        </div>
+        <h2>Welcome Back</h2>
+        <p class="sub">Sign in to your Cozy Haven Stay account</p>
+
+        <div id="loginErr" class="alert-err mb-3 text-start"></div>
+
+        <form id="loginForm" class="text-start" novalidate>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Email</label>
+            <input type="email" id="email" class="form-control form-control-lg" placeholder="your@email.com"
+              required />
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-bold mb-1">Password</label>
+            <div class="input-group">
+              <input type="password" id="password" class="form-control form-control-lg" placeholder="Password"
+                required />
+              <span class="input-group-text bg-white" id="togglePwd" style="cursor: pointer;"><i
+                  class="fa fa-eye"></i></span>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-pink w-100 py-3 mb-4 rounded-pill fw-bold btn-login">Sign In</button>
+        </form>
+
+        <div class="pt-3 border-top" style="font-size: 0.95rem; color: #555;">
+          Don't have an account? <a href="register.html" class="fw-bold ms-1"
+            style="color: var(--pink); text-decoration: none; transition: 0.2s;">Register</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+	  const form = document.getElementById('loginForm');
+	  const errAlert = document.getElementById('loginErr');
+	  const togglePwd = document.getElementById('togglePwd');
+
+	  // Toggle password visibility
+	  if (togglePwd) {
+	    togglePwd.addEventListener('click', () => {
+	      const input = document.getElementById('password');
+	      const icon = togglePwd.querySelector('i');
+	      input.type = input.type === 'password' ? 'text' : 'password';
+	      icon.className = input.type === 'password' ? 'fa fa-eye' : 'fa fa-eye-slash';
+	    });
+	  }
+
+	  form.addEventListener('submit', async (e) => {
+	    e.preventDefault();
+	    errAlert.style.display = 'none';
+
+	    const email = document.getElementById('email').value.trim();
+	    const password = document.getElementById('password').value;
+
+	    if (!email || !password) {
+	      errAlert.innerText = 'Please enter email and password';
+	      errAlert.style.display = 'block';
+	      return;
+	    }
+
+	    try {
+	      // Login request
+	      const loginRes = await fetch('http://localhost:8080/api/users/login', {
+	        method: 'POST',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify({ email, password }),
+	        credentials: 'include'
+	      });
+
+	      if (!loginRes.ok) {
+	        const errMsg = await loginRes.text();
+	        throw new Error(errMsg || 'Login failed');
+	      }
+
+	      // Get role from backend
+	      const roleRes = await fetch(`http://localhost:8080/api/users/getRoleByEmail?email=${encodeURIComponent(email)}`, {
+	        method: 'GET',
+	        credentials: 'include'
+	      });
+
+	      if (!roleRes.ok) {
+	        const errMsg = await roleRes.text();
+	        throw new Error(errMsg || 'Cannot fetch role');
+	      }
+
+	      const data = await roleRes.json();
+
+	      // Store in sessionStorage
+	      sessionStorage.setItem('userRole', data.role);
+	      sessionStorage.setItem('userEmail', email);
+
+	      // Redirect based on role
+	      switch (data.role) {
+	        case 'ADMIN': window.location.href = 'admin-dashboard.html'; break;
+	        case 'OWNER': window.location.href = 'owner-dashboard.html'; break;
+	        case 'USER': window.location.href = 'user-dashboard.html'; break;
+	        default: throw new Error('Invalid role received');
+	      }
+
+	    } catch (err) {
+	      errAlert.innerText = err.message;
+	      errAlert.style.display = 'block';
+	    }
+	  });
+	});
+  </script>
+</body>
+
+</html>

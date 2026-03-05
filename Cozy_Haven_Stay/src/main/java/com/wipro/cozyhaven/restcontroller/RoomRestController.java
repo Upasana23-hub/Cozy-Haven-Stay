@@ -39,7 +39,7 @@ public class RoomRestController {
         return new ResponseEntity<>(savedRoom, HttpStatus.CREATED);
 	}
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
+	@PreAuthorize("permitAll()")
 	@GetMapping("/getall")
 	public ResponseEntity<List<RoomDTO>> getAllRooms() {
         List<RoomDTO> rooms = roomService.getAllRooms();

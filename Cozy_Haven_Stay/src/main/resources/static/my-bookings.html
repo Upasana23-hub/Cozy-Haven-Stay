@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cozy Haven Stay | My Bookings</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            background: #fff9fb;
+        }
+
+        /* ── Top Navbar ── */
+        .top-nav {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1.5px solid #f5e0ee;
+            padding: 10px 0;
+            box-shadow: 0 2px 16px rgba(233, 30, 140, 0.07);
+        }
+
+        /* ── Booking Card (used when coming from rooms.html) ── */
+        .booking-card {
+            background: #fff;
+            border-radius: 18px;
+            border: 1px solid #f5e0ee;
+            padding: 36px;
+            max-width: 520px;
+            margin: 40px auto;
+            box-shadow: 0 8px 32px rgba(233, 30, 140, 0.09);
+        }
+
+        .booking-title {
+            font-weight: 800;
+            color: var(--pink);
+            margin-bottom: 8px;
+        }
+
+        /* ── Booking Success Banner ── */
+        #bookingSuccess {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 10px;
+            padding: 14px 20px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        /* ── My Bookings List (when no room selected - shows all user bookings) ── */
+        .bookings-section {
+            padding: 40px 0;
+        }
+
+        .booking-row {
+            background: #fff;
+            border: 1px solid #f5e0ee;
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            transition: box-shadow .2s;
+        }
+
+        .booking-row:hover {
+            box-shadow: 0 4px 18px rgba(233, 30, 140, 0.10);
+        }
+
+        .booking-info h6 {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .booking-info p {
+            font-size: .85rem;
+            color: #888;
+            margin: 0;
+        }
+
+        .bstatus {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 99px;
+            font-size: .78rem;
+            font-weight: 700;
+        }
+
+        .CONFIRMED {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .CANCELLED {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .PENDING {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .cancel-btn {
+            background: none;
+            border: 1.5px solid #e91e8c;
+            color: #e91e8c;
+            border-radius: 99px;
+            padding: 5px 18px;
+            font-size: .82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .cancel-btn:hover {
+            background: #e91e8c;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="top-nav navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html" style="text-decoration:none;">
+                <img src="images/cozy.png" style="height:40px;" alt="logo" />
+                <span style="font-weight:800; color:#222; font-size:1rem;">Cozy Haven Stay</span>
+            </a>
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <a href="hotels.html" class="btn btn-sm rounded-pill px-3"
+                    style="border:1.5px solid var(--pink); color:var(--pink); font-weight:600;">Explore</a>
+                <a href="user-dashboard.html" class="btn btn-pink btn-sm rounded-pill px-3 fw-bold">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ════ BOOKING FORM (when coming from rooms.html with roomId/room params) ════ -->
+    <div id="bookingFormSection" style="display:none;">
+        <div class="booking-card">
+            <div id="bookingSuccess">
+                <i class="fa fa-check-circle me-2"></i> Booking Confirmed! Redirecting...
+            </div>
+            <h4 class="booking-title" id="roomName"></h4>
+            <p><strong>Bed Type:</strong> <span id="bedType"></span></p>
+            <p><strong>Price:</strong> ₹<span id="roomPrice"></span> / night</p>
+            <hr style="border-color:#f5e0ee;" />
+            <form id="bookingForm">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Check-in Date</label>
+                    <input type="date" id="checkIn" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Check-out Date</label>
+                    <input type="date" id="checkOut" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-pink w-100 rounded-pill py-3 fw-bold" style="font-size:1.05rem;">
+                    <i class="fa fa-check me-2"></i> Confirm Booking
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ════ MY BOOKINGS LIST (when no room selected) ════ -->
+    <div id="myBookingsSection" style="display:none;" class="bookings-section">
+        <div class="container">
+            <h4 class="fw-bold mb-1">My Bookings</h4>
+            <p class="text-muted mb-4" style="font-size:.9rem;">All your current and past bookings</p>
+            <div id="bookingsList">
+                <div class="text-center py-5">
+                    <div class="spinner-border" style="color:var(--pink);"></div>
+                    <p class="mt-2 text-muted">Loading bookings...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = JSON.parse(sessionStorage.getItem('user') || 'null');
+            if (!user) {
+                sessionStorage.setItem('redirectAfterLogin', window.location.href);
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const hasRoom = params.get('roomId') || params.get('room');
+
+            if (hasRoom) {
+                // Show booking form
+                document.getElementById('bookingFormSection').style.display = 'block';
+            } else {
+                // Show list of user's bookings
+                document.getElementById('myBookingsSection').style.display = 'block';
+                await loadMyBookings(user);
+            }
+        });
+
+        async function loadMyBookings(user) {
+            const list = document.getElementById('bookingsList');
+            try {
+                const userId = user.userId ?? user.id;
+                const res = await fetch(`http://localhost:8080/api/users/${userId}`, { credentials: 'include' });
+                const userData = await res.json();
+                const bookings = userData.bookings ?? [];
+
+                if (bookings.length === 0) {
+                    list.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fa fa-calendar-times" style="font-size:3rem; color:#f5e0ee;"></i>
+                        <p class="mt-3 text-muted">No bookings yet. <a href="hotels.html" style="color:var(--pink);">Explore hotels</a></p>
+                    </div>`;
+                    return;
+                }
+
+                list.innerHTML = bookings.map(b => `
+                <div class="booking-row">
+                    <div class="booking-info">
+                        <h6>Booking #${b.bookingId ?? b.id}</h6>
+                        <p>Room ID: ${b.roomId ?? '-'} &nbsp;|&nbsp;
+                           Check-in: ${b.checkInDate ?? '-'} &nbsp;|&nbsp;
+                           Check-out: ${b.checkOutDate ?? '-'}
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="bstatus ${b.bookingStatus ?? 'PENDING'}">${b.bookingStatus ?? 'PENDING'}</span>
+                        ${b.bookingStatus !== 'CANCELLED' ? `
+                            <button class="cancel-btn" onclick="cancelMyBooking(${b.bookingId ?? b.id})">
+                                Cancel
+                            </button>` : ''}
+                    </div>
+                </div>`).join('');
+
+            } catch (err) {
+                list.innerHTML = '<div class="text-center text-danger py-4">Failed to load bookings.</div>';
+                console.error(err);
+            }
+        }
+
+        async function cancelMyBooking(id) {
+            if (!confirm('Cancel this booking? This cannot be undone.')) return;
+            try {
+                const res = await fetch(`http://localhost:8080/api/bookings/cancel/${id}`, {
+                    method: 'DELETE', credentials: 'include'
+                });
+                if (!res.ok) throw new Error('Cancel failed');
+                alert('Booking cancelled.');
+                window.location.reload();
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
