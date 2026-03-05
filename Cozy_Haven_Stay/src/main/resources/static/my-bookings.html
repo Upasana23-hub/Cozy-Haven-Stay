@@ -222,6 +222,15 @@
         // CONSOLIDATED BOOKING LOGIC (my-bookings.html)
         // ============================================================
 
+        // 1. Immediate Auth Check (Prevents split-second render if logged out)
+        const user = JSON.parse(sessionStorage.getItem('user') || 'null');
+        if (!user) {
+            sessionStorage.setItem('redirectAfterLogin', window.location.href);
+            window.location.href = 'login.html';
+            // Stop further script execution
+            throw new Error('Not logged in. Redirecting to login.html');
+        }
+
         const BOOK_API = 'http://localhost:8080/api';
         const urlParams = new URLSearchParams(window.location.search);
         const bookRoomId = urlParams.get('roomId');
@@ -230,14 +239,6 @@
         const bookRoomPrice = urlParams.get('price');
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Auth check
-            const user = JSON.parse(sessionStorage.getItem('user') || 'null');
-            if (!user) {
-                sessionStorage.setItem('redirectAfterLogin', window.location.href);
-                window.location.href = 'login.html';
-                return;
-            }
-
             // 2. Decide View: Booking Form OR Bookings List
             const hasRoom = bookRoomId || bookRoomName;
 
@@ -319,7 +320,7 @@
                 const timeDiff = dateOut.getTime() - dateIn.getTime();
                 const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
                 const pricePerNight = parseFloat(document.getElementById('roomPrice')?.innerText || bookRoomPrice || '0');
-                const totalAmount = (nights * noOfRooms * pricePerNight) || 1; 
+                const totalAmount = (nights * noOfRooms * pricePerNight) || 1;
 
                 const paymentStatus = paymentMethod === 'PAY_AT_HOTEL' ? 'PENDING' : 'PAID';
 

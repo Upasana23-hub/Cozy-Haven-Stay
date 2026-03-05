@@ -84,6 +84,7 @@ public class BookingServiceImpl implements BookingService {
             dto.setCheckOut(booking.getCheckOut());
             dto.setPaymentStatus(booking.getPaymentStatus());
             dto.setTotalAmount(booking.getTotalAmount());
+            dto.setBookingStatus(booking.getBookingStatus()); 
 
             bookingDTOs.add(dto);
         }
