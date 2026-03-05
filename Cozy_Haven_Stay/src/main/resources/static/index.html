@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cozy Haven Stay</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg sticky-top" style="
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1.5px solid #f5e0ee;
+      padding: 10px 0;
+      box-shadow: 0 2px 16px rgba(233,30,140,0.07);
+  ">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html" style="text-decoration:none;">
+        <img src="images/cozy.png" alt="Cozy Haven Stay" style="height:42px;" />
+        <span style="font-weight:800; font-size:1.1rem; color:#222;">Cozy Haven Stay</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ms-auto align-items-center" style="gap:6px;">
+          <li class="nav-item">
+            <a class="nav-link px-3 py-2 rounded-pill" href="hotels.html"
+              style="color:#333; font-weight:600; font-size:0.95rem; transition:all 0.2s;"
+              onmouseover="this.style.color='var(--pink)'; this.style.background='#fce7f3';"
+              onmouseout="this.style.color='#333'; this.style.background='transparent';">Explore</a>
+          </li>
+          <li class="nav-item" id="navBookings" style="display:none;">
+            <a class="nav-link px-3 py-2 rounded-pill" href="my-bookings.html"
+              style="color:#333; font-weight:600; font-size:0.95rem; transition:all 0.2s;"
+              onmouseover="this.style.color='var(--pink)'; this.style.background='#fce7f3';"
+              onmouseout="this.style.color='#333'; this.style.background='transparent';">My Bookings</a>
+          </li>
+          <!-- Visual divider -->
+          <li class="nav-item d-none d-lg-block">
+            <div style="width:1.5px; height:28px; background:#f0d0e8; margin:0 10px;"></div>
+          </li>
+          <li class="nav-item" id="navGuest">
+            <a href="login.html" class="btn btn-sm rounded-pill px-4 fw-bold"
+              style="border:2px solid var(--pink); color:var(--pink); background:transparent; font-size:0.88rem; transition:all 0.2s; line-height:1.6;"
+              onmouseover="this.style.background='var(--pink)'; this.style.color='#fff';"
+              onmouseout="this.style.background='transparent'; this.style.color='var(--pink)';">Sign In</a>
+          </li>
+          <li class="nav-item" id="navGuest2">
+            <a href="register.html" class="btn btn-sm rounded-pill px-4 fw-bold"
+              style="background:var(--pink); color:#fff; font-size:0.88rem; border:2px solid var(--pink); transition:all 0.2s; line-height:1.6; box-shadow:0 3px 12px rgba(233,30,140,0.25);"
+              onmouseover="this.style.opacity='0.88'; this.style.transform='translateY(-1px)';"
+              onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)';">Register</a>
+          </li>
+          <li class="nav-item dropdown" id="navUser" style="display:none;">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 px-2" href="#" data-bs-toggle="dropdown"
+              style="color:#333; font-weight:600; font-size:0.95rem;">
+              <span
+                style="width:34px; height:34px; border-radius:50%; background:var(--blush); display:flex; align-items:center; justify-content:center;">
+                <i class="fa fa-user" style="color:var(--pink); font-size:0.9rem;"></i>
+              </span>
+              <span id="navUserName"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2" style="min-width:190px;">
+              <li><a class="dropdown-item rounded-2 py-2 px-3" href="#" id="dashLinkDrop">
+                  <i class="fa fa-th-large me-2" style="color:var(--pink);"></i>Dashboard</a></li>
+              <li><a class="dropdown-item rounded-2 py-2 px-3" href="my-bookings.html">
+                  <i class="fa fa-calendar me-2" style="color:var(--pink);"></i>My Bookings</a></li>
+              <li>
+                <hr class="dropdown-divider my-1" />
+              </li>
+              <li><a class="dropdown-item rounded-2 py-2 px-3 text-danger" href="#" id="logoutBtn">
+                  <i class="fa fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero"
+    style="background: linear-gradient(135deg, rgba(233,30,140,0.5) 0%, rgba(192,132,252,0.6) 100%), url('https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; padding: 100px 0 120px;">
+    <div class="container">
+      <h1 class="display-3 fw-bolder mb-3" style="text-shadow: 2px 4px 8px rgba(0,0,0,0.4); letter-spacing: -0.5px;">
+        Welcome to <span
+          style="background: linear-gradient(120deg, #ffe4e6, #fbcfe8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-style: italic;">Cozy
+          Haven Stay</span></h1>
+      <p class="lead mb-5 fs-4" style="text-shadow: 1px 2px 4px rgba(0,0,0,0.4); font-weight: 500;">Find Your Perfect
+        Villas &amp; Homestays — Handpicked for You</p>
+      <div class="search-box">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-4">
+            <label class="search-label">Destination</label>
+            <input type="text" id="sLoc" class="form-control" placeholder="City or property name" />
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="search-label">Check-in</label>
+            <input type="date" id="sCI" class="form-control" />
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="search-label">Check-out</label>
+            <input type="date" id="sCO" class="form-control" />
+          </div>
+          <div class="col-6 col-md-2">
+            <label class="search-label">Guests</label>
+            <select id="sGuests" class="form-select">
+              <option value="1">1 Guest</option>
+              <option value="2">2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4+ Guests</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <button class="btn btn-pink w-100" onclick="doSearch()"><i class="fa fa-search me-1"></i>Search</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESTINATIONS -->
+  <section class="py-5" style="background:#fdf2f8">
+    <div class="container">
+      <h2 class="section-title center text-center mb-1">Popular Destinations</h2>
+      <p class="text-center text-muted mb-4" style="font-size:.9rem">Top locations loved by our guests</p>
+      <div class="row g-3">
+        <div class="col-6 col-md-3"><a href="hotels.html?location=Bali">
+            <div class="dest-wrap"><img src="images/one.png" alt="Bali">
+              <div class="dest-overlay"><span>Bali</span></div>
+            </div>
+          </a></div>
+        <div class="col-6 col-md-3"><a href="hotels.html?location=Yogyakarta">
+            <div class="dest-wrap"><img src="images/two.png" alt="Yogyakarta">
+              <div class="dest-overlay"><span>Yogyakarta</span></div>
+            </div>
+          </a></div>
+        <div class="col-6 col-md-3"><a href="hotels.html?location=Bandung">
+            <div class="dest-wrap"><img src="images/three.png" alt="Bandung">
+              <div class="dest-overlay"><span>Bandung</span></div>
+            </div>
+          </a></div>
+        <div class="col-6 col-md-3"><a href="hotels.html?location=Lombok">
+            <div class="dest-wrap"><img src="images/Four.png" alt="Sikkim">
+              <div class="dest-overlay"><span>Sikkim</span></div>
+            </div>
+          </a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-title center text-center mb-1">Featured Properties</h2>
+      <p class="text-center text-muted mb-4" style="font-size:.9rem">Curated stays just for you</p>
+      <div class="row g-3" id="featured">
+        <div class="col-12 text-center py-4">
+          <div class="spinner-border" style="color:var(--pink)"></div>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <a href="hotels.html" class="btn btn-outline-pink">View All Properties</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="py-5" style="background:#fdf2f8">
+    <div class="container">
+      <h2 class="section-title center text-center mb-4">Why Choose Us?</h2>
+      <div class="row g-3 text-center">
+        <div class="col-6 col-md-3">
+          <div class="why-card">
+            <div class="why-icon"><i class="fa fa-shield-alt"></i></div>
+            <h6>Verified Stays</h6>
+            <p>Every listing is reviewed for quality.</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="why-card">
+            <div class="why-icon"><i class="fa fa-tag"></i></div>
+            <h6>Best Price</h6>
+            <p>We guarantee the best rates.</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="why-card">
+            <div class="why-icon"><i class="fa fa-headset"></i></div>
+            <h6>24/7 Support</h6>
+            <p>Always here to help you.</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="why-card">
+            <div class="why-icon"><i class="fa fa-star"></i></div>
+            <h6>Top Rated</h6>
+            <p>Real reviews from real guests.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <img src="images/cozy.png" height="40" alt="logo" class="mb-2" />
+          <p style="font-size:.85rem;color:#a08898">Your home away from home. Villas and homestays across beautiful
+            destinations.</p>
+        </div>
+        <div class="col-6 col-md-2">
+          <h6>Explore</h6>
+          <ul class="footer-links">
+            <li><a href="hotels.html">All Properties</a></li>
+            <li><a href="hotels.html?type=VILLA">Villas</a></li>
+            <li><a href="hotels.html?type=HOMESTAY">Homestays</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-2">
+          <h6>Account</h6>
+          <ul class="footer-links">
+            <li><a href="login.html">Sign In</a></li>
+            <li><a href="register.html">Register</a></li>
+            <li><a href="my-bookings.html">My Bookings</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h6>Follow Us</h6>
+          <div class="social-icons mb-2">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-tiktok"></i></a>
+          </div>
+          <p style="font-size:.82rem;color:#a08898">support@cozyhavenstay.com</p>
+        </div>
+      </div>
+      <hr />
+      <p class="text-center mb-0" style="font-size:.82rem;color:#a08898">&copy; 2025 Cozy Haven Stay. All rights
+        reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      initNavbar();
+      const today = new Date(), tom = new Date(); tom.setDate(today.getDate() + 1);
+      document.getElementById('sCI').value = today.toISOString().split('T')[0];
+      document.getElementById('sCO').value = tom.toISOString().split('T')[0];
+      loadFeatured();
+    });
+    async function doSearch() {
+      const p = new URLSearchParams();
+      const loc = document.getElementById('sLoc').value.trim();
+      if (loc) {
+        p.set('location', loc);
+        try {
+          // Pre-validate: call search API so hotels.html already has results
+          const data = await API.get(`/hotels/search/${loc}`);
+          console.log('Search results:', data);
+        } catch (err) {
+          console.error('Search API error:', err);
+        }
+      }
+      p.set('checkIn', document.getElementById('sCI').value);
+      p.set('checkOut', document.getElementById('sCO').value);
+      p.set('guests', document.getElementById('sGuests').value);
+      window.location.href = 'hotels.html?' + p;
+    }
+    async function loadFeatured() {
+      const box = document.getElementById('featured');
+      try {
+        const res = await fetch('http://localhost:8080/api/hotels/getall', { credentials: 'include' });
+        if (!res.ok) throw new Error('Server error ' + res.status);
+        let hotels = await res.json();
+        if (!Array.isArray(hotels)) hotels = hotels.content || hotels.hotels || [];
+        const list = hotels.slice(0, 4);
+        box.innerHTML = list.length
+          ? list.map(h => hotelCard(h)).join('')
+          : '<p class="text-muted text-center col-12">No properties found.</p>';
+      } catch (e) {
+        console.error('Featured fetch error:', e);
+        box.innerHTML = '<p class="text-muted text-center col-12">Unable to load properties. Make sure the backend is running.</p>';
+      }
+    }
+
+    function hotelCard(h) {
+      return `
+        <div class="col-md-6 col-lg-3">
+          <div style="background:white; border-radius:14px; border:1px solid #f5e0ee; overflow:hidden; height:100%; display:flex; flex-direction:column; box-shadow:0 2px 10px rgba(233,30,140,0.06); transition:box-shadow 0.2s;">
+            <div style="height:160px; overflow:hidden;">
+              <img src="${h.image || 'images/one.png'}" alt="${h.name}" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div class="p-3 d-flex flex-column" style="flex:1;">
+              <div class="d-flex justify-content-between align-items-start mb-1">
+                <h6 class="fw-bold m-0" style="color:#333;font-size:1rem;">${h.name}</h6>
+                <span style="color:#f59e0b;font-size:0.85rem;"><i class="fa fa-star"></i> ${h.rating || '4.5'}</span>
+              </div>
+              <p class="text-muted mb-1" style="font-size:0.82rem;"><i class="fa fa-map-marker-alt me-1" style="color:var(--pink);"></i>${h.location || ''}</p>
+              <p class="text-secondary mb-3" style="font-size:0.85rem;flex:1;">${(h.description || '').substring(0, 70)}${(h.description || '').length > 70 ? '...' : ''}</p>
+              <a href="rooms.html?hotelId=${h.hotelId}" class="btn btn-pink btn-sm rounded-pill fw-bold">View Rooms</a>
+            </div>
+          </div>
+        </div>`;
+    }
+  </script>
+</body>
+
+</html>

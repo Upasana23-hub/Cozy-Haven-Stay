@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Rooms - Cozy Haven Stay</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            background: #fffafc;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--pink) 0%, #c084fc 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .room-card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #f5e0ee;
+            overflow: hidden;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .room-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(233, 30, 140, 0.12);
+        }
+
+        .room-img-wrapper {
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .room-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .room-price-tag {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-weight: 800;
+            color: var(--pink);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .room-features span {
+            font-size: 0.82rem;
+            color: #777;
+            background: #fdf2f8;
+            padding: 4px 10px;
+            border-radius: 99px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm"
+        style="background: rgba(255,255,255,0.97); backdrop-filter: blur(12px); border-bottom: 1.5px solid #f5e0ee;">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="images/cozy.png" alt="Cozy Haven Stay" style="height:40px;" />
+                <span style="font-weight:800; color:#222; font-size:1rem;">Cozy Haven Stay</span>
+            </a>
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <a href="hotels.html" class="btn btn-outline-pink btn-sm rounded-pill px-3 fw-bold">
+                    <i class="fa fa-arrow-left me-1"></i>Back to Hotels
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="fw-800 mb-2">Select Your Room</h1>
+            <p class="mb-0 opacity-90">Tailored comfort for your perfect stay</p>
+        </div>
+    </section>
+
+    <!-- ROOMS LIST -->
+    <div class="container py-5">
+        <div class="row g-4" id="roomsList">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border" style="color: var(--pink)"></div>
+                <p class="mt-2 text-muted">Fetching available rooms...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer style="background: #1a0a24; color: #cbb; padding: 40px 0; margin-top: 40px;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <img src="images/cozy.png" height="40" alt="logo" class="mb-2" />
+                    <p style="font-size:.85rem;color:#a08898;">Your home away from home. Villas and homestays across beautiful destinations.</p>
+                </div>
+                <div class="col-6 col-md-2">
+                    <h6 style="color:#fff;">Explore</h6>
+                    <ul class="footer-links">
+                        <li><a href="hotels.html">All Properties</a></li>
+                        <li><a href="hotels.html?type=VILLA">Villas</a></li>
+                        <li><a href="hotels.html?type=HOMESTAY">Homestays</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-2">
+                    <h6 style="color:#fff;">Account</h6>
+                    <ul class="footer-links">
+                        <li><a href="login.html">Sign In</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="my-bookings.html">My Bookings</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 style="color:#fff;">Follow Us</h6>
+                    <div class="social-icons mb-2">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                    <p style="font-size:.82rem;color:#a08898;">support@cozyhavenstay.com</p>
+                </div>
+            </div>
+            <hr style="border-color:#3a1a3a;" />
+            <p class="text-center mb-0" style="font-size:.82rem;color:#a08898;">&copy; 2026 Cozy Haven Stay. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRooms();
+        });
+
+        async function loadRooms() {
+            const container = document.getElementById('roomsList');
+            try {
+                const res = await fetch('http://localhost:8080/api/rooms/getall', { credentials: 'include' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const rooms = await res.json();
+
+                if (!rooms || rooms.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="fa fa-bed mb-3" style="font-size:3rem; color:#f5e0ee;"></i>
+                            <h5 class="text-muted">No rooms available in the database.</h5>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = rooms.map(room => `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="room-card">
+                            <div class="room-img-wrapper">
+                                <img src="${room.image || 'images/room.png'}" alt="Room" />
+                                <div class="room-price-tag">₹${room.baseFare || room.price} / night</div>
+                            </div>
+                            <div class="p-4 d-flex flex-column h-100">
+                                <h5 class="fw-bold mb-2">${room.roomSize || room.roomType || 'Standard Room'}</h5>
+                                <div class="room-features mb-3">
+                                    <span><i class="fa fa-bed me-1"></i> ${room.bedType || 'Double Bed'}</span>
+                                    <span><i class="fa fa-users me-1"></i> Max ${room.capacity || room.maxOccupancy || '2'}</span>
+                                    <span><i class="fa fa-wifi me-1"></i> Free WiFi</span>
+                                    <span><i class="fa fa-snowflake me-1"></i> AC</span>
+                                </div>
+                                <p class="text-secondary small mb-4">Spacious and well-appointed room with all modern amenities for a comfortable stay.</p>
+                                <div class="mt-auto">
+                                    <a href="my-bookings.html?roomId=${room.roomId || room.id}&room=${encodeURIComponent(room.roomSize || room.roomType)}&bed=${encodeURIComponent(room.bedType)}&price=${room.baseFare || room.price}" 
+                                       class="btn btn-pink w-100 rounded-pill py-2 fw-bold shadow-sm">
+                                       Book Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error('Error fetching rooms:', err);
+                container.innerHTML = '<div class="col-12 text-center text-danger py-5">Failed to load rooms. Check your backend/server.</div>';
+            }
+        }
+    </script>
+</body>
+
+</html>

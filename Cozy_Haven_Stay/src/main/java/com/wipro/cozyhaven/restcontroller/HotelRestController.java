@@ -123,7 +123,7 @@ public class HotelRestController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("permitAll()")
     @GetMapping("/search/{location}")
     public ResponseEntity<List<Hotel>> searchHotelsByLocation(@PathVariable String location) {
         return ResponseEntity.ok(hotelService.searchHotelsByLocation(location));

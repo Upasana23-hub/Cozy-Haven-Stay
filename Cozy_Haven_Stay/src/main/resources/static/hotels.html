@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hotels - Cozy Haven Stay</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/hotels.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top" style="
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(12px);
+        border-bottom: 1.5px solid #f5e0ee;
+        padding: 10px 0;
+        box-shadow: 0 2px 16px rgba(233,30,140,0.07);
+    ">
+        <div class="container">
+
+            <!-- Brand / Logo -->
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html" style="text-decoration:none;">
+                <img src="images/cozy.png" alt="Cozy Haven Stay" style="height:42px;" />
+                <span style="font-weight:800; font-size:1.1rem; color:#222;">Cozy Haven Stay</span>
+            </a>
+
+            <!-- Mobile toggler -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#hotelNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Nav items -->
+            <div class="collapse navbar-collapse" id="hotelNav">
+                <ul class="navbar-nav ms-auto align-items-center" style="gap: 6px;">
+
+                    <!-- Explore link -->
+                    <li class="nav-item">
+                        <a class="nav-link fw-600 px-3 py-2 rounded-pill" href="hotels.html"
+                            style="color:#333; font-weight:600; font-size:0.95rem; transition:all 0.2s;"
+                            onmouseover="this.style.color='var(--pink)'; this.style.background='#fce7f3';"
+                            onmouseout="this.style.color='#333'; this.style.background='transparent';">
+                            Explore
+                        </a>
+                    </li>
+
+                    <!-- My Bookings (shown when logged in as USER) -->
+                    <li class="nav-item" id="navBookings" style="display:none;">
+                        <a class="nav-link fw-600 px-3 py-2 rounded-pill" href="my-bookings.html"
+                            style="color:#333; font-weight:600; font-size:0.95rem; transition:all 0.2s;"
+                            onmouseover="this.style.color='var(--pink)'; this.style.background='#fce7f3';"
+                            onmouseout="this.style.color='#333'; this.style.background='transparent';">
+                            My Bookings
+                        </a>
+                    </li>
+
+                    <!-- Divider line between links and buttons -->
+                    <li class="nav-item d-none d-lg-block" id="navGuestDivider">
+                        <div style="width:1.5px; height:28px; background:#f0d0e8; margin: 0 10px;"></div>
+                    </li>
+
+                    <!-- Sign In button (guest) -->
+                    <li class="nav-item" id="navGuest">
+                        <a href="login.html" class="btn btn-sm rounded-pill px-4 fw-bold" style="
+                               border: 2px solid var(--pink);
+                               color: var(--pink);
+                               background: transparent;
+                               font-size: 0.88rem;
+                               transition: all 0.2s;
+                               line-height: 1.6;
+                           " onmouseover="this.style.background='var(--pink)'; this.style.color='#fff';"
+                            onmouseout="this.style.background='transparent'; this.style.color='var(--pink)';">
+                            Sign In
+                        </a>
+                    </li>
+
+                    <!-- Register button (guest) -->
+                    <li class="nav-item" id="navGuest2">
+                        <a href="register.html" class="btn btn-sm rounded-pill px-4 fw-bold" style="
+                               background: var(--pink);
+                               color: #fff;
+                               font-size: 0.88rem;
+                               border: 2px solid var(--pink);
+                               transition: all 0.2s;
+                               line-height: 1.6;
+                               box-shadow: 0 3px 12px rgba(233,30,140,0.25);
+                           " onmouseover="this.style.opacity='0.88'; this.style.transform='translateY(-1px)';"
+                            onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)';">
+                            Register
+                        </a>
+                    </li>
+
+                    <!-- User dropdown (shown when logged in) -->
+                    <li class="nav-item dropdown" id="navUser" style="display:none;">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 px-2" href="#"
+                            data-bs-toggle="dropdown" style="color:#333; font-weight:600; font-size:0.95rem;">
+                            <span
+                                style="width:34px; height:34px; border-radius:50%; background:var(--blush); display:flex; align-items:center; justify-content:center;">
+                                <i class="fa fa-user" style="color:var(--pink); font-size:0.9rem;"></i>
+                            </span>
+                            <span id="navUserName"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2"
+                            style="min-width:190px;">
+                            <li><a class="dropdown-item rounded-2 py-2 px-3" href="#" id="dashLinkDrop">
+                                    <i class="fa fa-th-large me-2" style="color:var(--pink);"></i>Dashboard
+                                </a></li>
+                            <li><a class="dropdown-item rounded-2 py-2 px-3" href="my-bookings.html">
+                                    <i class="fa fa-calendar me-2" style="color:var(--pink);"></i>My Bookings
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider my-1" />
+                            </li>
+                            <li><a class="dropdown-item rounded-2 py-2 px-3 text-danger" href="#" id="logoutBtn">
+                                    <i class="fa fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- PAGE HEADER -->
+    <section class="page-header" style="background: var(--pink); color: white; padding: 30px 0; text-align: center;">
+        <div class="container">
+            <h1 style="font-weight: 800; margin-bottom: 5px;">Our Hotels</h1>
+            <p style="font-size: 0.95rem; margin: 0; opacity: 0.9;">Discover amazing stays</p>
+        </div>
+    </section>
+
+    <!-- HOTELS LIST -->
+    <div class="container mt-4 pb-5">
+        <div class="d-flex flex-column gap-4" id="hotelsList">
+            <div class="text-center loading-state py-5">
+                <div class="spinner-border" style="color: var(--pink)"></div>
+                <p class="mt-2 text-muted">Loading hotels...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer mt-5" style="background: #1a0a24; color: #cbb; padding: 40px 0;">
+        <div class="container text-center">
+            <h6 style="color: white;">Cozy Haven Stay</h6>
+            <p style="font-size: 0.85rem; margin-bottom: 0;">&copy; 2026. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/user.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            initNavbar();
+            await loadHotels();
+        });
+
+        async function loadHotels() {
+            const container = document.getElementById('hotelsList');
+            const params = new URLSearchParams(window.location.search);
+            const locationQ = params.get('location');
+            const type = params.get('type');
+
+            try {
+                let url = 'http://localhost:8080/api/hotels/getall';
+                if (locationQ) {
+                    url = `http://localhost:8080/api/hotels/search/${locationQ}`;
+                }
+
+                const resp = await fetch(url, { credentials: 'include' });
+                let hotels = await resp.json();
+
+                // Simple frontend filter for type (if URL has ?type=VILLA) since your backend only has search by location
+                if (type && Array.isArray(hotels)) {
+                    // Let's assume description has word VILLA or HOMESTAY or perhaps name has it
+                    const lowerType = type.toLowerCase();
+                    hotels = hotels.filter(h =>
+                        (h.name && h.name.toLowerCase().includes(lowerType)) ||
+                        (h.description && h.description.toLowerCase().includes(lowerType))
+                    );
+                }
+
+                if (!hotels || hotels.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-center text-muted py-5">No hotels found matching your criteria.</div>';
+                    return;
+                }
+
+                container.innerHTML = hotels.map(hotel => `
+          <div style="
+            display: flex;
+            flex-direction: row;
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #f5e0ee;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(233,30,140,0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+          " onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 32px rgba(233,30,140,0.13)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 2px 10px rgba(233,30,140,0.06)';">
+
+            <!-- Image -->
+            <div style="
+              width: 260px;
+              min-width: 220px;
+              max-width: 260px;
+              flex-shrink: 0;
+              position: relative;
+              overflow: hidden;
+            ">
+              <img src="${hotel.image || 'images/one.png'}" alt="${hotel.name}"
+                style="width:100%; height:100%; object-fit:cover; display:block;">
+              <div style="
+                position:absolute; bottom:12px; left:12px;
+                background:rgba(255,255,255,0.95);
+                padding:4px 12px; border-radius:99px;
+                font-weight:800; color:var(--pink);
+                font-size:0.82rem;
+                box-shadow:0 3px 8px rgba(0,0,0,0.1);
+              ">
+                <i class="fa fa-star me-1" style="color:#f59e0b;"></i>${hotel.rating || '4.5'}
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div style="padding:22px 28px; flex:1; display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <h5 style="font-weight:700; margin-bottom:6px; color:#222;">${hotel.name}</h5>
+                <p style="font-size:0.85rem; color:#888; margin-bottom:10px;">
+                  <i class="fa fa-map-marker-alt me-1" style="color:var(--pink);"></i>${hotel.location || ''}
+                </p>
+                <p style="font-size:0.9rem; color:#555; margin-bottom:0;">
+                  ${(hotel.description || '').substring(0, 120)}${(hotel.description || '').length > 120 ? '...' : ''}
+                </p>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:flex-end; margin-top:18px;">
+                <button class="btn btn-pink rounded-pill px-4 fw-bold"
+                  onclick="window.location.href='rooms.html?hotelId=${hotel.hotelId}'">
+                  <i class="fa fa-door-open me-1"></i>View Rooms
+                </button>
+              </div>
+            </div>
+
+          </div>
+        `).join('');
+
+            } catch (err) {
+                console.error('Error fetching hotels', err);
+                container.innerHTML = '<div class="col-12 text-center text-danger py-5">Error connecting to the server.</div>';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
