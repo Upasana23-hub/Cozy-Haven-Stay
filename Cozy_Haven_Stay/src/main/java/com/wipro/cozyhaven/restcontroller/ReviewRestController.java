@@ -33,7 +33,7 @@ public class ReviewRestController {
         return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
     }
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
+	
 	@GetMapping("/hotel/{hotelId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByHotel(@PathVariable Long hotelId) {
         List<ReviewDTO> reviews = reviewService.getReviewsByHotel(hotelId);
