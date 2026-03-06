@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Cozy Haven Stay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .booking-card {
+            background: #fff;
+            border: 1px solid #f5e0ee;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            transition: box-shadow 0.2s;
+        }
+
+        .booking-card:hover {
+            box-shadow: 0 4px 18px rgba(233, 30, 140, 0.10);
+        }
+
+        .booking-id {
+            font-size: 0.82rem;
+            background: #fdf2f8;
+            color: var(--pink);
+            padding: 3px 12px;
+            border-radius: 99px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .booking-date {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .status-badge {
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 99px;
+        }
+
+        .status-booked {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #fdecea;
+            color: #c62828;
+        }
+
+        .status-pending {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .payment-paid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .payment-pending {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .no-bookings {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+        }
+
+        .no-bookings i {
+            font-size: 3rem;
+            color: #f5e0ee;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .info-label {
+            font-size: 0.78rem;
+            color: #aaa;
+            margin-bottom: 2px;
+        }
+
+        .info-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+
+            <!-- SIDEBAR -->
+            <div class="col-md-3">
+                <div class="dash-sidebar text-center">
+                    <div class="mb-4">
+                        <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
+                            style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
+                        <h6 id="sidebarUserName">Loading...</h6>
+                        <small style="color:#888;" id="sidebarUserRole">User</small>
+                    </div>
+                    <hr>
+                    <div class="dash-nav">
+                        <a href="user-dashboard.html"><i class="fa fa-home"></i> Dashboard</a>
+                        <a href="hotels.html"><i class="fa fa-hotel"></i> Search Hotels</a>
+                        <a href="booking-user.html" class="active"><i class="fa fa-calendar"></i> My Bookings</a>
+                        <a href="my-reviews.html"><i class="fa fa-star"></i> Reviews</a>
+                        <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
+                        <a href="#" id="sidebarLogout"><i class="fa fa-sign-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div class="col-md-9">
+                <div class="welcome-bar mb-4">
+                    <h5>My Bookings</h5>
+                    <p>All your hotel reservations at Cozy Haven Stay</p>
+                </div>
+
+                <!-- Bookings count badge -->
+                <div class="mb-3">
+                    <span class="badge rounded-pill px-3 py-2"
+                        style="background:#fdf2f8; color:var(--pink); font-size:0.85rem; font-weight:600;">
+                        <i class="fa fa-calendar me-1"></i>
+                        <span id="bookingCount">0</span> Booking(s)
+                    </span>
+                </div>
+
+                <!-- Bookings List -->
+                <div id="bookingsList">
+                    <div class="text-center py-5">
+                        <div class="spinner-border" style="color:var(--pink);"></div>
+                        <p class="mt-2 text-muted">Loading your bookings...</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8080/api';
+
+        function getAuthHeaders() {
+            const email = sessionStorage.getItem('userEmail');
+            const password = sessionStorage.getItem('userPassword');
+            if (!email || !password) return {};
+            return {
+                'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const role = sessionStorage.getItem('userRole');
+            const email = sessionStorage.getItem('userEmail');
+
+            if (!role || role !== 'USER') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('sidebarUserName').innerText = email;
+
+            document.getElementById('sidebarLogout').addEventListener('click', () => {
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            });
+
+            // Get userId — use stored value or fetch from email
+            let userId = sessionStorage.getItem('userId');
+            if (!userId) {
+                const userRes = await fetch(
+                    `${BASE_URL}/users/email/${encodeURIComponent(email)}`,
+                    { credentials: 'include', headers: getAuthHeaders() }
+                );
+                if (!userRes.ok) {
+                    document.getElementById('bookingsList').innerHTML =
+                        `<div class="text-center text-danger py-5">Could not resolve user. Please log in again.</div>`;
+                    return;
+                }
+                const userData = await userRes.json();
+                userId = userData.userId ?? userData.user_id ?? userData.id;
+                sessionStorage.setItem('userId', userId);
+            }
+
+            await loadBookings(userId);
+        });
+
+        async function loadBookings(userId) {
+            const container = document.getElementById('bookingsList');
+
+            try {
+                const res = await fetch(`${BASE_URL}/bookings/user/${userId}`, {
+                    credentials: 'include',
+                    headers: getAuthHeaders()
+                });
+
+                if (!res.ok) throw new Error('Could not fetch bookings');
+                const bookings = await res.json();
+
+                document.getElementById('bookingCount').innerText = bookings.length;
+
+                if (bookings.length === 0) {
+                    container.innerHTML = `
+          <div class="no-bookings">
+            <i class="fa fa-calendar-times"></i>
+            <h5>No bookings yet</h5>
+            <p>You haven't made any reservations yet.</p>
+            <a href="hotels.html" class="btn btn-pink rounded-pill px-4 fw-bold mt-2">Explore Hotels</a>
+          </div>`;
+                    return;
+                }
+
+                container.innerHTML = bookings.map(b => {
+                    const bookingId = b.bookingId ?? b.booking_id ?? b.id;
+                    const checkIn = b.checkIn ?? b.check_in ?? '';
+                    const checkOut = b.checkOut ?? b.check_out ?? '';
+                    const bookedAt = b.bookedAt ?? b.booked_at ?? '';
+                    const status = (b.bookingStatus ?? b.booking_status ?? 'BOOKED').toUpperCase();
+                    const paymentStatus = (b.paymentStatus ?? b.payment_status ?? 'PENDING').toUpperCase();
+                    const totalAmount = b.totalAmount ?? b.total_amount ?? 0;
+                    const adults = b.adults ?? 0;
+                    const children = b.children ?? 0;
+                    const noOfRooms = b.noOfRooms ?? b.no_of_rooms ?? 1;
+                    const hotelId = b.hotelId ?? b.hotel_id ?? '';
+
+                    const fmtDate = d => d ? new Date(d).toLocaleDateString('en-IN', {
+                        day: '2-digit', month: 'short', year: 'numeric'
+                    }) : '—';
+
+                    const statusClass = status === 'CANCELLED' ? 'status-cancelled'
+                        : status === 'PENDING' ? 'status-pending'
+                            : 'status-booked';
+                    const paymentClass = paymentStatus === 'PAID' ? 'payment-paid' : 'payment-pending';
+
+                    return `
+          <div class="booking-card">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+              <div>
+                <span class="booking-id">
+                  <i class="fa fa-hashtag me-1"></i>Booking #${bookingId}
+                </span>
+                <div class="d-flex gap-2 mt-1">
+                  <span class="status-badge ${statusClass}">${status}</span>
+                  <span class="status-badge ${paymentClass}">
+                    <i class="fa fa-credit-card me-1"></i>${paymentStatus}
+                  </span>
+                </div>
+              </div>
+              <small class="booking-date">
+                <i class="fa fa-clock me-1"></i>Booked on ${fmtDate(bookedAt)}
+              </small>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-6 col-md-3">
+                <div class="info-label"><i class="fa fa-sign-in-alt me-1"></i>Check-In</div>
+                <div class="info-value">${fmtDate(checkIn)}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="info-label"><i class="fa fa-sign-out-alt me-1"></i>Check-Out</div>
+                <div class="info-value">${fmtDate(checkOut)}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="info-label"><i class="fa fa-users me-1"></i>Guests</div>
+                <div class="info-value">${adults} Adult${adults !== 1 ? 's' : ''}${children > 0 ? `, ${children} Child${children !== 1 ? 'ren' : ''}` : ''}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="info-label"><i class="fa fa-bed me-1"></i>Rooms</div>
+                <div class="info-value">${noOfRooms} Room${noOfRooms !== 1 ? 's' : ''}</div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3"
+                 style="border-top: 1px solid #f5e0ee;">
+              <div>
+                <span class="info-label">Total Amount</span>
+                <div style="font-size:1.1rem; font-weight:700; color:var(--pink);">
+                  ₹${Number(totalAmount).toLocaleString('en-IN')}
+                </div>
+              </div>
+              ${status !== 'CANCELLED'
+                            ? `<button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                           onclick="cancelBooking(${bookingId})">
+                     <i class="fa fa-times-circle me-1"></i>Cancel
+                   </button>`
+                            : `<span class="text-muted" style="font-size:0.8rem;">Booking Cancelled</span>`
+                        }
+            </div>
+          </div>`;
+                }).join('');
+
+            } catch (err) {
+                console.error('Error loading bookings:', err);
+                container.innerHTML = `
+        <div class="text-center text-danger py-5">
+          Failed to load bookings. Check backend connection.
+        </div>`;
+            }
+        }
+
+        async function cancelBooking(bookingId) {
+            if (!confirm('Are you sure you want to cancel this booking?')) return;
+            try {
+                const res = await fetch(`${BASE_URL}/bookings/cancel/${bookingId}`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: getAuthHeaders()
+                });
+                if (!res.ok) throw new Error('Cancel failed');
+                alert('Booking cancelled successfully.');
+                await loadBookings(sessionStorage.getItem('userId'));
+            } catch (err) {
+                alert('Failed to cancel booking. Please try again.');
+            }
+        }
+    </script>
+
+</body>
+
+</html>
