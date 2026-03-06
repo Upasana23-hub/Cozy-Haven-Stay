@@ -19,4 +19,8 @@ public interface UserService {
     void cancelMyBooking(Long userId, Long bookingId);
     
     User getUserByEmail(String email);
+    
+    List<UserResponseDTO> getAllUsers();
+
+    void deleteUser(Long userId);
 }
