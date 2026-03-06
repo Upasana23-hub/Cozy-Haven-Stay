@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Bookings - Cozy Haven Stay</title>
+  <link rel="icon" type="image/png" href="images/cozy.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .bstatus {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .CONFIRMED, .BOOKED { background: #d4edda; color: #155724; }
+    .CANCELLED          { background: #f8d7da; color: #721c24; }
+    .PENDING            { background: #fff3cd; color: #856404; }
+    .BOOKED             { background: #cfe2ff; color: #084298; }
+
+    .hotel-group-header {
+      background: linear-gradient(135deg, #fdf2f8, #fff0f8);
+      border-left: 4px solid #e91e8c;
+      padding: 12px 18px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #333;
+    }
+    .no-bookings-box {
+      text-align: center;
+      padding: 50px 20px;
+      color: #aaa;
+    }
+    .no-bookings-box i {
+      font-size: 3rem;
+      color: #f5e0ee;
+      display: block;
+      margin-bottom: 14px;
+    }
+    .step-pill {
+      font-size: 0.8rem;
+      padding: 5px 14px;
+      border-radius: 99px;
+      font-weight: 600;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid mt-4">
+    <div class="row">
+
+      <!-- SIDEBAR -->
+      <div class="col-md-3">
+        <div class="dash-sidebar text-center">
+          <div class="mb-4">
+            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
+              style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
+            <h6 id="ownerName">Loading...</h6>
+            <small style="color:#888;">Owner</small>
+          </div>
+          <hr>
+          <div class="dash-nav text-start">
+            <a href="owner-dashboard.html"><i class="fa fa-home"></i> Dashboard</a>
+            <a href="add-owner-details.html"><i class="fa fa-user-plus"></i> Add Owner Details</a>
+            <a href="addhotel.html"><i class="fa fa-hotel"></i> Add Hotel</a>
+            <a href="addroom.html"><i class="fa fa-bed"></i> Add Room</a>
+            <a href="manage-rooms.html"><i class="fa fa-list"></i> Manage Rooms</a>
+            <a href="booking-owner.html" class="active"><i class="fa fa-calendar"></i> Hotel Bookings</a>
+            <a href="owner-profile.html"><i class="fa fa-user"></i> Profile</a>
+            <a href="#" id="ownerLogout"><i class="fa fa-sign-out"></i> Logout</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="col-md-9">
+
+        <div class="welcome-bar mb-4">
+          <h5>Hotel Bookings — <span id="welcomeOwner">Owner</span></h5>
+          <p>All guest bookings across your registered hotels</p>
+        </div>
+
+        <!-- Status indicator -->
+        <div id="statusPill" class="mb-3">
+          <span class="step-pill bg-warning text-dark">⏳ Loading...</span>
+        </div>
+
+        <!-- Error banner -->
+        <div id="errorBanner" class="alert alert-danger rounded-3 d-none mb-3"></div>
+
+        <!-- Summary bar -->
+        <div id="summaryBar" class="d-none d-flex align-items-center gap-3 mb-3 flex-wrap">
+          <span class="badge rounded-pill px-3 py-2"
+            style="background:#fdf2f8; color:#e91e8c; font-size:0.85rem; font-weight:600;">
+            <i class="fa fa-hotel me-1"></i><span id="hotelCount">0</span> Hotel(s)
+          </span>
+          <span class="badge rounded-pill px-3 py-2"
+            style="background:#f0f9ff; color:#0369a1; font-size:0.85rem; font-weight:600;">
+            <i class="fa fa-calendar me-1"></i><span id="bookingCount">0</span> Total Booking(s)
+          </span>
+          <select id="statusFilter" class="form-select form-select-sm rounded-pill ms-auto" style="max-width:160px;">
+            <option value="ALL">All Statuses</option>
+            <option value="BOOKED">Booked</option>
+            <option value="CONFIRMED">Confirmed</option>
+            <option value="PENDING">Pending</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+        </div>
+
+        <!-- Bookings rendered here, grouped by hotel -->
+        <div id="bookingsContent"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const API_BASE = 'http://localhost:8080/api';
+
+    // ── Same Basic Auth pattern used across all owner pages ──
+    function getAuthHeaders() {
+      const email    = sessionStorage.getItem('userEmail');
+      const password = sessionStorage.getItem('userPassword');
+      if (!email || !password) return { 'Content-Type': 'application/json' };
+      return {
+        'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
+        'Content-Type': 'application/json'
+      };
+    }
+
+    async function apiFetch(path) {
+      const res = await fetch(`${API_BASE}${path}`, {
+        credentials: 'include',
+        headers: getAuthHeaders()
+      });
+      if (!res.ok) throw new Error(`${path} → HTTP ${res.status}`);
+      return res.json();
+    }
+
+    // hotelId → { hotelName, bookings[] }
+    let hotelBookingMap  = {};
+    // flat list of all bookings across all hotels (with _hotelName attached)
+    let allFlatBookings  = [];
+
+    function setStatus(msg, type = 'warning') {
+      const colors = {
+        warning: 'bg-warning text-dark',
+        success: 'bg-success text-white',
+        danger:  'bg-danger text-white'
+      };
+      document.getElementById('statusPill').innerHTML =
+        `<span class="step-pill ${colors[type]}">${msg}</span>`;
+    }
+    function hideStatus() {
+      document.getElementById('statusPill').style.display = 'none';
+    }
+    function showError(msg) {
+      setStatus('❌ Failed to load', 'danger');
+      const b = document.getElementById('errorBanner');
+      b.innerHTML = `<strong>Error:</strong> ${msg}`;
+      b.classList.remove('d-none');
+    }
+
+    // ── Boot ──
+    document.addEventListener('DOMContentLoaded', async () => {
+      const role  = sessionStorage.getItem('userRole');
+      const email = sessionStorage.getItem('userEmail');
+
+      if (!role || role !== 'OWNER') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      document.getElementById('ownerName').innerText    = email;
+      document.getElementById('welcomeOwner').innerText = email;
+
+      document.getElementById('ownerLogout').addEventListener('click', e => {
+        e.preventDefault();
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+      });
+
+      document.getElementById('statusFilter').addEventListener('change', renderAll);
+
+      await loadOwnerBookings(email);
+    });
+
+    async function loadOwnerBookings(email) {
+      try {
+
+        // STEP 1 — get userId
+        setStatus('⏳ Fetching your account...');
+        let userId = sessionStorage.getItem('userId');
+        if (!userId) {
+          const u = await apiFetch(`/users/email/${encodeURIComponent(email)}`);
+          userId  = u.userId ?? u.user_id ?? u.id;
+          if (userId) sessionStorage.setItem('userId', userId);
+        }
+        if (!userId) throw new Error('Could not resolve your user account.');
+
+        // STEP 2 — get ownerId
+        setStatus('⏳ Fetching owner profile...');
+        let ownerId = sessionStorage.getItem('ownerId');
+        if (!ownerId) {
+          const o = await apiFetch(`/owners/user/${userId}`);
+          ownerId  = o.ownerId ?? o.owner_id;
+          if (ownerId) sessionStorage.setItem('ownerId', ownerId);
+        }
+        if (!ownerId) throw new Error('Owner profile not found. Please complete Owner Details first.');
+
+        // STEP 3 — get all hotels, filter to this owner's
+        setStatus('⏳ Loading your hotels...');
+        const allHotels = await apiFetch('/hotels/getall');
+        const myHotels  = allHotels.filter(h =>
+          String(h.ownerId ?? h.owner?.ownerId ?? h.owner_id) === String(ownerId)
+        );
+
+        if (myHotels.length === 0) {
+          hideStatus();
+          document.getElementById('bookingsContent').innerHTML = `
+            <div class="no-bookings-box">
+              <i class="fa fa-hotel"></i>
+              <h5>No hotels registered yet</h5>
+              <p>Add a hotel first to start receiving bookings.</p>
+              <a href="addhotel.html" class="btn btn-primary rounded-pill px-4 fw-bold mt-2">
+                <i class="fa fa-plus me-2"></i>Add Hotel
+              </a>
+            </div>`;
+          return;
+        }
+
+        document.getElementById('hotelCount').innerText = myHotels.length;
+
+        // STEP 4 — for each hotel call /bookings/hotel/{hotelId}
+        // ✅ This endpoint has ROLE_OWNER access in your controller
+        setStatus('⏳ Fetching bookings per hotel...');
+
+        hotelBookingMap = {};
+        allFlatBookings = [];
+
+        await Promise.all(myHotels.map(async hotel => {
+          const hotelId   = hotel.hotelId ?? hotel.id;
+          const hotelName = hotel.name ?? hotel.hotelName ?? `Hotel #${hotelId}`;
+
+          hotelBookingMap[hotelId] = { hotelName, hotelId, bookings: [] };
+
+          try {
+            // ✅ Uses the correct ROLE_OWNER-accessible endpoint
+            const bookings = await apiFetch(`/bookings/hotel/${hotelId}`);
+            (bookings ?? []).forEach(b => {
+              const enriched = { ...b, _hotelId: hotelId, _hotelName: hotelName };
+              hotelBookingMap[hotelId].bookings.push(enriched);
+              allFlatBookings.push(enriched);
+            });
+          } catch (e) {
+            console.warn(`Could not load bookings for hotel ${hotelId}:`, e.message);
+            // Don't crash — just show 0 bookings for this hotel
+          }
+        }));
+
+        const total = allFlatBookings.length;
+        setStatus(`✅ ${total} booking(s) loaded across ${myHotels.length} hotel(s)`, 'success');
+        setTimeout(hideStatus, 2500);
+
+        document.getElementById('summaryBar').classList.remove('d-none');
+        renderAll();
+
+      } catch (err) {
+        console.error(err);
+        showError(err.message);
+      }
+    }
+
+    // ── Render table grouped by hotel with optional status filter ──
+    function renderAll() {
+      const filterStatus = document.getElementById('statusFilter').value;
+      const content      = document.getElementById('bookingsContent');
+
+      const filtered = filterStatus === 'ALL'
+        ? allFlatBookings
+        : allFlatBookings.filter(b =>
+            (b.bookingStatus ?? '').toUpperCase() === filterStatus
+          );
+
+      document.getElementById('bookingCount').innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        content.innerHTML = `
+          <div class="no-bookings-box">
+            <i class="fa fa-calendar-times"></i>
+            <h5>No bookings found</h5>
+            <p>${filterStatus !== 'ALL'
+              ? `No ${filterStatus.toLowerCase()} bookings at the moment.`
+              : 'No bookings yet for your hotels.'}</p>
+          </div>`;
+        return;
+      }
+
+      // Group filtered bookings by hotel name
+      const grouped = {};
+      filtered.forEach(b => {
+        const key = b._hotelName ?? 'Unknown Hotel';
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(b);
+      });
+
+      const fmtDate = d => d
+        ? new Date(d).toLocaleDateString('en-IN', {
+            day: '2-digit', month: 'short', year: 'numeric'
+          })
+        : '—';
+
+      content.innerHTML = Object.entries(grouped).map(([hotelName, bookings]) => `
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+
+          <div class="hotel-group-header rounded-top-4">
+            <i class="fa fa-hotel me-2" style="color:#e91e8c;"></i>${hotelName}
+            <span class="badge ms-2"
+              style="background:#e91e8c; color:#fff; border-radius:99px; font-size:0.75rem;">
+              ${bookings.length} booking(s)
+            </span>
+          </div>
+
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped mb-0 align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th class="ps-3">Booking ID</th>
+                    <th>Guest</th>
+                    <th>Room ID</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Nights</th>
+                    <th>Guests</th>
+                    <th>Rooms</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th class="pe-3">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${bookings.map(b => {
+                    const bookingId   = b.bookingId ?? '—';
+                    const status      = (b.bookingStatus ?? 'PENDING').toUpperCase();
+                    const payStatus   = b.paymentStatus ?? '—';
+                    const checkIn     = b.checkIn  ?? '';
+                    const checkOut    = b.checkOut ?? '';
+                    const amount      = b.totalAmount ?? null;
+                    // DTO returns userId & roomId (not nested objects)
+                    const guest       = `User #${b.userId ?? '—'}`;
+                    const roomId      = b.roomId ?? '—';
+                    const adults      = b.adults   ?? 1;
+                    const children    = b.children ?? 0;
+                    const noOfRooms   = b.noOfRooms ?? 1;
+                    const isCancelled = status === 'CANCELLED';
+
+                    let nights = '—';
+                    if (checkIn && checkOut) {
+                      const diff = Math.ceil(
+                        (new Date(checkOut) - new Date(checkIn)) / 86400000
+                      );
+                      if (diff > 0) nights = diff;
+                    }
+
+                    return `
+                      <tr id="booking-row-${bookingId}">
+                        <td class="ps-3"><strong>#${bookingId}</strong></td>
+                        <td style="font-size:0.85rem;">${guest}</td>
+                        <td>${roomId}</td>
+                        <td>${fmtDate(checkIn)}</td>
+                        <td>${fmtDate(checkOut)}</td>
+                        <td>${nights}</td>
+                        <td>${adults}A${children > 0 ? ` ${children}C` : ''}</td>
+                        <td>${noOfRooms}</td>
+                        <td>${amount != null
+                          ? '₹' + Number(amount).toLocaleString('en-IN')
+                          : '—'}</td>
+                        <td>
+                          <span class="badge rounded-pill px-2
+                            ${payStatus === 'PAID' ? 'bg-success' :
+                              payStatus === 'REFUNDED' ? 'bg-info text-dark' :
+                              'bg-warning text-dark'}">
+                            ${payStatus}
+                          </span>
+                        </td>
+                        <td><span class="bstatus ${status}">${status}</span></td>
+                        <td class="pe-3">
+                          <button
+                            class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                            id="cancel-btn-${bookingId}"
+                            onclick="cancelBooking(${bookingId})"
+                            ${isCancelled ? 'disabled' : ''}>
+                            <i class="fa fa-${isCancelled ? 'ban' : 'times-circle'} me-1"></i>
+                            ${isCancelled ? 'Cancelled' : 'Cancel'}
+                          </button>
+                        </td>
+                      </tr>`;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── Cancel booking ──
+    async function cancelBooking(bookingId) {
+      if (!confirm(`Cancel Booking #${bookingId}? This cannot be undone.`)) return;
+
+      const btn = document.getElementById(`cancel-btn-${bookingId}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Cancelling...';
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/bookings/cancel/${bookingId}`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error(await res.text() || 'Cancel failed');
+
+        // Update in-memory data and re-render — no page reload needed
+        allFlatBookings.forEach(b => {
+          if (b.bookingId == bookingId) {
+            b.bookingStatus  = 'CANCELLED';
+            b.paymentStatus  = 'REFUNDED';
+          }
+        });
+        Object.values(hotelBookingMap).forEach(h =>
+          h.bookings.forEach(b => {
+            if (b.bookingId == bookingId) {
+              b.bookingStatus = 'CANCELLED';
+              b.paymentStatus = 'REFUNDED';
+            }
+          })
+        );
+        renderAll();
+
+      } catch (err) {
+        alert('Failed to cancel: ' + err.message);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-times-circle me-1"></i>Cancel';
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
