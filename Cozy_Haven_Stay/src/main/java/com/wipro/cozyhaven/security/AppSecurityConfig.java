@@ -64,7 +64,8 @@ public class AppSecurityConfig {
                     "/admin-dashboard.html",
                     "/user-profile.html",
                     "/my-bookings.html",
-                    "bookings.html",
+                    "/bookings.html",
+                    "/booking-details.html",
                     "/css/**",
                     "/js/**",
                     "/images/**"

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Details - Cozy Haven Stay</title>
+    <link rel="icon" type="image/png" href="images/cozy.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        :root { --pink: #e91e8c; }
+        * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(rgba(255,250,252,0.88), rgba(255,250,252,0.88)),
+                        url('images/booking.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        .top-nav {
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1.5px solid #f5e0ee;
+            padding: 10px 0;
+            box-shadow: 0 2px 16px rgba(233,30,140,0.07);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .btn-pink { background: var(--pink); color: #fff; border: none; }
+        .btn-pink:hover { background: #c1177a; color: #fff; }
+
+        .details-wrapper {
+            max-width: 680px;
+            margin: 50px auto 80px;
+            padding: 0 16px;
+        }
+
+        .details-card {
+            background: rgba(255,255,255,0.97);
+            border-radius: 24px;
+            border: 1px solid #f5e0ee;
+            box-shadow: 0 12px 48px rgba(233,30,140,0.10);
+            overflow: hidden;
+        }
+
+        .card-banner {
+            background: linear-gradient(135deg, var(--pink), #ff6fb7);
+            padding: 36px 36px 28px;
+            color: #fff;
+        }
+        .card-banner h2 { font-weight: 900; font-size: 1.7rem; margin-bottom: 4px; }
+        .card-banner p  { opacity: 0.85; margin: 0; font-size: 0.95rem; }
+
+        .card-body-inner { padding: 32px 36px; }
+
+        .info-section { margin-bottom: 28px; }
+        .info-section h6 {
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #bbb;
+            margin-bottom: 14px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #fdf0f7;
+            font-size: 0.97rem;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row .label { color: #666; font-weight: 600; }
+        .info-row .value { font-weight: 700; color: #222; text-align: right; }
+
+        .bstatus {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .CONFIRMED { background: #d4edda; color: #155724; }
+        .CANCELLED { background: #f8d7da; color: #721c24; }
+        .PENDING   { background: #fff3cd; color: #856404; }
+        .BOOKED    { background: #cfe2ff; color: #084298; }
+
+        .total-box {
+            background: linear-gradient(135deg, #fff0f8, #ffe4f3);
+            border: 1.5px solid #f5c6e8;
+            border-radius: 16px;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-box .total-label { font-weight: 700; color: #555; font-size: 1rem; }
+        .total-box .total-value { font-weight: 900; color: var(--pink); font-size: 1.8rem; }
+
+        .state-box {
+            max-width: 440px;
+            margin: 80px auto;
+            text-align: center;
+            padding: 0 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="top-nav navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html" style="text-decoration:none;">
+                <img src="images/cozy.png" style="height:40px;" alt="logo" />
+                <span style="font-weight:800; color:#222; font-size:1rem;">Cozy Haven Stay</span>
+            </a>
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <a href="my-bookings.html"
+                   class="btn btn-sm rounded-pill px-3"
+                   style="border:1.5px solid var(--pink); color:var(--pink); font-weight:600;">
+                    <i class="fa fa-arrow-left me-1"></i> My Bookings
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOADING -->
+    <div id="loadingSection" class="state-box">
+        <div class="spinner-border mb-3" style="color:var(--pink); width:3rem; height:3rem;"></div>
+        <p class="text-muted">Loading your booking details…</p>
+    </div>
+
+    <!-- ERROR -->
+    <div id="errorSection" class="state-box" style="display:none;">
+        <i class="fa fa-exclamation-circle mb-3" style="font-size:3.5rem; color:#dc3545;"></i>
+        <h5 class="text-danger fw-bold">Booking not found</h5>
+        <p class="text-muted">We could not load this booking. Please try again.</p>
+        <a href="my-bookings.html" class="btn btn-pink rounded-pill px-5 mt-2">Back to Bookings</a>
+    </div>
+
+    <!-- DETAILS CARD -->
+    <div class="details-wrapper" id="detailsSection" style="display:none;">
+        <div class="details-card">
+
+            <div class="card-banner">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h2><i class="fa fa-hotel me-2"></i>Booking Confirmed!</h2>
+                        <p>Your stay at Cozy Haven has been reserved. Enjoy every moment!</p>
+                    </div>
+                    <span class="fs-2">🏨</span>
+                </div>
+            </div>
+
+            <div class="card-body-inner">
+
+                <!-- Booking Overview -->
+                <div class="info-section">
+                    <h6>Booking Overview</h6>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-hashtag me-2" style="color:var(--pink);"></i>Booking ID</span>
+                        <span class="value" id="detBookingId">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-circle-dot me-2" style="color:var(--pink);"></i>Booking Status</span>
+                        <span id="detBookingStatus">—</span>
+                    </div>
+                </div>
+
+                <!-- Stay Details -->
+                <div class="info-section">
+                    <h6>Stay Details</h6>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-door-open me-2" style="color:var(--pink);"></i>Room ID</span>
+                        <span class="value" id="detRoomId">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-calendar-check me-2" style="color:var(--pink);"></i>Check-in</span>
+                        <span class="value" id="detCheckIn">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-calendar-xmark me-2" style="color:var(--pink);"></i>Check-out</span>
+                        <span class="value" id="detCheckOut">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-moon me-2" style="color:var(--pink);"></i>Nights</span>
+                        <span class="value" id="detNights">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-bed me-2" style="color:var(--pink);"></i>Rooms Booked</span>
+                        <span class="value" id="detRooms">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-users me-2" style="color:var(--pink);"></i>Guests</span>
+                        <span class="value" id="detGuests">—</span>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="info-section">
+                    <h6>Payment</h6>
+                    <div class="info-row">
+                        <span class="label"><i class="fa fa-credit-card me-2" style="color:var(--pink);"></i>Payment Status</span>
+                        <span class="value" id="detPayStatus">—</span>
+                    </div>
+                </div>
+
+                <!-- Total -->
+                <div class="total-box">
+                    <span class="total-label"><i class="fa fa-receipt me-2"></i>Total Amount Paid</span>
+                    <span class="total-value">₹<span id="detTotal">0</span></span>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-3 mt-4">
+                    <a href="my-bookings.html" class="btn btn-outline-secondary rounded-pill flex-fill fw-bold py-2">
+                        <i class="fa fa-list me-1"></i> All Bookings
+                    </a>
+                    <a href="hotels.html" class="btn btn-pink rounded-pill flex-fill fw-bold py-2">
+                        <i class="fa fa-hotel me-1"></i> Explore More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const BOOK_API  = 'http://localhost:8080/api';
+
+        function getAuthHeaders() {
+            const email    = sessionStorage.getItem('userEmail');
+            const password = sessionStorage.getItem('userPassword');
+            if (!email || !password) return { 'Content-Type': 'application/json' };
+            return {
+                'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userRole = sessionStorage.getItem('userRole');
+            if (!userRole || userRole !== 'USER') {
+                sessionStorage.setItem('redirectAfterLogin', window.location.href);
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // ✅ Read bookingId from URL first, fallback to sessionStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookingId = urlParams.get('bookingId')
+                           ?? sessionStorage.getItem('lastBookingId');
+
+            if (!bookingId) {
+                showError();
+                return;
+            }
+
+            try {
+                // ✅ Uses getbyid — accessible to ROLE_USER
+                const res = await fetch(`${BOOK_API}/bookings/getbyid/${bookingId}`, {
+                    credentials: 'include',
+                    headers: getAuthHeaders()
+                });
+                if (!res.ok) throw new Error('Not found');
+                const booking = await res.json();
+                renderDetails(booking);
+            } catch (err) {
+                console.error(err);
+                showError();
+            }
+        });
+
+        function showError() {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('errorSection').style.display   = 'block';
+        }
+
+        function renderDetails(b) {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('detailsSection').style.display = 'block';
+
+            const status = b.bookingStatus ?? 'PENDING';
+
+            let nights = '—';
+            if (b.checkIn && b.checkOut) {
+                const diffMs = new Date(b.checkOut) - new Date(b.checkIn);
+                nights = Math.ceil(diffMs / (1000 * 3600 * 24)) + ' night(s)';
+            }
+
+            document.getElementById('detBookingId').innerText      = `#${b.bookingId ?? '—'}`;
+            document.getElementById('detBookingStatus').innerHTML  = `<span class="bstatus ${status}">${status}</span>`;
+            document.getElementById('detRoomId').innerText         = b.roomId ?? b.room?.roomId ?? '—';
+            document.getElementById('detCheckIn').innerText        = b.checkIn  ?? '—';
+            document.getElementById('detCheckOut').innerText       = b.checkOut ?? '—';
+            document.getElementById('detNights').innerText         = nights;
+            document.getElementById('detRooms').innerText          = b.noOfRooms ?? 1;
+            document.getElementById('detGuests').innerText         = `${b.adults ?? 1} Adult(s), ${b.children ?? 0} Child(ren)`;
+            document.getElementById('detPayStatus').innerText      = b.paymentStatus ?? '—';
+            document.getElementById('detTotal').innerText          = b.totalAmount   ?? '0';
+        }
+    </script>
+</body>
+</html>
