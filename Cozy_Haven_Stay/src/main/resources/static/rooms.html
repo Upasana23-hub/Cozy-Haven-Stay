@@ -9,9 +9,7 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        body {
-            background: #fffafc;
-        }
+        body { background: #fffafc; }
 
         .page-header {
             background: linear-gradient(135deg, var(--pink) 0%, #c084fc 100%);
@@ -79,6 +77,28 @@
 
         .star-filled { color: #f59e0b; }
         .star-empty  { color: #d1d5db; }
+
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+
+        .star-rating input { display: none; }
+
+        .star-rating label {
+            font-size: 1.5rem;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: #f59e0b;
+        }
     </style>
 </head>
 
@@ -120,7 +140,46 @@
 
     <!-- REVIEWS SECTION -->
     <section class="container py-5" id="reviewsSection">
-        <h3 class="fw-bold mb-4"><i class="fa fa-star me-2" style="color:#f59e0b;"></i>Guest Reviews</h3>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0"><i class="fa fa-star me-2" style="color:#f59e0b;"></i>Guest Reviews</h3>
+            <button class="btn btn-pink rounded-pill px-4 fw-bold" id="btnWriteReview" onclick="toggleReviewForm()">
+                Write a Review
+            </button>
+        </div>
+
+        <!-- Write Review Form -->
+        <div id="reviewFormWrapper" class="mb-5 p-4 rounded-4 shadow-sm"
+            style="display:none; background:#fff; border:1px solid #f5e0ee;">
+            <h5 class="fw-bold mb-3">Share your experience</h5>
+            <form id="reviewForm">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Rating</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5" required />
+                        <label for="star5" title="5 stars"><i class="fa fa-star"></i></label>
+                        <input type="radio" id="star4" name="rating" value="4" />
+                        <label for="star4" title="4 stars"><i class="fa fa-star"></i></label>
+                        <input type="radio" id="star3" name="rating" value="3" />
+                        <label for="star3" title="3 stars"><i class="fa fa-star"></i></label>
+                        <input type="radio" id="star2" name="rating" value="2" />
+                        <label for="star2" title="2 stars"><i class="fa fa-star"></i></label>
+                        <input type="radio" id="star1" name="rating" value="1" />
+                        <label for="star1" title="1 star"><i class="fa fa-star"></i></label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Comment</label>
+                    <textarea id="reviewComment" class="form-control" rows="3"
+                        placeholder="Tell us about your stay..." required></textarea>
+                </div>
+                <div class="text-end">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4 me-2"
+                        onclick="toggleReviewForm()">Cancel</button>
+                    <button type="submit" class="btn btn-pink rounded-pill px-4 fw-bold">Submit Review</button>
+                </div>
+            </form>
+        </div>
+
         <div id="reviewsList" class="row g-4">
             <div class="col-12 text-center py-5">
                 <div class="spinner-border" style="color: var(--pink)"></div>
@@ -174,22 +233,22 @@
     <script src="js/api.js"></script>
     <script>
 
-        // ✅ Helper: Basic Auth headers for protected endpoints
+        const BASE_URL = 'http://localhost:8080/api';
+
+        // ✅ Basic Auth headers
         function getAuthHeaders() {
             const email    = sessionStorage.getItem('userEmail');
             const password = sessionStorage.getItem('userPassword');
             if (!email || !password) return {};
-            const encoded = btoa(`${email}:${password}`);
             return {
-                'Authorization': `Basic ${encoded}`,
+                'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
                 'Content-Type': 'application/json'
             };
         }
 
-        // ✅ Get hotelId from URL query params
+        // ✅ Get hotelId from URL
         function getHotelIdFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('hotelId');
+            return new URLSearchParams(window.location.search).get('hotelId');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -200,33 +259,44 @@
         // ── LOAD ROOMS ──
         async function loadRooms() {
             const container = document.getElementById('roomsList');
+            const hotelId   = getHotelIdFromUrl();
+
             try {
-                // Rooms are public — no auth needed, but include just in case
-                const res = await fetch('http://localhost:8080/api/rooms/getall', {
-                    credentials: 'include'
-                });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const rooms = await res.json();
+                // ✅ Filter by hotelId if present, otherwise load all
+                const url = hotelId
+                    ? `${BASE_URL}/rooms/getbyhotel/${hotelId}`
+                    : `${BASE_URL}/rooms/getall`;
+
+                const res = await fetch(url, { credentials: 'include' });
+
+                // Fallback to getall if hotel-specific endpoint fails
+                let rooms;
+                if (!res.ok && hotelId) {
+                    const fallback = await fetch(`${BASE_URL}/rooms/getall`, { credentials: 'include' });
+                    rooms = await fallback.json();
+                } else {
+                    rooms = await res.json();
+                }
 
                 if (!rooms || rooms.length === 0) {
                     container.innerHTML = `
                         <div class="col-12 text-center py-5">
                             <i class="fa fa-bed mb-3" style="font-size:3rem; color:#f5e0ee;"></i>
-                            <h5 class="text-muted">No rooms available in the database.</h5>
+                            <h5 class="text-muted">No rooms available.</h5>
                         </div>`;
                     return;
                 }
 
                 container.innerHTML = rooms.map(room => {
-                    const roomId     = room.roomId     ?? room.room_id     ?? '';
-                    const roomType   = room.roomType   ?? room.room_type   ?? 'Standard Room';
-                    const roomSize   = room.roomSize   ?? room.room_size   ?? roomType;
-                    const bedType    = room.bedType    ?? room.bed_type    ?? 'Double Bed';
-                    const baseFare   = room.baseFare   ?? room.base_fare   ?? room.price ?? 0;
-                    const maxPeople  = room.maxPeople  ?? room.max_people  ?? room.maxOccupancy ?? 2;
-                    const hasAC      = room.acAvailable ?? room.ac_available ?? false;
-                    const available  = room.availability ?? true;
-                    const image      = room.image ?? 'images/room.png';
+                    const roomId   = room.roomId   ?? room.room_id  ?? '';
+                    const roomType = room.roomType ?? room.room_type ?? 'Standard Room';
+                    const roomSize = room.roomSize ?? room.room_size ?? roomType;
+                    const bedType  = room.bedType  ?? room.bed_type  ?? 'Double Bed';
+                    const baseFare = room.baseFare ?? room.base_fare ?? room.price ?? 0;
+                    const maxPeople = room.maxPeople ?? room.max_people ?? room.maxOccupancy ?? 2;
+                    const hasAC    = room.acAvailable ?? room.ac_available ?? false;
+                    const available = room.availability ?? true;
+                    const image    = room.image ?? 'images/room.png';
 
                     const bookUrl = `my-bookings.html?roomId=${roomId}&room=${encodeURIComponent(roomSize)}&bed=${encodeURIComponent(bedType)}&price=${baseFare}`;
 
@@ -246,8 +316,7 @@
                                     ${hasAC ? `<span><i class="fa fa-snowflake me-1"></i>AC</span>` : ''}
                                     ${available
                                         ? `<span style="background:#d1fae5;color:#065f46;"><i class="fa fa-check me-1"></i>Available</span>`
-                                        : `<span style="background:#fee2e2;color:#991b1b;"><i class="fa fa-times me-1"></i>Unavailable</span>`
-                                    }
+                                        : `<span style="background:#fee2e2;color:#991b1b;"><i class="fa fa-times me-1"></i>Unavailable</span>`}
                                 </div>
                                 <p class="text-secondary small mb-4">Spacious and well-appointed room with all modern amenities for a comfortable stay.</p>
                                 <div class="mt-auto">
@@ -283,7 +352,7 @@
             }
 
             try {
-                const res = await fetch(`http://localhost:8080/api/reviews/hotel/${hotelId}`, {
+                const res = await fetch(`${BASE_URL}/reviews/hotel/${hotelId}`, {
                     credentials: 'include'
                 });
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -299,16 +368,25 @@
                 }
 
                 container.innerHTML = reviews.map(review => {
-                    const name    = review.userName ?? review.user?.email ?? review.email ?? 'Anonymous';
-                    const rating  = review.rating   ?? 5;
-                    const comment = review.comment  ?? review.reviewText ?? '';
-                    const date    = review.reviewDate ?? review.date ?? '';
+                    // ✅ Fixed field mapping to match DB columns
+                    const name    = review.userName
+                                 ?? review.user?.name
+                                 ?? review.user?.email
+                                 ?? 'Anonymous';
+                    const rating  = review.rating  ?? 5;
+                    const comment = review.comment ?? '';
+                    // ✅ Fixed: use createdAt / created_at matching DB column
+                    const date    = review.createdAt
+                                 ?? review.created_at
+                                 ?? review.reviewDate
+                                 ?? '';
 
                     const formattedDate = date
-                        ? new Date(date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+                        ? new Date(date).toLocaleDateString('en-IN', {
+                              day: '2-digit', month: 'short', year: 'numeric'
+                          })
                         : '';
 
-                    // Build star icons
                     const stars = Array.from({ length: 5 }, (_, i) =>
                         `<i class="fa fa-star ${i < rating ? 'star-filled' : 'star-empty'}"></i>`
                     ).join('');
@@ -335,6 +413,76 @@
             }
         }
 
+        // ── TOGGLE REVIEW FORM ──
+        function toggleReviewForm() {
+            const userRole = sessionStorage.getItem('userRole');
+            if (!userRole || userRole !== 'USER') {
+                alert('Please sign in as a user to leave a review.');
+                sessionStorage.setItem('redirectAfterLogin', window.location.href);
+                window.location.href = 'login.html';
+                return;
+            }
+            const wrapper = document.getElementById('reviewFormWrapper');
+            wrapper.style.display = wrapper.style.display === 'none' ? 'block' : 'none';
+            if (wrapper.style.display === 'block') {
+                wrapper.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // ── SUBMIT REVIEW ──
+        document.getElementById('reviewForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const hotelId   = getHotelIdFromUrl();
+            const rating    = document.querySelector('input[name="rating"]:checked')?.value;
+            const comment   = document.getElementById('reviewComment').value.trim();
+            const userEmail = sessionStorage.getItem('userEmail');
+
+            if (!hotelId || !rating || !comment || !userEmail) {
+                alert('Please fill all fields and ensure you are logged in.');
+                return;
+            }
+
+            try {
+                // ✅ Use correct endpoint: /api/users/email/{email}
+                const userRes = await fetch(
+                    `${BASE_URL}/users/email/${encodeURIComponent(userEmail)}`,
+                    { credentials: 'include', headers: getAuthHeaders() }
+                );
+                if (!userRes.ok) throw new Error('Could not identify user');
+                const userData = await userRes.json();
+                const userId   = userData.userId ?? userData.user_id;
+
+                const payload = {
+                    hotelId:  parseInt(hotelId),
+                    userId:   userId,
+                    rating:   parseInt(rating),
+                    comment:  comment
+                };
+
+                const res = await fetch(`${BASE_URL}/reviews/add`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const errMsg = await res.text();
+                    throw new Error(errMsg || 'Submission failed');
+                }
+
+                alert('Thank you! Your review has been submitted.');
+                document.getElementById('reviewForm').reset();
+                toggleReviewForm();
+                loadReviews(); // ✅ Refresh reviews list
+
+            } catch (err) {
+                alert('Error: ' + err.message);
+                console.error(err);
+            }
+        });
+
         // ── BOOKING CLICK — LOGIN CHECK ──
         function handleBookingClick(e, destUrl) {
             e.preventDefault();
@@ -351,5 +499,4 @@
         }
     </script>
 </body>
-
 </html>
