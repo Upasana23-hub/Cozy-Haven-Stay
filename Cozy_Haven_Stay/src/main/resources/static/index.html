@@ -269,10 +269,7 @@
       const exploreLi = navLinks.querySelector('li:first-child');
 
       if (userEmail) {
-        // LOGGED IN: Show Explore + Dashboard (role-based) + Logout
-        const userRole = sessionStorage.getItem('userRole') || '';
-
-        // Hide guest-only links
+        // LOGGED IN: Show only Explore and a direct Logout button
         if (navGuest) navGuest.style.setProperty('display', 'none', 'important');
         if (navGuest2) navGuest2.style.setProperty('display', 'none', 'important');
         if (navBookings) navBookings.style.setProperty('display', 'none', 'important');
@@ -280,47 +277,20 @@
         // Ensure Explore is visible
         if (exploreLi) exploreLi.style.setProperty('display', 'block', 'important');
 
-        // Determine dashboard URL & label based on role
-        let dashUrl = 'user-profile.html';
-        let dashLabel = 'Dashboard';
-        let dashIcon = 'fa-user';
-        if (userRole === 'ADMIN') {
-          dashUrl = 'admin-dashboard.html';
-          dashLabel = 'Admin Dashboard';
-          dashIcon = 'fa-shield-halved';
-        } else if (userRole === 'OWNER') {
-          dashUrl = 'owner-dashboard.html';
-          dashLabel = 'Owner Dashboard';
-          dashIcon = 'fa-building';
-        } else if (userRole === 'USER') {
-          dashUrl = 'user-dashboard.html';
-          dashLabel = 'My Dashboard';
-          dashIcon = 'fa-gauge';
-        }
-
-        // Replace user dropdown with Dashboard + Logout buttons
+        // Instead of a complex dropdown, let's make the user part just a direct Logout button
         if (navUser) {
+          const userName = sessionStorage.getItem('userName') || 'User';
           navUser.innerHTML = `
-            <a href="${dashUrl}"
-               class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded-pill"
-               style="color:#333; font-weight:600; font-size:0.95rem; transition:all 0.2s; text-decoration:none;"
-               onmouseover="this.style.color='#fff'; this.style.background='var(--pink)';"
-               onmouseout="this.style.color='#333'; this.style.background='transparent';">
-              <i class="fa ${dashIcon}" style="color:var(--pink);"></i>
-              ${dashLabel}
-            </a>
-            <a href="#" id="directLogout"
-               class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded-pill ms-1"
-               style="color:#333; font-weight:600; font-size:0.95rem; transition:all 0.2s;"
-               onmouseover="this.style.color='#fff'; this.style.background='var(--pink)';"
-               onmouseout="this.style.color='#333'; this.style.background='transparent';">
-              <i class="fa fa-sign-out-alt" style="color:var(--pink);"></i>
-              Logout
-            </a>`;
-          navUser.style.setProperty('display', 'flex', 'important');
-          navUser.style.alignItems = 'center';
+                <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded-pill" href="#" id="directLogout"
+                   style="color:#333; font-weight:600; font-size:0.95rem; transition:all 0.2s;"
+                   onmouseover="this.style.color='#fff'; this.style.background='var(--pink)';"
+                   onmouseout="this.style.color='#333'; this.style.background='transparent';">
+                  <i class="fa fa-sign-out-alt" style="color:var(--pink);"></i>
+                  Logout
+                </a>`;
+          navUser.style.setProperty('display', 'block', 'important');
 
-          // Logout click
+          // Add simple logout logic
           document.getElementById('directLogout').onclick = (e) => {
             e.preventDefault();
             sessionStorage.clear();
