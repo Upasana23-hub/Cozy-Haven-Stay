@@ -1,69 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Owner Dashboard - Cozy Haven Stay</title>
-<link rel="icon" type="image/png" href="images/cozy.png" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Dashboard - Cozy Haven Stay</title>
+  <link rel="icon" type="image/png" href="images/cozy.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<div class="container-fluid mt-4">
-  <div class="row">
-    <!-- SIDEBAR -->
-    <div class="col-md-3">
-      <div class="dash-sidebar text-center">
-        <div class="mb-4">
-          <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
-               style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
-          <h6 id="ownerName">Loading...</h6>
-          <small style="color:#888;" id="ownerRole">Owner</small>
-        </div>
-        <hr>
-        <div class="dash-nav text-start">
-          <a href="owner-dashboard.html" class="active"><i class="fa fa-home"></i> Dashboard</a>
-          <a href="add-owner-details.html"><i class="fa fa-user-plus"></i> Add Owner Details</a>  <!-- ✅ New -->
-          <a href="add-hotel.html"><i class="fa fa-hotel"></i> Add Hotel</a>                      <!-- ✅ New -->
-          <a href="manage-rooms.html"><i class="fa fa-bed"></i> Manage Rooms</a>
-          <a href="#bookingsSection"><i class="fa fa-calendar"></i> Hotel Bookings</a>
-          <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
-          <a href="index.html" id="ownerLogout"><i class="fa fa-sign-out"></i> Logout</a>
+  <div class="container-fluid mt-4">
+    <div class="row">
+      <!-- SIDEBAR -->
+      <div class="col-md-3">
+        <div class="dash-sidebar text-center">
+          <div class="mb-4">
+            <img
+              src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
+              style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
+            <h6 id="ownerName">Loading...</h6>
+            <small style="color:#888;" id="ownerRole">Owner</small>
+          </div>
+          <hr>
+          <div class="dash-nav text-start">
+            <a href="owner-dashboard.html" class="active"><i class="fa fa-home"></i> Dashboard</a>
+            <a href="addowner-details.html"><i class="fa fa-user-plus"></i> Add Owner Details</a>
+            <a href="addhotel.html"><i class="fa fa-hotel"></i> Add Hotel</a>
+            <a href="addroom.html"><i class="fa fa-bed"></i> Add Room</a>
+            <a href="manage-rooms.html"><i class="fa fa-list"></i> Manage Rooms</a>
+            <a href="#bookingsSection"><i class="fa fa-calendar"></i> Hotel Bookings</a>
+            <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
+            <a href="index.html" id="ownerLogout"><i class="fa fa-sign-out"></i> Logout</a>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="col-md-9">
-      <div class="welcome-bar mb-4">
-        <h5>Welcome, <span id="welcomeOwner">Owner</span>!</h5>
-        <p>Manage your hotel rooms and bookings</p>
+      <!-- MAIN CONTENT -->
+      <div class="col-md-9">
+        <div class="welcome-bar mb-4">
+          <h5>Welcome, <span id="welcomeOwner">Owner</span>!</h5>
+          <p>Manage your hotel rooms and bookings</p>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const role = sessionStorage.getItem('userRole');
-  if (!role || role !== 'OWNER') {
-    window.location.href = 'login.html';
-    return;
-  }
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const role = sessionStorage.getItem('userRole');
+      if (!role || role !== 'OWNER') {
+        window.location.href = 'login.html';
+        return;
+      }
 
-  const email = sessionStorage.getItem('userEmail');
-  document.getElementById('ownerName').innerText = email;
-  document.getElementById('welcomeOwner').innerText = email;
+      const email = sessionStorage.getItem('userEmail');
+      document.getElementById('ownerName').innerText = email;
+      document.getElementById('welcomeOwner').innerText = email;
 
-  // ✅ Fixed: was 'sidebarLogout' but element id is 'ownerLogout'
-  document.getElementById('ownerLogout').addEventListener('click', () => {
-    sessionStorage.clear();
-    window.location.href = 'login.html';
-  });
-});
-</script>
+      // ✅ Fixed: was 'sidebarLogout' but element id is 'ownerLogout'
+      document.getElementById('ownerLogout').addEventListener('click', () => {
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+      });
+    });
+  </script>
 
 </body>
+
 </html>
