@@ -136,4 +136,23 @@ public class UserRestController {
 
         return ResponseEntity.ok(user);
     }
+    
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/all")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+
+        List<UserResponseDTO> users = userService.getAllUsers();
+
+        return ResponseEntity.ok(users);
+    }
+    
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/delete/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
+
+        userService.deleteUser(userId);
+
+        return ResponseEntity.ok("User and their bookings deleted successfully");
+    }
+    
 }

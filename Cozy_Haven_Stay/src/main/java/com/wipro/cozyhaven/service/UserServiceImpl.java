@@ -103,6 +103,29 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
+    @Override
+    public List<UserResponseDTO> getAllUsers() {
+
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+       
+        List<Bookings> bookings = bookingRepository.findByUserUserId(userId);
+
+        bookingRepository.deleteAll(bookings);
+
+        userRepository.delete(user);
+    }
 
    
     private UserResponseDTO mapToResponse(User user) {
