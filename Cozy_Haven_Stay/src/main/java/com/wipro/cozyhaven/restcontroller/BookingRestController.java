@@ -65,4 +65,12 @@ public class BookingRestController {
         List<BookingsDTO> bookings = bookingService.getBookingByPaymentStatus(paymentStatus);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
+	
+	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<List<BookingsDTO>> getBookingsByUserId(@PathVariable Long userId) {
+
+	    List<BookingsDTO> bookings = bookingService.getBookingsByUserId(userId);
+	    return new ResponseEntity<>(bookings, HttpStatus.OK);
+	}
 }
