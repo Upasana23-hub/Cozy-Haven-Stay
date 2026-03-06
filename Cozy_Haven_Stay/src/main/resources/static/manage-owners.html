@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Owners - Cozy Haven Stay</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .badge-approved {
+    background-color: #198754;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .badge-pending {
+    background-color: #ffc107;
+    color: #333;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .btn-approve {
+    background-color: #0d6efd;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .btn-approve:hover:not(:disabled) {
+    background-color: #0b5ed7;
+    color: #fff;
+  }
+  .btn-approve:disabled {
+    background-color: #a0bffd;
+    color: #fff;
+    cursor: not-allowed;
+  }
+</style>
+</head>
+<body>
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- SIDEBAR -->
+    <div class="col-md-3">
+      <div class="dash-sidebar text-center">
+        <div class="mb-4">
+          <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK" 
+               style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
+          <h6 id="adminName">Loading...</h6>
+          <small style="color:#888;" id="adminRole">Administrator</small>
+        </div>
+        <hr>
+        <div class="dash-nav text-start">
+          <a href="admin-dashboard.html"><i class="fa fa-home"></i> Dashboard</a>
+          <a href="manage-users.html"><i class="fa fa-users"></i> Manage Users</a>
+          <a href="manage-owners.html" class="active"><i class="fa fa-user-shield"></i> Manage Owners</a>
+          <a href="bookings.html"><i class="fa fa-calendar"></i> All Bookings</a>
+          <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
+          <a href="index.html" id="adminLogout"><i class="fa fa-sign-out"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="col-md-9">
+      <div class="welcome-bar mb-4">
+        <h5>Manage Owners</h5>
+        <p>View and approve property owners in the system</p>
+      </div>
+
+      <!-- Owners Table -->
+      <div class="card">
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Owner ID</th>
+                <th>Business Name</th>
+                <th>Address</th>
+                <th>GST Number</th>
+                <th>User ID</th>
+                <th>Created Date</th>
+                <th>Active</th>
+                <th>Approval</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="ownersTable">
+              <!-- Owners will be dynamically loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const role = sessionStorage.getItem('userRole');
+  if (!role || role !== 'ADMIN') {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  document.getElementById('adminName').innerText = sessionStorage.getItem('userEmail');
+
+  document.getElementById('adminLogout').addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+  });
+
+  loadOwners();
+});
+
+function loadOwners() {
+  const ownersTable = document.getElementById('ownersTable');
+  ownersTable.innerHTML = `<tr><td colspan="9" class="text-center text-muted">Loading...</td></tr>`;
+
+  fetch('http://localhost:8080/api/owners/getall', {
+    method: 'GET',
+    credentials: 'include'
+  })
+  .then(res => {
+    if (res.status === 401) {
+      alert('Unauthorized. Please login as admin.');
+      window.location.href = 'login.html';
+      return;
+    }
+    if (!res.ok) throw new Error('Network response not ok');
+    return res.json();
+  })
+  .then(owners => {
+    ownersTable.innerHTML = '';
+
+    if (!owners || owners.length === 0) {
+      ownersTable.innerHTML = `<tr><td colspan="9" class="text-center text-muted">No owners found</td></tr>`;
+      return;
+    }
+
+    owners.forEach((owner) => {
+      // Support both camelCase (Spring default) and snake_case field names
+      const ownerId      = owner.ownerId      ?? owner.owner_id      ?? 'N/A';
+      const businessName = owner.buisnessName ?? owner.buisness_name ?? 'N/A';
+      const address      = owner.address      ?? 'N/A';
+      const gstNumber    = owner.gstNumber    ?? owner.gst_number    ?? 'N/A';
+      const userId       = owner.userId       ?? owner.user_id       ?? 'N/A';
+      const createdDate  = owner.createdDate  ?? owner.created_date  ?? '';
+
+      // active / approved come as boolean true/false from Spring (Jackson serializes 0x01 → true)
+      const isActive   = owner.active   === true || owner.active   === 1;
+      const isApproved = owner.approved === true || owner.approved === 1;
+
+      const approvalBadge = isApproved
+        ? `<span class="badge-approved"><i class="fa fa-check-circle me-1"></i>Approved</span>`
+        : `<span class="badge-pending"><i class="fa fa-clock me-1"></i>Pending</span>`;
+
+      const activeBadge = isActive
+        ? `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2">Yes</span>`
+        : `<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2">No</span>`;
+
+      const formattedDate = createdDate
+        ? new Date(createdDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+        : 'N/A';
+
+      const row = document.createElement('tr');
+      row.id = `owner-row-${ownerId}`;
+      row.innerHTML = `
+        <td>${ownerId}</td>
+        <td><strong>${businessName}</strong></td>
+        <td>${address}</td>
+        <td><code>${gstNumber}</code></td>
+        <td>${userId}</td>
+        <td>${formattedDate}</td>
+        <td>${activeBadge}</td>
+        <td id="status-${ownerId}">${approvalBadge}</td>
+        <td>
+          <button
+            class="btn-approve"
+            id="btn-${ownerId}"
+            onclick="approveOwner(${ownerId})"
+            ${isApproved ? 'disabled' : ''}>
+            <i class="fa fa-user-check me-1"></i>${isApproved ? 'Approved' : 'Approve'}
+          </button>
+        </td>
+      `;
+      ownersTable.appendChild(row);
+    });
+  })
+  .catch(err => {
+    console.error('Error fetching owners:', err);
+    ownersTable.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Failed to load owners</td></tr>`;
+  });
+}
+
+function approveOwner(ownerId) {
+  if (!confirm(`Approve owner #${ownerId}?`)) return;
+
+  const btn = document.getElementById(`btn-${ownerId}`);
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa fa-spinner fa-spin me-1"></i>Approving...`;
+  }
+
+  fetch(`http://localhost:8080/api/owners/${ownerId}/approve`, {
+    method: 'PUT',
+    credentials: 'include'
+  })
+  .then(res => {
+    if (res.status === 401) {
+      alert('Unauthorized. Please login again.');
+      window.location.href = 'login.html';
+      return;
+    }
+    if (!res.ok) throw new Error('Failed to approve owner');
+    return res.json();
+  })
+  .then(() => {
+    alert(`Owner #${ownerId} approved successfully!`);
+
+    // Update badge and button inline — no full reload needed
+    const statusCell = document.getElementById(`status-${ownerId}`);
+    if (statusCell) {
+      statusCell.innerHTML = `<span class="badge-approved"><i class="fa fa-check-circle me-1"></i>Approved</span>`;
+    }
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa fa-user-check me-1"></i>Approved`;
+    }
+  })
+  .catch(err => {
+    console.error('Error approving owner:', err);
+    alert('Error approving owner. Please try again.');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa fa-user-check me-1"></i>Approve`;
+    }
+  });
+}
+</script>
+
+</body>
+</html>

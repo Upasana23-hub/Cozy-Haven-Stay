@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Dashboard - Cozy Haven Stay</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- SIDEBAR -->
+    <div class="col-md-3">
+      <div class="dash-sidebar text-center">
+        <div class="mb-4">
+          <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
+               style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
+          <h6 id="ownerName">Loading...</h6>
+          <small style="color:#888;">Owner</small>
+        </div>
+        <hr>
+        <div class="dash-nav text-start">
+          <a href="owner-dashboard.html" class="active"><i class="fa fa-home"></i> Dashboard</a>
+          <a href="#roomsSection"><i class="fa fa-bed"></i> Manage Rooms</a>
+          <a href="#bookingsSection"><i class="fa fa-calendar"></i> Hotel Bookings</a>
+          <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
+          <a href="index.html" id="ownerLogout"><i class="fa fa-sign-out"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="col-md-9">
+
+      <!-- Manage Rooms Section -->
+      <div id="roomsSection" class="card mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="fa fa-bed me-2"></i>Manage Rooms</h5>
+          </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Room ID</th>
+                <th>Room No.</th>
+                <th>Type</th>
+                <th>Bed Type</th>
+                <th>Room Size</th>
+                <th>Base Fare (₹)</th>
+                <th>Max People</th>
+                <th>AC</th>
+                <th>Available</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="roomsTable">
+              <!-- Rooms loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const role = sessionStorage.getItem('userRole');
+  if (!role || role !== 'OWNER') {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  document.getElementById('ownerName').innerText = sessionStorage.getItem('userEmail');
+
+  document.getElementById('ownerLogout').addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+  });
+
+  loadRooms();
+});
+
+function loadRooms() {
+  const roomsTable = document.getElementById('roomsTable');
+  roomsTable.innerHTML = `<tr><td colspan="10" class="text-center text-muted">Loading...</td></tr>`;
+
+  fetch('http://localhost:8080/api/rooms/getall', {
+    method: 'GET',
+    credentials: 'include'
+  })
+  .then(res => {
+    if (res.status === 401) {
+      alert('Unauthorized. Please login again.');
+      window.location.href = 'login.html';
+      return;
+    }
+    if (!res.ok) throw new Error('Failed to fetch rooms');
+    return res.json();
+  })
+  .then(rooms => {
+    roomsTable.innerHTML = '';
+
+    if (!rooms || rooms.length === 0) {
+      roomsTable.innerHTML = `<tr><td colspan="10" class="text-center text-muted">No rooms found</td></tr>`;
+      return;
+    }
+
+    rooms.forEach(room => {
+      const roomId     = room.roomId     ?? room.room_id     ?? 'N/A';
+      const roomNumber = room.roomNumber ?? room.room_number ?? 'N/A';
+      const roomType   = room.roomType   ?? room.room_type   ?? 'N/A';
+      const bedType    = room.bedType    ?? room.bed_type    ?? 'N/A';
+      const roomSize   = room.roomSize   ?? room.room_size   ?? 'N/A';
+      const baseFare   = room.baseFare   ?? room.base_fare   ?? 'N/A';
+      const maxPeople  = room.maxPeople  ?? room.max_people  ?? 'N/A';
+      const hasAC      = room.acAvailable ?? room.ac_available;
+      const available  = room.availability;
+
+      const acBadge = (hasAC === true || hasAC === 1)
+        ? `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2">Yes</span>`
+        : `<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2">No</span>`;
+
+      const availBadge = (available === true || available === 1)
+        ? `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2">Yes</span>`
+        : `<span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2">No</span>`;
+
+      const row = document.createElement('tr');
+      row.id = `room-row-${roomId}`;
+      row.innerHTML = `
+        <td>${roomId}</td>
+        <td><strong>${roomNumber}</strong></td>
+        <td>${roomType}</td>
+        <td>${bedType}</td>
+        <td>${roomSize}</td>
+        <td>₹${baseFare}</td>
+        <td>${maxPeople}</td>
+        <td>${acBadge}</td>
+        <td>${availBadge}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" onclick="deleteRoom(${roomId})">
+            <i class="fa fa-trash me-1"></i>Delete
+          </button>
+        </td>
+      `;
+      roomsTable.appendChild(row);
+    });
+  })
+  .catch(err => {
+    console.error('Error fetching rooms:', err);
+    roomsTable.innerHTML = `<tr><td colspan="10" class="text-center text-danger">Failed to load rooms</td></tr>`;
+  });
+}
+
+function deleteRoom(roomId) {
+  if (!confirm(`Are you sure you want to delete Room #${roomId}? This cannot be undone.`)) return;
+
+  fetch(`http://localhost:8080/api/rooms/delete/${roomId}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  })
+  .then(res => {
+    if (res.status === 401) {
+      alert('Unauthorized. Please login again.');
+      window.location.href = 'login.html';
+      return;
+    }
+    if (!res.ok) {
+      // Try to read error message from body if available
+      return res.text().then(text => {
+        throw new Error(text || `Server returned ${res.status}`);
+      });
+    }
+
+    // ✅ Don't try to parse JSON — many delete endpoints return empty body or plain text
+    return res.text();
+  })
+  .then(data => {
+    if (data === undefined) return; // redirect happened above
+
+    // Remove row from table instantly
+    const row = document.getElementById(`room-row-${roomId}`);
+    if (row) row.remove();
+
+    // If table is now empty
+    const roomsTable = document.getElementById('roomsTable');
+    if (roomsTable.children.length === 0) {
+      roomsTable.innerHTML = `<tr><td colspan="10" class="text-center text-muted">No rooms found</td></tr>`;
+    }
+  })
+  .catch(err => {
+    console.error('Error deleting room:', err);
+    alert(`Error deleting room: ${err.message}`);
+  });
+}
+</script>
+
+</body>
+</html>
