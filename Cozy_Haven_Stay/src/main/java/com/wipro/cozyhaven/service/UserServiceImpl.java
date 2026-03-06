@@ -18,11 +18,13 @@ import com.wipro.cozyhaven.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
-    private final UserRepository userRepository;
-    private final BookingsRepository bookingRepository;
+	
+	@Autowired
+    private UserRepository userRepository;
+	
+	@Autowired
+    private BookingsRepository bookingRepository;
     
     @Autowired
     private PasswordEncoder passwordEncoder;

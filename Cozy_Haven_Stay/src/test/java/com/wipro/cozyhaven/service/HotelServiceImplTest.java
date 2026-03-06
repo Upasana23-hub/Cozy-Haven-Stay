@@ -20,116 +20,144 @@ import com.wipro.cozyhaven.repository.UserRepository;
 @Transactional
 class HotelServiceImplTest {
 
-    @Autowired
-    private HotelService hotelService;
+	@Autowired
+	private HotelService hotelService;
 
-    @Autowired
-    private HotelOwnerService ownerService;
+	@Autowired
+	private HotelOwnerService ownerService;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-  
-    @Test
-    void testAddHotel() {
-        HotelOwner owner = createOwner();
-        Hotel hotel = new Hotel();
-        hotel.setName("Cozy Haven");
-        hotel.setLocation("Kolkata");
-        hotel.setDescription("Luxury and affordable stay");
-        hotel.setRating(4.8);
+	@Test
+	void testAddHotel() {
+		HotelOwner owner = createOwner();
+		Hotel hotel = new Hotel();
+		hotel.setName("Cozy Haven");
+		hotel.setLocation("Kolkata");
+		hotel.setDescription("Luxury and affordable stay");
+		hotel.setRating(4.8);
 
-        Hotel savedHotel = hotelService.addHotel(owner.getOwnerId(), hotel);
-        assertNotNull(savedHotel.getHotelId());
-        assertEquals("Cozy Haven", savedHotel.getName());
-    }
+		Hotel savedHotel = hotelService.addHotel(owner.getOwnerId(), hotel);
+		assertNotNull(savedHotel.getHotelId());
+		assertEquals("Cozy Haven", savedHotel.getName());
+	}
 
-    
-    @Test
-    void testGetHotelByOwner() {
-        HotelOwner owner = createOwner();
-        Hotel hotel = new Hotel();
-        hotel.setName("Owner Hotel");
-        hotel.setLocation("Mumbai");
-        hotel.setDescription("Luxury hotel in Mumbai");
-        hotel.setRating(4.5);
-        hotelService.addHotel(owner.getOwnerId(), hotel);
+	@Test
+	void testGetHotelByOwner() {
+		HotelOwner owner = createOwner();
+		Hotel hotel = new Hotel();
+		hotel.setName("Owner Hotel");
+		hotel.setLocation("Mumbai");
+		hotel.setDescription("Luxury hotel in Mumbai");
+		hotel.setRating(4.5);
+		hotelService.addHotel(owner.getOwnerId(), hotel);
 
-        List<Hotel> hotels = hotelService.getHotelByOwner(owner.getOwnerId());
+		List<Hotel> hotels = hotelService.getHotelByOwner(owner.getOwnerId());
 
-        assertNotNull(hotels);
-        assertEquals(1, hotels.size());
-        assertEquals("Owner Hotel", hotels.get(0).getName());
-    }
+		assertNotNull(hotels);
+		assertEquals(1, hotels.size());
+		assertEquals("Owner Hotel", hotels.get(0).getName());
+	}
 
-    
-    @Test
-    void testUpdateHotel() {
-        HotelOwner owner = createOwner();
-        Hotel hotel = new Hotel();
-        hotel.setName("Taj Hotel");
-        hotel.setLocation("Agra");
-        hotel.setDescription("Luxury hotel");
+	@Test
+	void testUpdateHotel() {
+		HotelOwner owner = createOwner();
+		Hotel hotel = new Hotel();
+		hotel.setName("Taj Hotel");
+		hotel.setLocation("Agra");
+		hotel.setDescription("Luxury hotel");
 
-        Hotel saved = hotelService.addHotel(owner.getOwnerId(), hotel);
-        saved.setName("LivenGarden");
+		Hotel saved = hotelService.addHotel(owner.getOwnerId(), hotel);
+		saved.setName("LivenGarden");
 
-        Hotel updated = hotelService.updateHotel(owner.getOwnerId(), saved.getHotelId(), saved);
-        assertEquals("LivenGarden", updated.getName());
-    }
+		Hotel updated = hotelService.updateHotel(owner.getOwnerId(), saved.getHotelId(), saved);
+		assertEquals("LivenGarden", updated.getName());
+	}
 
+	@Test
+	void testDeleteHotel() {
+		HotelOwner owner = createOwner();
+		Hotel hotel = new Hotel();
+		hotel.setName("Delete Hotel");
+		hotel.setLocation("Kolkata");
+		hotel.setDescription("Test Hotel");
 
-    @Test
-    void testDeleteHotel() {
-        HotelOwner owner = createOwner();
-        Hotel hotel = new Hotel();
-        hotel.setName("Delete Hotel");
-        hotel.setLocation("Kolkata");
-        hotel.setDescription("Test Hotel");
+		Hotel saved = hotelService.addHotel(owner.getOwnerId(), hotel);
+		hotelService.deleteHotel(owner.getOwnerId(), saved.getHotelId());
 
-        Hotel saved = hotelService.addHotel(owner.getOwnerId(), hotel);
-        hotelService.deleteHotel(owner.getOwnerId(), saved.getHotelId());
+		List<Hotel> hotels = hotelService.getHotelByOwner(owner.getOwnerId());
+		assertTrue(hotels.isEmpty());
+	}
 
-        List<Hotel> hotels = hotelService.getHotelByOwner(owner.getOwnerId());
-        assertTrue(hotels.isEmpty());
-    }
+	@Test
+	void testGetAllActiveHotels() {
+		List<Hotel> hotels = hotelService.getAllActiveHotels();
+		assertNotNull(hotels);
+	}
 
-    
-    @Test
-    void testGetAllActiveHotels() {
-        List<Hotel> hotels = hotelService.getAllActiveHotels();
-        assertNotNull(hotels);
-    }
+	@Test
+	void testSearchHotelsByLocation() {
+		List<Hotel> hotels = hotelService.searchHotelsByLocation("Pune");
+		assertNotNull(hotels);
+	}
 
-    
-    @Test
-    void testSearchHotelsByLocation() {
-        List<Hotel> hotels = hotelService.searchHotelsByLocation("Pune");
-        assertNotNull(hotels);
-    }
+	@Test
+	void testSearchHotelsByLocationAndRating() {
+		List<Hotel> hotels = hotelService.searchHotelsByLocationAndRating("Pune", 4.0);
+		assertNotNull(hotels);
+	}
 
-   
-    @Test
-    void testSearchHotelsByLocationAndRating() {
-        List<Hotel> hotels = hotelService.searchHotelsByLocationAndRating("Pune", 4.0);
-        assertNotNull(hotels);
-    }
+	private HotelOwner createOwner() {
 
-   
-    private HotelOwner createOwner() {
-        
-        User user = new User();
-        user.setName("Test User");
-        user.setEmail("test" + System.currentTimeMillis() + "@example.com"); 
-        user.setPassword("TestPass");
-        user = userRepository.save(user);
+		User user = new User();
+		user.setName("Test User");
+		user.setEmail("test" + System.currentTimeMillis() + "@example.com");
+		user.setPassword("TestPass");
+		user = userRepository.save(user);
 
-        HotelOwner owner = new HotelOwner();
-        owner.setUser(user); // FK
-        owner.setBuisnessName("JW Marriot");
-        owner.setGstNumber("GST" + System.currentTimeMillis());
-        owner.setAddress("Kolkata");
+		HotelOwner owner = new HotelOwner();
+		owner.setUser(user); // FK
+		owner.setBuisnessName("JW Marriot");
+		owner.setGstNumber("GST" + System.currentTimeMillis());
+		owner.setAddress("Kolkata");
 
-        return ownerService.createOwner(owner);
-    }
+		return ownerService.createOwner(owner);
+	}
+
+	@Test
+	void testGetHotelById() {
+
+		HotelOwner owner = createOwner();
+
+		Hotel hotel = new Hotel();
+		hotel.setName("ID Test Hotel");
+		hotel.setLocation("Delhi");
+		hotel.setDescription("Test Description");
+
+		Hotel saved = hotelService.addHotel(owner.getOwnerId(), hotel);
+
+		Hotel found = hotelService.getHotelById(saved.getHotelId());
+
+		assertNotNull(found);
+		assertEquals("ID Test Hotel", found.getName());
+	}
+
+	@Test
+	void testGetAllHotels() {
+
+		HotelOwner owner = createOwner();
+
+		Hotel hotel = new Hotel();
+		hotel.setName("All Hotels Test");
+		hotel.setLocation("Bangalore");
+		hotel.setDescription("Test Hotel");
+
+		hotelService.addHotel(owner.getOwnerId(), hotel);
+
+		List<Hotel> hotels = hotelService.getAllHotels();
+
+		assertNotNull(hotels);
+		assertTrue(hotels.size() > 0);
+	}
 }

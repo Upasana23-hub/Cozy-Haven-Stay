@@ -17,12 +17,12 @@ import com.wipro.cozyhaven.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService{
 	
-	
-	private final UserRepository userRepository;
-	private final BookingsRepository bookingsRepository;
+	@Autowired
+	private  UserRepository userRepository;
+	@Autowired
+	private BookingsRepository bookingsRepository;
 	
 	
 	@Override

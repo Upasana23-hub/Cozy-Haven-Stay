@@ -24,6 +24,7 @@ class UserServiceImplTest {
     
     @Test
     void testRegisterSuccess() {
+
         UserResponseDTO request = UserResponseDTO.builder()
                 .name("Debdutta")
                 .email("deb@gmail.com")
@@ -40,11 +41,11 @@ class UserServiceImplTest {
         assertEquals("deb@gmail.com", response.getEmail());
     }
 
-   
+
     @Test
     void testLoginSuccess() {
-        // First, register a user
-        UserResponseDTO registered = userService.register(UserResponseDTO.builder()
+
+        userService.register(UserResponseDTO.builder()
                 .name("LoginUser")
                 .email("loginuser@gmail.com")
                 .password("password")
@@ -53,12 +54,14 @@ class UserServiceImplTest {
                 .build());
 
         String message = userService.login("loginuser@gmail.com", "password");
+
         assertEquals("Login Successful", message);
     }
 
-    
+
     @Test
     void testGetProfileSuccess() {
+
         UserResponseDTO registered = userService.register(UserResponseDTO.builder()
                 .name("ProfileUser")
                 .email("profile@gmail.com")
@@ -74,9 +77,10 @@ class UserServiceImplTest {
         assertEquals(Role.USER, profile.getRole());
     }
 
-    
+
     @Test
     void testGetMyBookingsSuccess() {
+
         UserResponseDTO registered = userService.register(UserResponseDTO.builder()
                 .name("BookingUser")
                 .email("bookinguser@gmail.com")
@@ -86,27 +90,16 @@ class UserServiceImplTest {
                 .build());
 
         List<Bookings> bookings = userService.getMyBookings(registered.getUserId());
-        // Since no bookings are added yet, should return empty list
+
         assertNotNull(bookings);
         assertEquals(0, bookings.size());
     }
 
-   
-    @Test
-    void testCancelMyBookingSuccess() {
-        UserResponseDTO registered = userService.register(UserResponseDTO.builder()
-                .name("CancelUser")
-                .email("canceluser@gmail.com")
-                .password("123456")
-                .phone("9998887777")
-                .address("Chennai")
-                .build());
-        assertNotNull(userService);
-    }
 
     @Test
     void testGetUserByEmailSuccess() {
-        UserResponseDTO registered = userService.register(UserResponseDTO.builder()
+
+        userService.register(UserResponseDTO.builder()
                 .name("EmailUser")
                 .email("emailuser@gmail.com")
                 .password("123456")
@@ -115,5 +108,24 @@ class UserServiceImplTest {
                 .build());
 
         assertNotNull(userService.getUserByEmail("emailuser@gmail.com"));
+    }
+
+
+    @Test
+    void testDeleteUserSuccess() {
+
+        UserResponseDTO registered = userService.register(UserResponseDTO.builder()
+                .name("DeleteUser")
+                .email("deleteuser@gmail.com")
+                .password("123456")
+                .phone("9999999999")
+                .address("Mumbai")
+                .build());
+
+        userService.deleteUser(registered.getUserId());
+
+        assertEquals(false, userService.getAllUsers()
+                .stream()
+                .anyMatch(u -> u.getUserId().equals(registered.getUserId())));
     }
 }
