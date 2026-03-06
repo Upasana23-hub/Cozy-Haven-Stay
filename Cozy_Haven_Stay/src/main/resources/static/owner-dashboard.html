@@ -24,7 +24,7 @@
         <hr>
         <div class="dash-nav">
           <a href="owner-dashboard.html" class="active"><i class="fa fa-home"></i> Dashboard</a>
-          <a href="#roomsSection"><i class="fa fa-bed"></i> Manage Rooms</a>
+          <a href="manage-rooms.html"><i class="fa fa-bed"></i> Manage Rooms</a>
           <a href="#bookingsSection"><i class="fa fa-calendar"></i> Hotel Bookings</a>
           <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
           <a href="index.html" id="ownerLogout"><i class="fa fa-sign-out"></i> Logout</a>
@@ -37,81 +37,6 @@
       <div class="welcome-bar mb-4">
         <h5>Welcome, <span id="welcomeOwner">Owner</span>!</h5>
         <p>Manage your hotel rooms and bookings</p>
-      </div>
-
-      <!-- Stats -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon pink"><i class="fa fa-bed"></i></div>
-            <div>
-              <div class="stat-val" id="totalRooms">0</div>
-              <div class="stat-lbl">Total Rooms</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon purple"><i class="fa fa-calendar"></i></div>
-            <div>
-              <div class="stat-val" id="totalBookings">0</div>
-              <div class="stat-lbl">Bookings</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon green"><i class="fa fa-money-bill"></i></div>
-            <div>
-              <div class="stat-val" id="totalRevenue">₹0</div>
-              <div class="stat-lbl">Revenue</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ROOMS TABLE -->
-      <div class="card mb-4" id="roomsSection">
-        <div class="card-body">
-          <h6 class="mb-3">Manage Rooms</h6>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Room ID</th>
-                <th>Room Size</th>
-                <th>Bed Type</th>
-                <th>Capacity</th>
-                <th>Price</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="roomsTable">
-              <!-- Rooms will be dynamically loaded -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- BOOKINGS TABLE -->
-      <div class="card" id="bookingsSection">
-        <div class="card-body">
-          <h6 class="mb-3">Hotel Bookings</h6>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Room</th>
-                <th>Check-In</th>
-                <th>Check-Out</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="bookingsTable">
-              <!-- Bookings will be dynamically loaded -->
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   </div>

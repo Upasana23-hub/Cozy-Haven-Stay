@@ -64,7 +64,7 @@ public class RoomRestController {
     }
 	
 	
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_OWNER')")
 	@DeleteMapping("/delete/{roomId}")
 	 public ResponseEntity<String> deleteRoom(@PathVariable Long roomId) 
 	{
