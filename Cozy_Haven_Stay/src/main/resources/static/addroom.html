@@ -27,7 +27,6 @@
             min-height: 100vh;
         }
 
-        /* ── Sidebar ── */
         .dash-sidebar {
             background: #fff;
             border-radius: 20px;
@@ -70,7 +69,6 @@
             text-align: center;
         }
 
-        /* ── Form Card ── */
         .form-card {
             background: #fff;
             border-radius: 24px;
@@ -138,7 +136,6 @@
             padding-left: 36px;
         }
 
-        /* ── Section Heading ── */
         .section-label {
             font-size: 0.72rem;
             font-weight: 800;
@@ -149,7 +146,6 @@
             margin-top: 8px;
         }
 
-        /* ── Toggle Group ── */
         .toggle-group {
             display: flex;
             gap: 24px;
@@ -170,7 +166,6 @@
             color: #444;
         }
 
-        /* ── Success Modal ── */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -188,13 +183,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .success-card {
@@ -209,15 +199,8 @@
         }
 
         @keyframes popUp {
-            from {
-                transform: scale(0.7);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .success-emoji {
@@ -275,8 +258,7 @@
                         <a href="addroom.html" class="active"><i class="fa fa-bed"></i> Add Room</a>
                         <a href="manage-rooms.html"><i class="fa fa-list"></i> Manage Rooms</a>
                         <a href="#"><i class="fa fa-calendar"></i> Bookings</a>
-                        <a href="#" id="ownerLogout" style="color:#dc3545;"><i class="fa fa-sign-out-alt"></i>
-                            Logout</a>
+                        <a href="#" id="ownerLogout" style="color:#dc3545;"><i class="fa fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </div>
             </div>
@@ -285,27 +267,22 @@
             <div class="col-lg-9 col-md-8">
                 <div class="form-card">
 
-                    <!-- Header -->
                     <div class="d-flex align-items-center gap-3 mb-1">
-                        <div
-                            style="background:var(--pink-light); border-radius:14px; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
+                        <div style="background:var(--pink-light); border-radius:14px; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
                             <i class="fa fa-bed" style="color:var(--pink); font-size:1.3rem;"></i>
                         </div>
                         <div>
                             <h4 class="fw-bold mb-0">Add New Room</h4>
-                            <p class="text-muted mb-0" style="font-size:0.9rem;">Fill in room details to list it under
-                                your hotel</p>
+                            <p class="text-muted mb-0" style="font-size:0.9rem;">Fill in room details to list it under your hotel</p>
                         </div>
                     </div>
                     <hr style="border-color:#f5e0ee; margin: 20px 0 24px;" />
 
-                    <!-- Error Banner -->
                     <div id="errorBanner" class="alert alert-danger rounded-3 d-none" role="alert"></div>
 
                     <form id="addRoomForm" novalidate>
                         <div class="row g-4">
 
-                            <!-- ── SECTION: Room Identity ── -->
                             <div class="col-12">
                                 <p class="section-label"><i class="fa fa-hashtag me-1"></i>Room Identity</p>
                             </div>
@@ -320,23 +297,22 @@
                                 </div>
                             </div>
 
-                            <!-- Hotel ID -->
+                            <!-- Hotel ID — auto-fetched, read-only -->
                             <div class="col-md-6">
                                 <label class="form-label">Hotel ID <span class="text-danger">*</span></label>
                                 <div class="input-icon-wrap">
                                     <i class="fa fa-hotel field-icon"></i>
-                                    <input type="number" id="hotelId" class="form-control" placeholder="Enter Hotel ID"
-                                        required />
+                                    <input type="number" id="hotelId" class="form-control"
+                                        placeholder="Fetching your hotel…" readonly
+                                        style="background:#f8f9fa; cursor:not-allowed;" />
                                 </div>
-                                <small class="text-muted">Enter the Hotel ID this room belongs to.</small>
+                                <small class="text-muted" id="hotelIdStatus">Fetching your hotel profile…</small>
                             </div>
 
-                            <!-- ── SECTION: Room Type & Size ── -->
                             <div class="col-12 mt-2">
                                 <p class="section-label"><i class="fa fa-tag me-1"></i>Room Type & Configuration</p>
                             </div>
 
-                            <!-- Room Type -->
                             <div class="col-md-6">
                                 <label class="form-label">Room Type <span class="text-danger">*</span></label>
                                 <div class="input-icon-wrap">
@@ -354,7 +330,6 @@
                                 </div>
                             </div>
 
-                            <!-- Bed Type -->
                             <div class="col-md-6">
                                 <label class="form-label">Bed Type <span class="text-danger">*</span></label>
                                 <div class="input-icon-wrap">
@@ -371,7 +346,6 @@
                                 </div>
                             </div>
 
-                            <!-- Room Size -->
                             <div class="col-md-6">
                                 <label class="form-label">Room Size <span class="text-danger">*</span></label>
                                 <div class="input-icon-wrap">
@@ -381,60 +355,51 @@
                                 </div>
                             </div>
 
-                            <!-- Max People -->
                             <div class="col-md-6">
                                 <label class="form-label">Max Occupancy <span class="text-danger">*</span></label>
                                 <div class="input-icon-wrap">
                                     <i class="fa fa-users field-icon"></i>
-                                    <input type="number" id="maxPeople" class="form-control" placeholder="e.g. 2"
-                                        min="1" value="2" required />
+                                    <input type="number" id="maxPeople" class="form-control"
+                                        placeholder="e.g. 2" min="1" value="2" required />
                                 </div>
                                 <small class="text-muted">Minimum 1 person required.</small>
                             </div>
 
-                            <!-- ── SECTION: Pricing ── -->
                             <div class="col-12 mt-2">
                                 <p class="section-label"><i class="fa fa-indian-rupee-sign me-1"></i>Pricing</p>
                             </div>
 
-                            <!-- Base Fare -->
                             <div class="col-md-6">
-                                <label class="form-label">Base Fare (₹ / night) <span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label">Base Fare (₹ / night) <span class="text-danger">*</span></label>
                                 <div class="input-icon-wrap">
                                     <i class="fa fa-tag field-icon"></i>
-                                    <input type="number" id="baseFare" class="form-control" placeholder="e.g. 2500"
-                                        min="1" step="0.01" required />
+                                    <input type="number" id="baseFare" class="form-control"
+                                        placeholder="e.g. 2500" min="1" step="0.01" required />
                                 </div>
                                 <small class="text-muted">Must be greater than ₹0.</small>
                             </div>
 
-                            <!-- ── SECTION: Amenities & Status ── -->
                             <div class="col-12 mt-2">
                                 <p class="section-label"><i class="fa fa-sliders me-1"></i>Amenities & Availability</p>
                             </div>
 
                             <div class="col-12">
                                 <div class="toggle-group">
-                                    <!-- AC Available -->
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="acAvailable" checked />
                                         <label class="form-check-label" for="acAvailable">
                                             <i class="fa fa-snowflake me-1" style="color:var(--pink);"></i> AC Available
                                         </label>
                                     </div>
-                                    <!-- Availability -->
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="availability" checked />
                                         <label class="form-check-label" for="availability">
-                                            <i class="fa fa-check-circle me-1" style="color:var(--pink);"></i> Available
-                                            for Booking
+                                            <i class="fa fa-check-circle me-1" style="color:var(--pink);"></i> Available for Booking
                                         </label>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Submit -->
                             <div class="col-12 mt-3">
                                 <button type="submit" class="btn-submit" id="submitBtn">
                                     <i class="fa fa-plus me-2"></i>Add Room
@@ -465,7 +430,7 @@
         const API_BASE = 'http://localhost:8080/api';
 
         function getAuthHeaders() {
-            const email = sessionStorage.getItem('userEmail');
+            const email    = sessionStorage.getItem('userEmail');
             const password = sessionStorage.getItem('userPassword');
             if (!email || !password) return { 'Content-Type': 'application/json' };
             return {
@@ -475,8 +440,10 @@
         }
 
         function addAnother() {
+            const hotelId = document.getElementById('hotelId').value;
             document.getElementById('successModal').classList.remove('show');
             document.getElementById('addRoomForm').reset();
+            document.getElementById('hotelId').value = hotelId; // keep after reset
         }
 
         function goToDashboard() {
@@ -491,9 +458,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Auth guard — only OWNER allowed
-            const role = sessionStorage.getItem('userRole');
+            const role  = sessionStorage.getItem('userRole');
             const email = sessionStorage.getItem('userEmail');
+
             if (!role || role !== 'OWNER') {
                 window.location.href = 'login.html';
                 return;
@@ -501,29 +468,91 @@
 
             document.getElementById('ownerName').innerText = email;
 
-            // Logout
             document.getElementById('ownerLogout').addEventListener('click', (e) => {
                 e.preventDefault();
                 sessionStorage.clear();
                 window.location.href = 'login.html';
             });
 
-            // Form Submit
+            // ── Step 1: get userId (sessionStorage or fetch by email) ──
+            let userId = sessionStorage.getItem('userId');
+            if (!userId) {
+                try {
+                    const res = await fetch(`${API_BASE}/users/email/${encodeURIComponent(email)}`, {
+                        credentials: 'include', headers: getAuthHeaders()
+                    });
+                    if (res.ok) {
+                        const user = await res.json();
+                        userId = user.userId ?? user.user_id ?? user.id;
+                        if (userId) sessionStorage.setItem('userId', userId);
+                    }
+                } catch (e) { console.warn('Could not fetch userId:', e); }
+            }
+
+            // ── Step 2: get ownerId from /api/owners/user/{userId} ──
+            let ownerId = null;
+            if (userId) {
+                try {
+                    const res = await fetch(`${API_BASE}/owners/user/${userId}`, {
+                        credentials: 'include', headers: getAuthHeaders()
+                    });
+                    if (res.ok) {
+                        const ownerData = await res.json();
+                        ownerId = ownerData.ownerId ?? ownerData.owner_id;
+                    }
+                } catch (e) { console.warn('Could not fetch ownerId:', e); }
+            }
+
+            // ── Step 3: get hotelId from /api/hotels/owner/{ownerId} ──
+            if (ownerId) {
+                try {
+                    const res = await fetch(`${API_BASE}/hotels/owner/${ownerId}`, {
+                        credentials: 'include', headers: getAuthHeaders()
+                    });
+                    if (res.ok) {
+                        const hotel   = await res.json();
+                        const hotelId = hotel.hotelId ?? hotel.hotel_id ?? hotel.id;
+                        if (hotelId) {
+                            document.getElementById('hotelId').value = hotelId;
+                            document.getElementById('hotelIdStatus').innerText =
+                                `Hotel found — ${hotel.name} (ID: ${hotelId})`;
+                            document.getElementById('hotelIdStatus').style.color = '#2e7d32';
+                        } else {
+                            document.getElementById('hotelIdStatus').innerText =
+                                'Hotel ID not found. Please add your hotel first.';
+                            document.getElementById('hotelIdStatus').style.color = '#c62828';
+                        }
+                    } else {
+                        document.getElementById('hotelIdStatus').innerText =
+                            'No hotel found. Please complete Add Hotel first.';
+                        document.getElementById('hotelIdStatus').style.color = '#c62828';
+                    }
+                } catch (e) {
+                    console.warn('Could not fetch hotelId:', e);
+                    document.getElementById('hotelIdStatus').innerText = 'Could not fetch hotel details.';
+                    document.getElementById('hotelIdStatus').style.color = '#c62828';
+                }
+            } else {
+                document.getElementById('hotelIdStatus').innerText =
+                    'Owner profile not found. Please fill Owner Details first.';
+                document.getElementById('hotelIdStatus').style.color = '#c62828';
+            }
+
+            // ── Step 4: Form Submit → POST /api/rooms/add ──
             document.getElementById('addRoomForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 document.getElementById('errorBanner').classList.add('d-none');
 
-                const roomNumber = document.getElementById('roomNumber').value.trim();
-                const roomType = document.getElementById('roomType').value;
-                const bedType = document.getElementById('bedType').value;
-                const roomSize = document.getElementById('roomSize').value.trim();
-                const maxPeople = parseInt(document.getElementById('maxPeople').value, 10);
-                const baseFare = parseFloat(document.getElementById('baseFare').value);
-                const acAvailable = document.getElementById('acAvailable').checked;
+                const roomNumber   = document.getElementById('roomNumber').value.trim();
+                const roomType     = document.getElementById('roomType').value;
+                const bedType      = document.getElementById('bedType').value;
+                const roomSize     = document.getElementById('roomSize').value.trim();
+                const maxPeople    = parseInt(document.getElementById('maxPeople').value, 10);
+                const baseFare     = parseFloat(document.getElementById('baseFare').value);
+                const acAvailable  = document.getElementById('acAvailable').checked;
                 const availability = document.getElementById('availability').checked;
-                const hotelId = parseInt(document.getElementById('hotelId').value, 10);
+                const hotelId      = parseInt(document.getElementById('hotelId').value, 10);
 
-                // Validations
                 if (!roomNumber || !roomType || !bedType || !roomSize) {
                     showError('Please fill in all required text fields.');
                     return;
@@ -537,20 +566,13 @@
                     return;
                 }
                 if (!hotelId || hotelId < 1) {
-                    showError('Please enter a valid Hotel ID.');
+                    showError('Hotel ID could not be resolved. Please add your hotel first.');
                     return;
                 }
 
                 const payload = {
-                    roomNumber,
-                    roomType,
-                    bedType,
-                    roomSize,
-                    maxPeople,
-                    baseFare,
-                    acAvailable,
-                    availability,
-                    hotelId
+                    roomNumber, roomType, bedType, roomSize,
+                    maxPeople, baseFare, acAvailable, availability, hotelId
                 };
 
                 const btn = document.getElementById('submitBtn');
@@ -570,7 +592,6 @@
                         throw new Error(err || 'Failed to add room');
                     }
 
-                    // Show success popup
                     document.getElementById('successModal').classList.add('show');
 
                 } catch (err) {
@@ -583,5 +604,4 @@
         });
     </script>
 </body>
-
 </html>
