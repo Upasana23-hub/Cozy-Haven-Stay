@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.wipro.cozyhaven.dto.BookingsDTO;
 import com.wipro.cozyhaven.entity.Bookings;
 
 public interface BookingsRepository extends JpaRepository<Bookings, Long> {
@@ -11,4 +12,5 @@ public interface BookingsRepository extends JpaRepository<Bookings, Long> {
 	List<Bookings> findByPaymentStatus(String paymentStatus);
 	
 	List<Bookings> findByUserUserId(Long userId);
+	List<BookingsDTO> getBookingsByHotelId(Long hotelId);
 }
