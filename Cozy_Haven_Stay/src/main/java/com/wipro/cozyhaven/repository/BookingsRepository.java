@@ -13,6 +13,7 @@ public interface BookingsRepository extends JpaRepository<Bookings, Long> {
 	List<Bookings> findByPaymentStatus(String paymentStatus);
 	
 	List<Bookings> findByUserUserId(Long userId);
+
 	@Query("SELECT b FROM Bookings b WHERE b.hotel.hotelId = :hotelId")
 	List<Bookings> getBookingsByHotelId(@Param("hotelId") Long hotelId);
 }
