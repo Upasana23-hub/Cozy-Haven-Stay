@@ -138,7 +138,7 @@ public class UserRestController {
         return ResponseEntity.ok(user);
     }
     
-    @PreAuthorize("hasAuthority('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
     @GetMapping("/getall")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
 
