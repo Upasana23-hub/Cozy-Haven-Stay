@@ -187,5 +187,34 @@ public class BookingServiceImpl implements BookingService {
 
 	    return bookingDTOs;
 	}
+	@Override
+	public List<BookingsDTO> getBookingsByHotelId(Long hotelId) {
+
+	    List<Bookings> bookings = bookingRepository.findAll();
+	    List<BookingsDTO> bookingDTOs = new ArrayList<>();
+
+	    for (Bookings booking : bookings) {
+
+	        if (booking.getHotel().getHotelId().equals(hotelId)) {
+
+	            BookingsDTO dto = new BookingsDTO();
+	            dto.setBookingId(booking.getBookingId());
+	            dto.setUserId(booking.getUser().getUserId());
+	            dto.setRoomId(booking.getRoom().getRoomId());
+	            dto.setCheckIn(booking.getCheckIn());
+	            dto.setCheckOut(booking.getCheckOut());
+	            dto.setPaymentStatus(booking.getPaymentStatus());
+	            dto.setTotalAmount(booking.getTotalAmount());
+	            dto.setBookingStatus(booking.getBookingStatus());
+	            dto.setAdults(booking.getAdults());
+	            dto.setChildren(booking.getChildren());
+	            dto.setNoOfRooms(booking.getNoOfRooms());
+
+	            bookingDTOs.add(dto);
+	        }
+	    }
+
+	    return bookingDTOs;
+	}
 }
 	

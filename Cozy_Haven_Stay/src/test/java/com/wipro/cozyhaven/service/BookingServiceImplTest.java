@@ -206,4 +206,27 @@ class BookingServiceImplTest {
         assertTrue(bookings.size() > 0);
         assertEquals(user.getUserId(), bookings.get(0).getUserId());
     }
+    @Test
+    void testGetBookingsByHotelId() {
+
+        User user = createUser("Test User6", "user6@test.com");
+        Hotel hotel = createHotel();
+        Room room = createRoom(hotel, "107");
+
+        BookingsDTO dto = new BookingsDTO();
+        dto.setUserId(user.getUserId());
+        dto.setRoomId(room.getRoomId());
+        dto.setCheckIn(LocalDate.now().plusDays(1));
+        dto.setCheckOut(LocalDate.now().plusDays(2));
+        dto.setBookingStatus("CONFIRMED");
+        dto.setPaymentStatus("PAID");
+        dto.setTotalAmount(3500.0);
+
+        bookingService.createBooking(dto);
+
+        List<BookingsDTO> bookings = bookingService.getBookingsByHotelId(hotel.getHotelId());
+
+        assertNotNull(bookings);
+        assertTrue(bookings.size() > 0);
+    }
 }
