@@ -14,5 +14,6 @@ public interface BookingService {
      BookingsDTO  cancelBooking(Long bookingId);
     
      List<BookingsDTO> getBookingByPaymentStatus(String paymentStatus);
+     List<BookingsDTO> getBookingsByUserId(Long userId);
 
 }

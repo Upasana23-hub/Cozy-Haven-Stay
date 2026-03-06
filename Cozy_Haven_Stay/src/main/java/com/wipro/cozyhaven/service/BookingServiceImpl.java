@@ -155,5 +155,28 @@ public class BookingServiceImpl implements BookingService {
 
 	        return bookingDTOs;
 	}
+	@Override
+	public List<BookingsDTO> getBookingsByUserId(Long userId) {
+
+	    List<Bookings> bookings = bookingRepository.findByUserUserId(userId);
+	    List<BookingsDTO> bookingDTOs = new ArrayList<>();
+
+	    for (Bookings booking : bookings) {
+
+	        BookingsDTO dto = new BookingsDTO();
+	        dto.setBookingId(booking.getBookingId());
+	        dto.setUserId(booking.getUser().getUserId());
+	        dto.setRoomId(booking.getRoom().getRoomId());
+	        dto.setCheckIn(booking.getCheckIn());
+	        dto.setCheckOut(booking.getCheckOut());
+	        dto.setPaymentStatus(booking.getPaymentStatus());
+	        dto.setTotalAmount(booking.getTotalAmount());
+	        dto.setBookingStatus(booking.getBookingStatus());
+
+	        bookingDTOs.add(dto);
+	    }
+
+	    return bookingDTOs;
+	}
 }
 	
