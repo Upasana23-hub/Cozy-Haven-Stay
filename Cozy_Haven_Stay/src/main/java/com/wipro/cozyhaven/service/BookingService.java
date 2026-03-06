@@ -16,4 +16,5 @@ public interface BookingService {
      List<BookingsDTO> getBookingByPaymentStatus(String paymentStatus);
      List<BookingsDTO> getBookingsByUserId(Long userId);
 
+     List<BookingsDTO> getBookingsByHotelId(Long hotelId);
 }
