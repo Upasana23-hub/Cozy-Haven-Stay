@@ -1,0 +1,127 @@
+[33mf88e264[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature-upasana-frontend2[m[33m)[m HEAD@{0}: commit: bookings done
+[33m8c6d007[m[33m ([m[1;31morigin/feature-upasana-frontend2[m[33m)[m HEAD@{1}: checkout: moving from feature-upasana-frontend2 to feature-upasana-frontend2
+[33m8c6d007[m[33m ([m[1;31morigin/feature-upasana-frontend2[m[33m)[m HEAD@{2}: revert: Revert "booking details added"
+[33m8293a09[m HEAD@{3}: commit: booking details added
+[33m1678e86[m HEAD@{4}: commit: review of a specific user
+[33mc7981b3[m HEAD@{5}: commit: review done
+[33me57c9ae[m HEAD@{6}: commit: booking part done
+[33md5367f8[m HEAD@{7}: commit: log out logic added
+[33m9b61357[m HEAD@{8}: commit: booking part corrected
+[33m98080d7[m HEAD@{9}: commit: user management done
+[33m7ad6803[m[33m ([m[1;32mmain[m[33m)[m HEAD@{10}: checkout: moving from main to feature-upasana-frontend2
+[33m7ad6803[m[33m ([m[1;32mmain[m[33m)[m HEAD@{11}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33mbf6fb09[m HEAD@{12}: checkout: moving from feature-frontend-upasana to main
+[33mf3ef4a8[m[33m ([m[1;31morigin/feature-frontend-upasana[m[33m, [m[1;32mfeature-frontend-upasana[m[33m)[m HEAD@{13}: commit: booking logic done
+[33mb14b76d[m HEAD@{14}: commit: correction in hotel owner and booking html
+[33m70a5ee1[m HEAD@{15}: commit: managing owner and bookings done
+[33me8335fd[m HEAD@{16}: commit: admin booking edit
+[33mafdac5a[m HEAD@{17}: commit: profile part done
+[33m5144b23[m HEAD@{18}: commit: login, registration, dashboard done .
+[33me102ed1[m HEAD@{19}: checkout: moving from main to feature-frontend-upasana
+[33mbf6fb09[m HEAD@{20}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m9b07977[m[33m ([m[1;31morigin/feature/admin-frontend[m[33m)[m HEAD@{21}: checkout: moving from feature-frontend-upasana to main
+[33me102ed1[m HEAD@{22}: commit: get all hotels added
+[33m9b07977[m[33m ([m[1;31morigin/feature/admin-frontend[m[33m)[m HEAD@{23}: checkout: moving from main to feature-frontend-upasana
+[33m9b07977[m[33m ([m[1;31morigin/feature/admin-frontend[m[33m)[m HEAD@{24}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33mc5f73f4[m HEAD@{25}: checkout: moving from feature-junit_correction to main
+[33mcab05d3[m[33m ([m[1;31morigin/feature-junit_correction[m[33m, [m[1;32mfeature-junit_correction[m[33m)[m HEAD@{26}: commit: password encoder added
+[33mc5f73f4[m HEAD@{27}: checkout: moving from main to feature-junit_correction
+[33mc5f73f4[m HEAD@{28}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m7fa7942[m[33m ([m[1;31morigin/feature/user-admin-module[m[33m)[m HEAD@{29}: checkout: moving from feature-change to main
+[33m63f829f[m[33m ([m[1;31morigin/feature-change[m[33m, [m[1;32mfeature-change[m[33m)[m HEAD@{30}: commit: correction in testing
+[33ma28507e[m HEAD@{31}: commit: room booking payment review done
+[33m7fa7942[m[33m ([m[1;31morigin/feature/user-admin-module[m[33m)[m HEAD@{32}: checkout: moving from main to feature-change
+[33m7fa7942[m[33m ([m[1;31morigin/feature/user-admin-module[m[33m)[m HEAD@{33}: commit: changes in user and all
+[33m1960eea[m HEAD@{34}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m39bbd46[m[33m ([m[1;32mfeature-swagger[m[33m)[m HEAD@{35}: checkout: moving from feature-swagger to main
+[33m39bbd46[m[33m ([m[1;32mfeature-swagger[m[33m)[m HEAD@{36}: checkout: moving from main to feature-swagger
+[33m39bbd46[m[33m ([m[1;32mfeature-swagger[m[33m)[m HEAD@{37}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m32a4ecd[m HEAD@{38}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m651bc3b[m HEAD@{39}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m65bcb21[m HEAD@{40}: checkout: moving from feature-security to main
+[33mb28ae80[m[33m ([m[1;32mfeature-security[m[33m)[m HEAD@{41}: commit: role based security added
+[33m5020e0e[m HEAD@{42}: checkout: moving from main to feature-security
+[33m65bcb21[m HEAD@{43}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m1627558[m HEAD@{44}: checkout: moving from feature-security to main
+[33m5020e0e[m HEAD@{45}: commit: security configuration
+[33m1627558[m HEAD@{46}: checkout: moving from main to feature-security
+[33m1627558[m HEAD@{47}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m5c2c5da[m HEAD@{48}: checkout: moving from feature-servicenew to main
+[33me7125da[m[33m ([m[1;31morigin/feature-servicenew[m[33m, [m[1;32mfeature-servicenew[m[33m)[m HEAD@{49}: checkout: moving from main to feature-servicenew
+[33m5c2c5da[m HEAD@{50}: checkout: moving from feature-review_service_junit to main
+[33m7d923ed[m[33m ([m[1;31morigin/feature-review_service_junit[m[33m, [m[1;32mfeature-review_service_junit[m[33m)[m HEAD@{51}: checkout: moving from main to feature-review_service_junit
+[33m5c2c5da[m HEAD@{52}: commit: package and class added for security
+[33mbbbd784[m HEAD@{53}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m5242773[m HEAD@{54}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m5fdf850[m HEAD@{55}: checkout: moving from feature-payment_review to main
+[33m516fc9c[m[33m ([m[1;32mfeature-payment_review[m[33m)[m HEAD@{56}: checkout: moving from feature-review_payment_restcontroller to feature-payment_review
+[33m8e67a1c[m[33m ([m[1;31morigin/feature-review_payment_restcontroller[m[33m, [m[1;32mfeature-review_payment_restcontroller[m[33m)[m HEAD@{57}: checkout: moving from main to feature-review_payment_restcontroller
+[33m5fdf850[m HEAD@{58}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m995a73e[m HEAD@{59}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m0a47e80[m HEAD@{60}: checkout: moving from feature-review_service_junit to main
+[33m7d923ed[m[33m ([m[1;31morigin/feature-review_service_junit[m[33m, [m[1;32mfeature-review_service_junit[m[33m)[m HEAD@{61}: commit: JUnit for payment and review
+[33m0a47e80[m HEAD@{62}: checkout: moving from main to feature-review_service_junit
+[33m0a47e80[m HEAD@{63}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m3e5d145[m HEAD@{64}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m411ff20[m[33m ([m[1;32mfeature-entityuml[m[33m)[m HEAD@{65}: checkout: moving from feature-review_payment_restcontroller to main
+[33m8e67a1c[m[33m ([m[1;31morigin/feature-review_payment_restcontroller[m[33m, [m[1;32mfeature-review_payment_restcontroller[m[33m)[m HEAD@{66}: commit: Review and payment restcontroller
+[33m411ff20[m[33m ([m[1;32mfeature-entityuml[m[33m)[m HEAD@{67}: checkout: moving from main to feature-review_payment_restcontroller
+[33m411ff20[m[33m ([m[1;32mfeature-entityuml[m[33m)[m HEAD@{68}: checkout: moving from feature-entityuml to main
+[33m411ff20[m[33m ([m[1;32mfeature-entityuml[m[33m)[m HEAD@{69}: checkout: moving from main to feature-entityuml
+[33m411ff20[m[33m ([m[1;32mfeature-entityuml[m[33m)[m HEAD@{70}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m7e13e1c[m HEAD@{71}: checkout: moving from feature-servicenew to main
+[33me7125da[m[33m ([m[1;31morigin/feature-servicenew[m[33m, [m[1;32mfeature-servicenew[m[33m)[m HEAD@{72}: commit (merge): Conclude merge after resolving conflicts
+[33m75e7844[m HEAD@{73}: commit: ER diagram
+[33mec7f9ba[m HEAD@{74}: commit: validation added
+[33m9afed84[m HEAD@{75}: checkout: moving from main to feature-servicenew
+[33m7e13e1c[m HEAD@{76}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m2025e87[m[33m ([m[1;32mfeature-service[m[33m)[m HEAD@{77}: checkout: moving from feature-servicenew to main
+[33m9afed84[m HEAD@{78}: commit: Validation dependency added
+[33m2025e87[m[33m ([m[1;32mfeature-service[m[33m)[m HEAD@{79}: checkout: moving from main to feature-servicenew
+[33m2025e87[m[33m ([m[1;32mfeature-service[m[33m)[m HEAD@{80}: checkout: moving from feature-servicenew to main
+[33m2025e87[m[33m ([m[1;32mfeature-service[m[33m)[m HEAD@{81}: checkout: moving from main to feature-servicenew
+[33m2025e87[m[33m ([m[1;32mfeature-service[m[33m)[m HEAD@{82}: checkout: moving from feature-correction to main
+[33maeb3ab0[m[33m ([m[1;31morigin/feature-correction[m[33m, [m[1;32mfeature-correction[m[33m)[m HEAD@{83}: reset: moving to HEAD
+[33maeb3ab0[m[33m ([m[1;31morigin/feature-correction[m[33m, [m[1;32mfeature-correction[m[33m)[m HEAD@{84}: reset: moving to HEAD
+[33maeb3ab0[m[33m ([m[1;31morigin/feature-correction[m[33m, [m[1;32mfeature-correction[m[33m)[m HEAD@{85}: commit: change in package and interface names
+[33m22be7f5[m HEAD@{86}: commit: changes in package and interface name
+[33m736bdb1[m HEAD@{87}: checkout: moving from main to feature-correction
+[33m2025e87[m[33m ([m[1;32mfeature-service[m[33m)[m HEAD@{88}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33me6eeeb9[m HEAD@{89}: checkout: moving from feature-correction to main
+[33m736bdb1[m HEAD@{90}: commit: Correction done
+[33me6eeeb9[m HEAD@{91}: checkout: moving from main to feature-correction
+[33me6eeeb9[m HEAD@{92}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33md621791[m HEAD@{93}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33md532040[m HEAD@{94}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m36374b0[m HEAD@{95}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33mf99cf83[m HEAD@{96}: checkout: moving from feature-review_payment_fromservice to main
+[33mc663118[m[33m ([m[1;31morigin/feature-review_payment_fromservice[m[33m, [m[1;32mfeature-review_payment_fromservice[m[33m)[m HEAD@{97}: commit: payment and review service
+[33m1e569e0[m HEAD@{98}: commit: created global exception handler class
+[33m50af04a[m HEAD@{99}: commit: service interface and classes created
+[33mf99cf83[m HEAD@{100}: checkout: moving from main to feature-review_payment_fromservice
+[33mf99cf83[m HEAD@{101}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m516fc9c[m[33m ([m[1;32mfeature-payment_review[m[33m)[m HEAD@{102}: checkout: moving from feature-payment_review to main
+[33m516fc9c[m[33m ([m[1;32mfeature-payment_review[m[33m)[m HEAD@{103}: checkout: moving from main to feature-payment_review
+[33m516fc9c[m[33m ([m[1;32mfeature-payment_review[m[33m)[m HEAD@{104}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m802073a[m HEAD@{105}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33maa2b3dc[m HEAD@{106}: commit: Correction in payement entity
+[33m9a88f78[m HEAD@{107}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m6209b77[m HEAD@{108}: checkout: moving from feature-payment_review_repository to main
+[33m5e34102[m[33m ([m[1;31morigin/feature-payment_review_repository[m[33m, [m[1;32mfeature-payment_review_repository[m[33m)[m HEAD@{109}: commit: Review and Payment Repositories created
+[33m6209b77[m HEAD@{110}: checkout: moving from feature-payment to feature-payment_review_repository
+[33mc7d40db[m[33m ([m[1;31morigin/feature-payment[m[33m, [m[1;32mfeature-payment[m[33m)[m HEAD@{111}: checkout: moving from feature-payment_review_repository to feature-payment
+[33m6209b77[m HEAD@{112}: checkout: moving from main to feature-payment_review_repository
+[33m6209b77[m HEAD@{113}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m0a29a88[m HEAD@{114}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m715bafe[m[33m ([m[1;31morigin/feature-admin[m[33m)[m HEAD@{115}: checkout: moving from feature-payment to main
+[33mc7d40db[m[33m ([m[1;31morigin/feature-payment[m[33m, [m[1;32mfeature-payment[m[33m)[m HEAD@{116}: commit: Payment and review entity classes and application.properties done
+[33m715bafe[m[33m ([m[1;31morigin/feature-admin[m[33m)[m HEAD@{117}: checkout: moving from main to feature-payment
+[33m715bafe[m[33m ([m[1;31morigin/feature-admin[m[33m)[m HEAD@{118}: checkout: moving from feature-hotel to main
+[33mb981f2d[m[33m ([m[1;31morigin/feature-hotel[m[33m, [m[1;32mfeature-hotel[m[33m)[m HEAD@{119}: checkout: moving from main to feature-hotel
+[33m715bafe[m[33m ([m[1;31morigin/feature-admin[m[33m)[m HEAD@{120}: merge branch 'main' of https://github.com/Upasana23-hub/Cozy-Haven-Stay.git: Fast-forward
+[33m9f6296f[m HEAD@{121}: checkout: moving from feature-hotel to main
+[33mb981f2d[m[33m ([m[1;31morigin/feature-hotel[m[33m, [m[1;32mfeature-hotel[m[33m)[m HEAD@{122}: commit: Created Classes for hotel
+[33m9f6296f[m HEAD@{123}: checkout: moving from main to feature-hotel
+[33m9f6296f[m HEAD@{124}: commit: hotel class created
+[33m3670354[m HEAD@{125}: commit: packages created
+[33mab67f35[m HEAD@{126}: commit (initial): Project created

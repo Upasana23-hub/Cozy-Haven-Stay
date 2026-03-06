@@ -157,20 +157,31 @@
 
         const data = await roleRes.json();
 
-        // Step 3: Store credentials in sessionStorage
+        // Step 3: Get userId by email
+        const userRes = await fetch(
+          `http://localhost:8080/api/users/email/${encodeURIComponent(email)}`,
+          { method: 'GET', credentials: 'include' }
+        );
+
+        if (!userRes.ok) throw new Error('Could not fetch user details');
+        const userData = await userRes.json();
+        const userId = userData.userId ?? userData.user_id ?? userData.id;
+
+        // Step 4: Store in sessionStorage
         sessionStorage.setItem('userRole',     data.role);
         sessionStorage.setItem('userEmail',    email);
         sessionStorage.setItem('userPassword', password);
+        sessionStorage.setItem('userId',       userId);   
 
-        // Step 4: ✅ Check if there's a saved redirect URL (e.g. from rooms.html booking)
+        // Step 5: Check if there's a saved redirect URL
         const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
         if (redirectUrl && data.role === 'USER') {
-          sessionStorage.removeItem('redirectAfterLogin'); // ✅ Clear it after use
+          sessionStorage.removeItem('redirectAfterLogin');
           window.location.href = redirectUrl;
           return;
         }
 
-        // Step 5: Default redirect by role
+        // Step 6: Default redirect by role
         switch (data.role) {
           case 'ADMIN': window.location.href = 'admin-dashboard.html'; break;
           case 'OWNER': window.location.href = 'owner-dashboard.html'; break;

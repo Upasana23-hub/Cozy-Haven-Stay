@@ -401,14 +401,10 @@
                         throw new Error(err || 'Booking failed');
                     }
 
-                    // ✅ Get bookingId from response
                     const savedBooking = await res.json();
                     const newBookingId = savedBooking.bookingId;
 
-                    // ✅ Store in sessionStorage
                     sessionStorage.setItem('lastBookingId', newBookingId);
-
-                    // ✅ Redirect to booking-details page with bookingId in URL
                     window.location.href = `booking-details.html?bookingId=${newBookingId}`;
 
                 } catch (err) {
@@ -419,7 +415,7 @@
         }
 
         // ── Load My Bookings List ──
-        // ✅ Fetches each booking using getbyid — no getall needed!
+        // ✅ Uses /api/bookings/user/{userId} directly — no getbyid loop needed
         async function loadMyBookings() {
             const list      = document.getElementById('bookingsList');
             const userEmail = sessionStorage.getItem('userEmail');
@@ -432,9 +428,15 @@
                 );
                 if (!userRes.ok) throw new Error('Failed to fetch user');
                 const userData = await userRes.json();
+                const userId   = userData.userId ?? userData.user_id;
 
-                // Step 2: get bookings from user object (embedded in user response)
-                const bookings = userData.bookings ?? [];
+                // Step 2: fetch all bookings for this user directly
+                const bookRes = await fetch(`${BOOK_API}/bookings/user/${userId}`, {
+                    credentials: 'include',
+                    headers: getAuthHeaders()
+                });
+                if (!bookRes.ok) throw new Error('Failed to fetch bookings');
+                const bookings = await bookRes.json();
 
                 if (bookings.length === 0) {
                     list.innerHTML = `
@@ -445,31 +447,7 @@
                     return;
                 }
 
-                // ✅ Step 3: for each bookingId, fetch details using getbyid
-                const bookingDetails = await Promise.all(
-                    bookings.map(async (b) => {
-                        const bid = b.bookingId ?? b.id ?? b;
-                        try {
-                            const r = await fetch(`${BOOK_API}/bookings/getbyid/${bid}`, {
-                                credentials: 'include',
-                                headers: getAuthHeaders()
-                            });
-                            if (r.ok) return await r.json();
-                        } catch (e) {
-                            console.error(`Failed to fetch booking ${bid}`, e);
-                        }
-                        return null;
-                    })
-                );
-
-                const validBookings = bookingDetails.filter(b => b !== null);
-
-                if (validBookings.length === 0) {
-                    list.innerHTML = `<div class="text-center text-danger py-4">Could not load booking details.</div>`;
-                    return;
-                }
-
-                list.innerHTML = validBookings.map(b => `
+                list.innerHTML = bookings.map(b => `
                     <div class="booking-row" onclick="window.location.href='booking-details.html?bookingId=${b.bookingId}'">
                         <div class="booking-info">
                             <h6>Booking #${b.bookingId ?? 'N/A'}</h6>
@@ -479,7 +457,7 @@
                                 <strong>Total:</strong> ₹${b.totalAmount ?? '-'}
                             </p>
                             <small class="text-muted">
-                                Rooms: ${b.noOfRooms ?? 1} | Guests: ${b.adults ?? 1} Adults, ${b.children ?? 0} Children
+                                Rooms: ${b.noOfRooms ?? 0} | Guests: ${b.adults ?? 0} Adults, ${b.children ?? 0} Children
                             </small>
                         </div>
                         <div class="d-flex align-items-center gap-3">

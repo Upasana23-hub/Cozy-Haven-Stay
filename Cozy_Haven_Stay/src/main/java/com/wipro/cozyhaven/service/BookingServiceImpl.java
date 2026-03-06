@@ -43,11 +43,11 @@ public class BookingServiceImpl implements BookingService {
 	    booking.setBookedAt(LocalDateTime.now());
 	    booking.setCheckIn(bookingDTO.getCheckIn());
 	    booking.setCheckOut(bookingDTO.getCheckOut());
-
-	    
+	    booking.setAdults(bookingDTO.getAdults());           
+	    booking.setChildren(bookingDTO.getChildren());       
+	    booking.setNoOfRooms(bookingDTO.getNoOfRooms());     
 	    booking.setBookingStatus(bookingDTO.getBookingStatus() != null ? bookingDTO.getBookingStatus() : "BOOKED");
 	    booking.setPaymentStatus(bookingDTO.getPaymentStatus() != null ? bookingDTO.getPaymentStatus() : "PENDING");
-
 	    booking.setTotalAmount(bookingDTO.getTotalAmount());
 
 	    Bookings savedBooking = bookingRepository.save(booking);
@@ -58,6 +58,9 @@ public class BookingServiceImpl implements BookingService {
 	    savedDTO.setRoomId(savedBooking.getRoom().getRoomId());
 	    savedDTO.setCheckIn(savedBooking.getCheckIn());
 	    savedDTO.setCheckOut(savedBooking.getCheckOut());
+	    savedDTO.setAdults(savedBooking.getAdults());        
+	    savedDTO.setChildren(savedBooking.getChildren());    
+	    savedDTO.setNoOfRooms(savedBooking.getNoOfRooms()); 
 	    savedDTO.setPaymentStatus(savedBooking.getPaymentStatus());
 	    savedDTO.setTotalAmount(savedBooking.getTotalAmount());
 	    savedDTO.setBookingStatus(savedBooking.getBookingStatus());
