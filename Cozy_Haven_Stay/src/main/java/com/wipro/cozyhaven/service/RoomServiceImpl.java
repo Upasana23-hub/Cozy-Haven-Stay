@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wipro.cozyhaven.dto.RoomDTO;
+import com.wipro.cozyhaven.entity.Bookings;
 import com.wipro.cozyhaven.entity.Hotel;
 import com.wipro.cozyhaven.entity.HotelOwner;
 import com.wipro.cozyhaven.entity.Room;
 import com.wipro.cozyhaven.exception.ResourceNotFoundException;
+import com.wipro.cozyhaven.repository.BookingsRepository;
 import com.wipro.cozyhaven.repository.HotelRepository;
+import com.wipro.cozyhaven.repository.PaymentRepository;
 import com.wipro.cozyhaven.repository.RoomRepository;
 
 @Service
@@ -24,6 +27,11 @@ public class RoomServiceImpl implements RoomService {
 	    @Autowired
 	    private HotelRepository hotelRepository;
 
+	    @Autowired
+	    private BookingsRepository bookingsRepository;
+
+	    @Autowired
+	    private PaymentRepository paymentRepository;
 	    
 	    @Override
 	    public RoomDTO addRoom(RoomDTO roomDTO) {
@@ -145,13 +153,28 @@ public class RoomServiceImpl implements RoomService {
 	        return dto;
 	    }
 
-	   
 	    @Override
 	    public void deleteRoom(Long roomId) {
 
-	        Room room = roomRepository.findById(Long.valueOf(roomId))
+	        Room room = roomRepository.findById(roomId)
 	                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
+	       
+	        List<Bookings> bookings = bookingsRepository.findAll();
+
+	        for (Bookings booking : bookings) {
+
+	            if (booking.getRoom().getRoomId().equals(roomId)) {
+
+	                // Delete payment first
+	                paymentRepository.deleteByBookingBookingId(booking.getBookingId());
+
+	                // Delete booking
+	                bookingsRepository.delete(booking);
+	            }
+	        }
+
+	        // Finally delete room
 	        roomRepository.delete(room);
 	    }
 
