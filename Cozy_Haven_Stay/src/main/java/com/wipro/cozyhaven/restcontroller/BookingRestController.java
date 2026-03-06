@@ -73,4 +73,11 @@ public class BookingRestController {
 	    List<BookingsDTO> bookings = bookingService.getBookingsByUserId(userId);
 	    return new ResponseEntity<>(bookings, HttpStatus.OK);
 	}
+	@PreAuthorize("hasAnyAuthority('ROLE_OWNER','ROLE_ADMIN')")
+	@GetMapping("/hotel/{hotelId}")
+	public ResponseEntity<List<BookingsDTO>> getBookingsByHotelId(@PathVariable Long hotelId) {
+
+	    List<BookingsDTO> bookings = bookingService.getBookingsByHotelId(hotelId);
+	    return new ResponseEntity<>(bookings, HttpStatus.OK);
+	}
 }
