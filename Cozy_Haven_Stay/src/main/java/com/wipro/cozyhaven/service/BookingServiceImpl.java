@@ -109,6 +109,9 @@ public class BookingServiceImpl implements BookingService {
         dto.setPaymentStatus(booking.getPaymentStatus());
         dto.setTotalAmount(booking.getTotalAmount());
         dto.setBookingStatus(booking.getBookingStatus()); 
+        dto.setAdults(booking.getAdults());   
+        dto.setChildren(booking.getChildren()); 
+        dto.setNoOfRooms(booking.getNoOfRooms()); 
         return dto;
 	}
 
@@ -175,6 +178,9 @@ public class BookingServiceImpl implements BookingService {
 	        dto.setPaymentStatus(booking.getPaymentStatus());
 	        dto.setTotalAmount(booking.getTotalAmount());
 	        dto.setBookingStatus(booking.getBookingStatus());
+	        dto.setAdults(booking.getAdults());  
+	        dto.setChildren(booking.getChildren()); 
+	        dto.setNoOfRooms(booking.getNoOfRooms()); 
 
 	        bookingDTOs.add(dto);
 	    }

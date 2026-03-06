@@ -26,7 +26,7 @@ public class BookingRestController {
 	@Autowired
 	BookingService bookingService;
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_USER')")
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@PostMapping("/create")
 	public ResponseEntity<BookingsDTO> createBooking(
                                  @Valid @RequestBody BookingsDTO bookingDTO) 
@@ -36,7 +36,7 @@ public class BookingRestController {
         return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
     }
 
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@GetMapping("/getall")
 	public ResponseEntity<List<BookingsDTO>> getAllBookings() {
         List<BookingsDTO> bookings = bookingService.getAllBookings();
