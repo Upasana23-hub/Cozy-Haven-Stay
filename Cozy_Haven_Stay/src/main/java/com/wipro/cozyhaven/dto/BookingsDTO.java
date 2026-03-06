@@ -37,14 +37,14 @@ public class BookingsDTO {
 	@Min(value = 0, message = "Children cannot be negative")
 	private int children;
 
-    @NotNull(message = "Total amount must be calculated")
+    
     @Positive(message = "Total amount must be greater than 0")
 	private Double totalAmount;
     
-    @NotBlank(message = "Booking status is required")
+    
 	private String bookingStatus; 
 
-    @NotBlank(message = "Payment status is required")
+    
 	private String paymentStatus;    
 	private LocalDateTime bookedAt;
 	
