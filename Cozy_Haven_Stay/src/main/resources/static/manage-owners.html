@@ -107,6 +107,22 @@
 </div>
 
 <script>
+
+// ✅ Helper: builds Basic Auth header from stored credentials
+function getAuthHeaders() {
+  const email    = sessionStorage.getItem('userEmail');
+  const password = sessionStorage.getItem('userPassword');
+  if (!email || !password) {
+    window.location.href = 'login.html';
+    return {};
+  }
+  const encoded = btoa(`${email}:${password}`);
+  return {
+    'Authorization': `Basic ${encoded}`,
+    'Content-Type': 'application/json'
+  };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const role = sessionStorage.getItem('userRole');
   if (!role || role !== 'ADMIN') {
@@ -130,7 +146,8 @@ function loadOwners() {
 
   fetch('http://localhost:8080/api/owners/getall', {
     method: 'GET',
-    credentials: 'include'
+    credentials: 'include',
+    headers: getAuthHeaders() // ✅ Send Basic Auth every request
   })
   .then(res => {
     if (res.status === 401) {
@@ -142,23 +159,26 @@ function loadOwners() {
     return res.json();
   })
   .then(owners => {
+    if (!owners) return;
+
     ownersTable.innerHTML = '';
 
-    if (!owners || owners.length === 0) {
+    if (owners.length === 0) {
       ownersTable.innerHTML = `<tr><td colspan="9" class="text-center text-muted">No owners found</td></tr>`;
       return;
     }
 
     owners.forEach((owner) => {
-      // Support both camelCase (Spring default) and snake_case field names
       const ownerId      = owner.ownerId      ?? owner.owner_id      ?? 'N/A';
       const businessName = owner.buisnessName ?? owner.buisness_name ?? 'N/A';
       const address      = owner.address      ?? 'N/A';
       const gstNumber    = owner.gstNumber    ?? owner.gst_number    ?? 'N/A';
-      const userId       = owner.userId       ?? owner.user_id       ?? 'N/A';
+
+      // ✅ userId lives inside the nested user object
+      const userId = owner.user?.userId ?? owner.user?.user_id ?? owner.userId ?? 'N/A';
+
       const createdDate  = owner.createdDate  ?? owner.created_date  ?? '';
 
-      // active / approved come as boolean true/false from Spring (Jackson serializes 0x01 → true)
       const isActive   = owner.active   === true || owner.active   === 1;
       const isApproved = owner.approved === true || owner.approved === 1;
 
@@ -200,7 +220,7 @@ function loadOwners() {
   })
   .catch(err => {
     console.error('Error fetching owners:', err);
-    ownersTable.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Failed to load owners</td></tr>`;
+    ownersTable.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Failed to load owners. Please try again.</td></tr>`;
   });
 }
 
@@ -215,7 +235,8 @@ function approveOwner(ownerId) {
 
   fetch(`http://localhost:8080/api/owners/${ownerId}/approve`, {
     method: 'PUT',
-    credentials: 'include'
+    credentials: 'include',
+    headers: getAuthHeaders() // ✅ Send Basic Auth every request
   })
   .then(res => {
     if (res.status === 401) {
@@ -226,10 +247,12 @@ function approveOwner(ownerId) {
     if (!res.ok) throw new Error('Failed to approve owner');
     return res.json();
   })
-  .then(() => {
+  .then(data => {
+    if (!data) return;
+
     alert(`Owner #${ownerId} approved successfully!`);
 
-    // Update badge and button inline — no full reload needed
+    // ✅ Update badge and button inline without full reload
     const statusCell = document.getElementById(`status-${ownerId}`);
     if (statusCell) {
       statusCell.innerHTML = `<span class="badge-approved"><i class="fa fa-check-circle me-1"></i>Approved</span>`;
