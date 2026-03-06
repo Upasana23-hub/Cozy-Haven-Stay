@@ -16,7 +16,7 @@
     <div class="col-md-3">
       <div class="dash-sidebar text-center">
         <div class="mb-4">
-          <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK" 
+          <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
                style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
           <h6 id="adminName">Loading...</h6>
           <small style="color:#888;" id="adminRole">Administrator</small>
@@ -26,8 +26,8 @@
           <a href="admin-dashboard.html" class="active"><i class="fa fa-home"></i> Dashboard</a>
           <a href="manage-users.html"><i class="fa fa-users"></i> Manage Users</a>
           <a href="manage-owners.html"><i class="fa fa-user-shield"></i> Manage Owners</a>
-          <a href="bookings.html" class="active"><i class="fa fa-calendar"></i> All Bookings</a>
-          <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
+          <a href="bookings.html"><i class="fa fa-calendar"></i> All Bookings</a>
+          <a href="admin-profile.html"><i class="fa fa-user"></i> Profile</a>
           <a href="index.html" id="adminLogout"><i class="fa fa-sign-out"></i> Logout</a>
         </div>
       </div>
@@ -39,68 +39,27 @@
         <h5>Welcome, <span id="welcomeAdmin">Admin</span>!</h5>
         <p>Manage platform users and bookings</p>
       </div>
-
-      <!-- Stats -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon pink"><i class="fa fa-users"></i></div>
-            <div>
-              <div class="stat-val" id="totalUsers">0</div>
-              <div class="stat-lbl">Total Users</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon purple"><i class="fa fa-hotel"></i></div>
-            <div>
-              <div class="stat-val" id="totalHotels">0</div>
-              <div class="stat-lbl">Total Hotels</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="stat-card">
-            <div class="stat-icon green"><i class="fa fa-calendar"></i></div>
-            <div>
-              <div class="stat-val" id="totalBookings">0</div>
-              <div class="stat-lbl">Total Bookings</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- USERS TABLE -->
-      
-
-      <!-- BOOKINGS TABLE -->
-      
     </div>
   </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-	  const role = sessionStorage.getItem('userRole');
-	  if (!role || role !== 'ADMIN') {
-	    window.location.href = 'login.html';
-	    return;
-	  }
+  const role = sessionStorage.getItem('userRole');
+  if (!role || role !== 'ADMIN') {
+    window.location.href = 'login.html';
+    return;
+  }
 
-	  // Display admin info if needed
-	  const email = sessionStorage.getItem('userEmail');
-	  document.getElementById('adminName').innerText = email;
+  const email = sessionStorage.getItem('userEmail');
+  document.getElementById('adminName').innerText = email;
+  document.getElementById('welcomeAdmin').innerText = email;
 
-	  // Logout
-	  document.getElementById('sidebarLogout').addEventListener('click', () => {
-	    sessionStorage.clear();
-	    window.location.href = 'login.html';
-	  });
-
-	  // Optionally fetch admin data (all users, owners, bookings)
-	  // fetch('/api/admin/...').then(...);
-	});
+  document.getElementById('adminLogout').addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+  });
+});
 </script>
 
 </body>
