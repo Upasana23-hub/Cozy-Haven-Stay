@@ -8,7 +8,6 @@
   <link rel="icon" type="image/png" href="images/cozy.png" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <style>
     :root {
@@ -16,7 +15,9 @@
       --pink-light: #fff0f8;
     }
 
-    * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       background: linear-gradient(135deg, #fff0f8 0%, #f8f4ff 100%);
@@ -34,14 +35,56 @@
     }
 
     .sidebar-avatar {
-      width: 72px; height: 72px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid var(--pink);
     }
 
+    .avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .avatar-bow-left,
+    .avatar-bow-right {
+      position: absolute;
+      width: 15px;
+      height: 9px;
+      background: var(--pink);
+      border-radius: 50%;
+      top: -10px;
+      z-index: 3;
+    }
+
+    .avatar-bow-left {
+      left: calc(50% - 15px);
+      transform: rotate(-40deg);
+    }
+
+    .avatar-bow-right {
+      left: calc(50% + 1px);
+      transform: rotate(40deg);
+    }
+
+    .avatar-bow-knot {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      background: #c1177a;
+      border-radius: 50%;
+      top: -7px;
+      left: calc(50% - 3.5px);
+      z-index: 4;
+      border: 1.5px solid #fff;
+    }
+
     .dash-nav a {
-      display: flex; align-items: center; gap: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       padding: 10px 14px;
       border-radius: 12px;
       color: #555;
@@ -52,12 +95,16 @@
       margin-bottom: 4px;
     }
 
-    .dash-nav a:hover, .dash-nav a.active {
+    .dash-nav a:hover,
+    .dash-nav a.active {
       background: var(--pink-light);
       color: var(--pink);
     }
 
-    .dash-nav a i { width: 18px; text-align: center; }
+    .dash-nav a i {
+      width: 18px;
+      text-align: center;
+    }
 
     /* ── Form Card ── */
     .form-card {
@@ -68,12 +115,26 @@
       border: 1px solid #fce4f3;
     }
 
-    .form-card h4 { font-weight: 800; color: #222; margin-bottom: 4px; }
-    .form-card .subtitle { color: #aaa; font-size: 0.9rem; margin-bottom: 28px; }
+    .form-card h4 {
+      font-weight: 800;
+      color: #222;
+      margin-bottom: 4px;
+    }
 
-    .form-label { font-weight: 700; color: #444; font-size: 0.88rem; }
+    .form-card .subtitle {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+    }
 
-    .form-control, .form-select {
+    .form-label {
+      font-weight: 700;
+      color: #444;
+      font-size: 0.88rem;
+    }
+
+    .form-control,
+    .form-select {
       border: 1.5px solid #f0d6e8;
       border-radius: 12px;
       padding: 11px 14px;
@@ -81,7 +142,8 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    .form-control:focus, .form-select:focus {
+    .form-control:focus,
+    .form-select:focus {
       border-color: var(--pink);
       box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1);
       outline: none;
@@ -89,10 +151,12 @@
 
     .btn-submit {
       background: linear-gradient(135deg, var(--pink), #ff6fb7);
-      color: #fff; border: none;
+      color: #fff;
+      border: none;
       border-radius: 99px;
       padding: 14px 40px;
-      font-weight: 700; font-size: 1rem;
+      font-weight: 700;
+      font-size: 1rem;
       width: 100%;
       transition: all 0.3s;
       box-shadow: 0 8px 24px rgba(233, 30, 140, 0.25);
@@ -103,15 +167,24 @@
       box-shadow: 0 14px 32px rgba(233, 30, 140, 0.35);
     }
 
-    .input-icon-wrap { position: relative; }
+    .input-icon-wrap {
+      position: relative;
+    }
+
     .input-icon-wrap .field-icon {
-      position: absolute; left: 13px; top: 50%;
+      position: absolute;
+      left: 13px;
+      top: 50%;
       transform: translateY(-50%);
-      color: var(--pink); font-size: 0.9rem;
+      color: var(--pink);
+      font-size: 0.9rem;
       pointer-events: none;
     }
+
     .input-icon-wrap .form-control,
-    .input-icon-wrap .form-select { padding-left: 36px; }
+    .input-icon-wrap .form-select {
+      padding-left: 36px;
+    }
 
     .info-tip {
       background: var(--pink-light);
@@ -129,7 +202,7 @@
       border-radius: 20px;
       border: 1.5px solid #fce4f3;
       padding: 28px 32px;
-      box-shadow: 0 4px 24px rgba(233,30,140,0.08);
+      box-shadow: 0 4px 24px rgba(233, 30, 140, 0.08);
       margin-top: 28px;
     }
 
@@ -150,27 +223,82 @@
       font-size: 0.93rem;
     }
 
-    .profile-row:last-child { border-bottom: none; }
-    .profile-row .p-label { color: #888; font-weight: 600; }
-    .profile-row .p-value { font-weight: 700; color: #222; }
+    .profile-row:last-child {
+      border-bottom: none;
+    }
 
-    .badge-approved   { background: #d4edda; color: #155724; padding: 4px 14px; border-radius: 99px; font-size: 0.78rem; font-weight: 700; }
-    .badge-pending    { background: #fff3cd; color: #856404; padding: 4px 14px; border-radius: 99px; font-size: 0.78rem; font-weight: 700; }
-    .badge-active     { background: #cfe2ff; color: #084298; padding: 4px 14px; border-radius: 99px; font-size: 0.78rem; font-weight: 700; }
-    .badge-inactive   { background: #f8d7da; color: #721c24; padding: 4px 14px; border-radius: 99px; font-size: 0.78rem; font-weight: 700; }
+    .profile-row .p-label {
+      color: #888;
+      font-weight: 600;
+    }
+
+    .profile-row .p-value {
+      font-weight: 700;
+      color: #222;
+    }
+
+    .badge-approved {
+      background: #d4edda;
+      color: #155724;
+      padding: 4px 14px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .badge-pending {
+      background: #fff3cd;
+      color: #856404;
+      padding: 4px 14px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .badge-active {
+      background: #cfe2ff;
+      color: #084298;
+      padding: 4px 14px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .badge-inactive {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 4px 14px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
 
     /* ── Modal ── */
     .modal-overlay {
       display: none;
-      position: fixed; inset: 0; z-index: 9999;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
       background: rgba(30, 10, 40, 0.45);
       backdrop-filter: blur(10px);
-      justify-content: center; align-items: center;
+      justify-content: center;
+      align-items: center;
     }
 
-    .modal-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+    .modal-overlay.show {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
 
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
 
     .success-card {
       background: #fff;
@@ -178,27 +306,56 @@
       padding: 50px 40px;
       text-align: center;
       box-shadow: 0 30px 80px rgba(233, 30, 140, 0.18);
-      max-width: 420px; width: 90%;
+      max-width: 420px;
+      width: 90%;
       animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     @keyframes popUp {
-      from { transform: scale(0.7); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
+      from {
+        transform: scale(0.7);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
-    .success-emoji { font-size: 4rem; display: block; margin-bottom: 16px; }
-    .success-card h3 { font-weight: 900; color: #222; margin-bottom: 8px; }
-    .success-card p  { color: #888; font-size: 0.97rem; margin-bottom: 28px; }
+    .success-emoji {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .success-card h3 {
+      font-weight: 900;
+      color: #222;
+      margin-bottom: 8px;
+    }
+
+    .success-card p {
+      color: #888;
+      font-size: 0.97rem;
+      margin-bottom: 28px;
+    }
 
     .btn-close-modal {
-      background: var(--pink); color: #fff;
-      border: none; border-radius: 99px;
-      padding: 12px 36px; font-weight: 700;
-      cursor: pointer; transition: all 0.2s;
+      background: var(--pink);
+      color: #fff;
+      border: none;
+      border-radius: 99px;
+      padding: 12px 36px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .btn-close-modal:hover { background: #c1177a; transform: translateY(-2px); }
+    .btn-close-modal:hover {
+      background: #c1177a;
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 
@@ -209,8 +366,14 @@
       <!-- SIDEBAR -->
       <div class="col-lg-3 col-md-4">
         <div class="dash-sidebar text-center">
-          <img src="https://ui-avatars.com/api/?name=Owner&background=e91e8c&color=fff&size=128"
-            class="sidebar-avatar mb-3" id="avatarImg" alt="Owner" />
+          <div class="avatar-wrap">
+            <span class="avatar-bow-left"></span>
+            <span class="avatar-bow-right"></span>
+            <span class="avatar-bow-knot"></span>
+            <img
+              src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
+              class="sidebar-avatar" id="avatarImg" alt="Owner" />
+          </div>
           <h6 class="fw-bold mb-0" id="ownerName">Loading…</h6>
           <small class="text-muted">Hotel Owner</small>
           <hr class="my-3" />
@@ -229,7 +392,8 @@
       <div class="col-lg-9 col-md-8">
         <div class="form-card">
           <div class="d-flex align-items-center gap-3 mb-1">
-            <div style="background:var(--pink-light); border-radius:14px; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
+            <div
+              style="background:var(--pink-light); border-radius:14px; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
               <i class="fa fa-id-card" style="color:var(--pink); font-size:1.3rem;"></i>
             </div>
             <div>
@@ -256,9 +420,8 @@
                 <label class="form-label">User ID <span class="text-danger">*</span></label>
                 <div class="input-icon-wrap">
                   <i class="fa fa-user field-icon"></i>
-                  <input type="number" id="ownerUserId" class="form-control"
-                    placeholder="Auto-filled from your account" required readonly
-                    style="background:#f8f9fa; cursor:not-allowed;" />
+                  <input type="number" id="ownerUserId" class="form-control" placeholder="Auto-filled from your account"
+                    required readonly style="background:#f8f9fa; cursor:not-allowed;" />
                 </div>
                 <small class="text-muted">Auto-filled from your logged-in account.</small>
               </div>
@@ -278,9 +441,8 @@
                 <label class="form-label">GST Number <span class="text-danger">*</span></label>
                 <div class="input-icon-wrap">
                   <i class="fa fa-file-invoice field-icon"></i>
-                  <input type="text" id="gstNumber" class="form-control"
-                    placeholder="e.g. 27AAPFU0939F1ZV" maxlength="15"
-                    style="text-transform:uppercase;" required />
+                  <input type="text" id="gstNumber" class="form-control" placeholder="e.g. 27AAPFU0939F1ZV"
+                    maxlength="15" style="text-transform:uppercase;" required />
                 </div>
                 <small class="text-muted">15-digit GST Identification Number.</small>
               </div>
@@ -290,8 +452,8 @@
                 <label class="form-label">Business Address <span class="text-danger">*</span></label>
                 <div class="input-icon-wrap">
                   <i class="fa fa-location-dot field-icon"></i>
-                  <input type="text" id="ownerAddress" class="form-control"
-                    placeholder="Full registered address" required />
+                  <input type="text" id="ownerAddress" class="form-control" placeholder="Full registered address"
+                    required />
                 </div>
               </div>
 
@@ -299,15 +461,15 @@
               <div class="col-12">
                 <div class="d-flex gap-5 flex-wrap">
                   <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="ownerApproved"
-                      style="width:50px; height:26px;" disabled />
+                    <input class="form-check-input" type="checkbox" id="ownerApproved" style="width:50px; height:26px;"
+                      disabled />
                     <label class="form-check-label fw-bold text-muted" for="ownerApproved">
                       Approved (set by Admin)
                     </label>
                   </div>
                   <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="ownerActiveToggle"
-                      checked style="width:50px; height:26px; cursor:pointer;" />
+                    <input class="form-check-input" type="checkbox" id="ownerActiveToggle" checked
+                      style="width:50px; height:26px; cursor:pointer;" />
                     <label class="form-check-label fw-bold" for="ownerActiveToggle">
                       Active
                     </label>
@@ -341,7 +503,8 @@
                 <span class="p-value" id="profBusinessName">—</span>
               </div>
               <div class="profile-row">
-                <span class="p-label"><i class="fa fa-file-invoice me-2" style="color:var(--pink);"></i>GST Number</span>
+                <span class="p-label"><i class="fa fa-file-invoice me-2" style="color:var(--pink);"></i>GST
+                  Number</span>
                 <span class="p-value" id="profGst">—</span>
               </div>
               <div class="profile-row">
@@ -349,11 +512,13 @@
                 <span class="p-value" id="profAddress">—</span>
               </div>
               <div class="profile-row">
-                <span class="p-label"><i class="fa fa-circle-check me-2" style="color:var(--pink);"></i>Approval Status</span>
+                <span class="p-label"><i class="fa fa-circle-check me-2" style="color:var(--pink);"></i>Approval
+                  Status</span>
                 <span id="profApproved">—</span>
               </div>
               <div class="profile-row">
-                <span class="p-label"><i class="fa fa-toggle-on me-2" style="color:var(--pink);"></i>Active Status</span>
+                <span class="p-label"><i class="fa fa-toggle-on me-2" style="color:var(--pink);"></i>Active
+                  Status</span>
                 <span id="profActive">—</span>
               </div>
             </div>
@@ -369,7 +534,8 @@
     <div class="success-card">
       <span class="success-emoji">🎊✅🏢</span>
       <h3>Profile Saved!</h3>
-      <p>Your owner business details have been successfully registered. You can now add your hotels to Cozy Haven Stay!</p>
+      <p>Your owner business details have been successfully registered. You can now add your hotels to Cozy Haven Stay!
+      </p>
       <button class="btn-close-modal" onclick="closeSuccess()">Add a Hotel Now</button>
     </div>
   </div>
@@ -379,7 +545,7 @@
     const API_BASE = 'http://localhost:8080/api';
 
     function getAuthHeaders() {
-      const email    = sessionStorage.getItem('userEmail');
+      const email = sessionStorage.getItem('userEmail');
       const password = sessionStorage.getItem('userPassword');
       if (!email || !password) return { 'Content-Type': 'application/json' };
       return {
@@ -402,11 +568,11 @@
 
     // ── Render fetched owner profile below the form ──
     function renderOwnerProfile(o) {
-      document.getElementById('profOwnerId').innerText     = o.ownerId     ?? o.owner_id ?? '—';
-      document.getElementById('profUserId').innerText      = o.userId      ?? o.user_id  ?? '—';
+      document.getElementById('profOwnerId').innerText = o.ownerId ?? o.owner_id ?? '—';
+      document.getElementById('profUserId').innerText = o.userId ?? o.user_id ?? '—';
       document.getElementById('profBusinessName').innerText = o.buisnessName ?? o.businessName ?? '—';
-      document.getElementById('profGst').innerText         = o.gstNumber   ?? '—';
-      document.getElementById('profAddress').innerText     = o.address     ?? '—';
+      document.getElementById('profGst').innerText = o.gstNumber ?? '—';
+      document.getElementById('profAddress').innerText = o.address ?? '—';
 
       const approved = o.approved === true || o.approved === 'true';
       document.getElementById('profApproved').innerHTML =
@@ -425,7 +591,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-      const role  = sessionStorage.getItem('userRole');
+      const role = sessionStorage.getItem('userRole');
       const email = sessionStorage.getItem('userEmail');
 
       if (!role || role !== 'OWNER') {
@@ -448,7 +614,7 @@
           headers: getAuthHeaders()
         });
         if (res.ok) {
-          const user   = await res.json();
+          const user = await res.json();
           const userId = user.userId ?? user.id;
           if (userId) {
             document.getElementById('ownerUserId').value = userId;
@@ -464,11 +630,11 @@
         e.preventDefault();
         document.getElementById('errorBanner').classList.add('d-none');
 
-        const userId       = parseInt(document.getElementById('ownerUserId').value, 10);
+        const userId = parseInt(document.getElementById('ownerUserId').value, 10);
         const businessName = document.getElementById('businessName').value.trim();
-        const gstNumber    = document.getElementById('gstNumber').value.trim().toUpperCase();
-        const address      = document.getElementById('ownerAddress').value.trim();
-        const active       = document.getElementById('ownerActiveToggle').checked;
+        const gstNumber = document.getElementById('gstNumber').value.trim().toUpperCase();
+        const address = document.getElementById('ownerAddress').value.trim();
+        const active = document.getElementById('ownerActiveToggle').checked;
 
         if (!userId || !businessName || !gstNumber || !address) {
           showError('Please fill in all required fields.');
