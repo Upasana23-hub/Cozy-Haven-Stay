@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Cozy Haven Stay</title>
-  <link rel="icon" type="image/png" href="images/cozy.png" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -255,7 +254,57 @@
   <script src="js/auth.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Initial Navbar Logic
       initNavbar();
+
+      // 2. Strict Navbar Override
+      const userEmail = sessionStorage.getItem('userEmail');
+      const navGuest = document.getElementById('navGuest');
+      const navGuest2 = document.getElementById('navGuest2');
+      const navUser = document.getElementById('navUser');
+      const navBookings = document.getElementById('navBookings');
+
+      // Find the Explore link (usually the first child of the navbar)
+      const navLinks = document.querySelector('.navbar-nav');
+      const exploreLi = navLinks.querySelector('li:first-child');
+
+      if (userEmail) {
+        // LOGGED IN: Show only Explore and a direct Logout button
+        if (navGuest) navGuest.style.setProperty('display', 'none', 'important');
+        if (navGuest2) navGuest2.style.setProperty('display', 'none', 'important');
+        if (navBookings) navBookings.style.setProperty('display', 'none', 'important');
+
+        // Ensure Explore is visible
+        if (exploreLi) exploreLi.style.setProperty('display', 'block', 'important');
+
+        // Instead of a complex dropdown, let's make the user part just a direct Logout button
+        if (navUser) {
+          const userName = sessionStorage.getItem('userName') || 'User';
+          navUser.innerHTML = `
+                <a class="nav-link d-flex align-items-center gap-2 px-3 py-2 rounded-pill" href="#" id="directLogout"
+                   style="color:#333; font-weight:600; font-size:0.95rem; transition:all 0.2s;"
+                   onmouseover="this.style.color='#fff'; this.style.background='var(--pink)';"
+                   onmouseout="this.style.color='#333'; this.style.background='transparent';">
+                  <i class="fa fa-sign-out-alt" style="color:var(--pink);"></i>
+                  Logout
+                </a>`;
+          navUser.style.setProperty('display', 'block', 'important');
+
+          // Add simple logout logic
+          document.getElementById('directLogout').onclick = (e) => {
+            e.preventDefault();
+            sessionStorage.clear();
+            window.location.reload();
+          };
+        }
+      } else {
+        // NOT LOGGED IN: Show Explore, Sign In, and Register
+        if (exploreLi) exploreLi.style.display = 'block';
+        if (navGuest) navGuest.style.display = 'block';
+        if (navGuest2) navGuest2.style.display = 'block';
+        if (navUser) navUser.style.display = 'none';
+      }
+
       const today = new Date(), tom = new Date(); tom.setDate(today.getDate() + 1);
       document.getElementById('sCI').value = today.toISOString().split('T')[0];
       document.getElementById('sCO').value = tom.toISOString().split('T')[0];
