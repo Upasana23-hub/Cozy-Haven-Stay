@@ -13,8 +13,11 @@ import com.wipro.cozyhaven.entity.Bookings;
 import com.wipro.cozyhaven.entity.Role;
 import com.wipro.cozyhaven.entity.User;
 import com.wipro.cozyhaven.repository.BookingsRepository;
+import com.wipro.cozyhaven.repository.PaymentRepository;
+import com.wipro.cozyhaven.repository.ReviewRepository;
 import com.wipro.cozyhaven.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,9 +28,10 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
     private BookingsRepository bookingRepository;
+  
     
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
    
     @Override
@@ -116,17 +120,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long userId) {
+        try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            // Step 1: Delete payments for each booking
+            List<Bookings> bookings = bookingRepository.findByUserUserId(userId);
+            for (Bookings booking : bookings) {
+                paymentRepository.deleteByBookingBookingId(booking.getBookingId());
+            }
 
-       
-        List<Bookings> bookings = bookingRepository.findByUserUserId(userId);
+            // Step 2: Delete bookings
+            bookingRepository.deleteAll(bookings);
 
-        bookingRepository.deleteAll(bookings);
+            // Step 3: Delete reviews ✅ NEW
+            reviewRepository.deleteByUser_UserId(userId);
 
-        userRepository.delete(user);
+            // Step 4: Delete user
+            userRepository.delete(user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Something went wrong: " + e.getMessage());
+        }
     }
 
    

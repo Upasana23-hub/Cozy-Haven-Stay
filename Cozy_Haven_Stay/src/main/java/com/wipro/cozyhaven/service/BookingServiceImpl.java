@@ -30,44 +30,44 @@ public class BookingServiceImpl implements BookingService {
 
 	@Override
 	public BookingsDTO createBooking(BookingsDTO bookingDTO) {
-		User user = userRepository.findById(bookingDTO.getUserId())
-                .orElseThrow(() -> 
-                        new ResourceNotFoundException("User not found"));
-	
-		Room room = roomRepository.findById(bookingDTO.getRoomId())
-                .orElseThrow(() -> 
-                        new ResourceNotFoundException("Room not found"));
-        Bookings booking = new Bookings();
-        booking.setUser(user); 
-        booking.setRoom(room);
-        booking.setHotel(room.getHotel());
-        booking.setBookedAt(LocalDateTime.now());
-        booking.setCheckIn(bookingDTO.getCheckIn());
-        booking.setCheckOut(bookingDTO.getCheckOut());
-        booking.setBookingStatus(bookingDTO.getBookingStatus());
-        booking.setPaymentStatus(bookingDTO.getPaymentStatus());
-        booking.setTotalAmount(bookingDTO.getTotalAmount());
+	    User user = userRepository.findById(bookingDTO.getUserId())
+	            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Bookings savedBooking = bookingRepository.save(booking);
-       
+	    Room room = roomRepository.findById(bookingDTO.getRoomId())
+	            .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
-        BookingsDTO savedDTO = new BookingsDTO();
-   
+	    Bookings booking = new Bookings();
+	    booking.setUser(user);
+	    booking.setRoom(room);
+	    booking.setHotel(room.getHotel());
+	    booking.setBookedAt(LocalDateTime.now());
+	    booking.setCheckIn(bookingDTO.getCheckIn());
+	    booking.setCheckOut(bookingDTO.getCheckOut());
 
-        savedDTO.setBookingId(savedBooking.getBookingId());
-        savedDTO.setUserId(savedBooking.getUser().getUserId());
-        savedDTO.setRoomId(savedBooking.getRoom().getRoomId());
-        savedDTO.setCheckIn(savedBooking.getCheckIn());
-        savedDTO.setCheckOut(savedBooking.getCheckOut());
-        savedDTO.setPaymentStatus(savedBooking.getPaymentStatus());
-        savedDTO.setTotalAmount(savedBooking.getTotalAmount());
-        savedDTO.setBookingStatus(savedBooking.getBookingStatus());
-        savedDTO.setBookedAt(savedBooking.getBookedAt());
+	    
+	    booking.setBookingStatus(bookingDTO.getBookingStatus() != null ? bookingDTO.getBookingStatus() : "BOOKED");
+	    booking.setPaymentStatus(bookingDTO.getPaymentStatus() != null ? bookingDTO.getPaymentStatus() : "PENDING");
 
-        return savedDTO;
-		
+	    booking.setTotalAmount(bookingDTO.getTotalAmount());
+
+	    Bookings savedBooking = bookingRepository.save(booking);
+
+	    BookingsDTO savedDTO = new BookingsDTO();
+	    savedDTO.setBookingId(savedBooking.getBookingId());
+	    savedDTO.setUserId(savedBooking.getUser().getUserId());
+	    savedDTO.setRoomId(savedBooking.getRoom().getRoomId());
+	    savedDTO.setCheckIn(savedBooking.getCheckIn());
+	    savedDTO.setCheckOut(savedBooking.getCheckOut());
+	    savedDTO.setPaymentStatus(savedBooking.getPaymentStatus());
+	    savedDTO.setTotalAmount(savedBooking.getTotalAmount());
+	    savedDTO.setBookingStatus(savedBooking.getBookingStatus());
+	    savedDTO.setBookedAt(savedBooking.getBookedAt());
+
+	    return savedDTO;
 	}
-
+	
+	
+	
 	@Override
 	public List<BookingsDTO> getAllBookings() {
 
