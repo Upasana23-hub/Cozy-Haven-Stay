@@ -36,7 +36,7 @@ public class BookingRestController {
         return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
     }
 
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@GetMapping("/getall")
 	public ResponseEntity<List<BookingsDTO>> getAllBookings() {
         List<BookingsDTO> bookings = bookingService.getAllBookings();

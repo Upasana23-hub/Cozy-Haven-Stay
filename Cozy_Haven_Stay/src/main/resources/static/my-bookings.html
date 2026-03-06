@@ -10,19 +10,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         body {
-            background: linear-gradient(rgba(255, 250, 252, 0.85), rgba(255, 250, 252, 0.85)), url('images/booking.png') no-repeat center center fixed;
+            background: linear-gradient(rgba(255,250,252,0.85), rgba(255,250,252,0.85)), url('images/booking.png') no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
         }
-
         .top-nav {
-            background: rgba(255, 255, 255, 0.97);
+            background: rgba(255,255,255,0.97);
             backdrop-filter: blur(12px);
             border-bottom: 1.5px solid #f5e0ee;
             padding: 10px 0;
-            box-shadow: 0 2px 16px rgba(233, 30, 140, 0.07);
+            box-shadow: 0 2px 16px rgba(233,30,140,0.07);
         }
-
         .booking-card {
             background: #fff;
             border-radius: 18px;
@@ -30,29 +28,10 @@
             padding: 36px;
             max-width: 520px;
             margin: 40px auto;
-            box-shadow: 0 8px 32px rgba(233, 30, 140, 0.09);
+            box-shadow: 0 8px 32px rgba(233,30,140,0.09);
         }
-
-        .booking-title {
-            font-weight: 800;
-            color: var(--pink);
-            margin-bottom: 8px;
-        }
-
-        #bookingSuccess {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            border-radius: 10px;
-            padding: 14px 20px;
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
-
-        .bookings-section {
-            padding: 40px 0;
-        }
-
+        .booking-title { font-weight: 800; color: var(--pink); margin-bottom: 8px; }
+        .bookings-section { padding: 40px 0; }
         .booking-row {
             background: #fff;
             border: 1px solid #f5e0ee;
@@ -66,45 +45,14 @@
             gap: 12px;
             transition: box-shadow .2s;
         }
-
-        .booking-row:hover {
-            box-shadow: 0 4px 18px rgba(233, 30, 140, 0.10);
-        }
-
-        .booking-info h6 {
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .booking-info p {
-            font-size: .85rem;
-            color: #888;
-            margin: 0;
-        }
-
-        .bstatus {
-            display: inline-block;
-            padding: 3px 12px;
-            border-radius: 99px;
-            font-size: .78rem;
-            font-weight: 700;
-        }
-
-        .CONFIRMED {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .CANCELLED {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .PENDING {
-            background: #fff3cd;
-            color: #856404;
-        }
-
+        .booking-row:hover { box-shadow: 0 4px 18px rgba(233,30,140,0.10); }
+        .booking-info h6 { font-weight: 700; margin-bottom: 4px; }
+        .booking-info p  { font-size: .85rem; color: #888; margin: 0; }
+        .bstatus { display: inline-block; padding: 3px 12px; border-radius: 99px; font-size: .78rem; font-weight: 700; }
+        .CONFIRMED { background: #d4edda; color: #155724; }
+        .CANCELLED { background: #f8d7da; color: #721c24; }
+        .PENDING   { background: #fff3cd; color: #856404; }
+        .BOOKED    { background: #cfe2ff; color: #084298; }
         .cancel-btn {
             background: none;
             border: 1.5px solid #e91e8c;
@@ -116,20 +64,12 @@
             cursor: pointer;
             transition: all .2s;
         }
-
-        .cancel-btn:hover {
-            background: #e91e8c;
-            color: #fff;
-        }
-
-        /* ── Success Modal Styles ── */
+        .cancel-btn:hover { background: #e91e8c; color: #fff; }
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.4);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255,255,255,0.4);
             backdrop-filter: blur(15px);
             z-index: 9999;
             display: none;
@@ -138,78 +78,32 @@
             opacity: 0;
             transition: opacity 0.5s ease;
         }
-
-        .modal-overlay.show {
-            display: flex;
-            opacity: 1;
-        }
-
+        .modal-overlay.show { display: flex; opacity: 1; }
         .success-card {
             background: white;
             padding: 50px;
             border-radius: 30px;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(233, 30, 140, 0.2);
+            box-shadow: 0 25px 60px rgba(233,30,140,0.2);
             transform: scale(0.8);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
             max-width: 450px;
             width: 90%;
-            border: 1px solid rgba(255, 255, 255, 0.6);
         }
-
-        .modal-overlay.show .success-card {
-            transform: scale(1);
-        }
-
-        .success-icon {
-            font-size: 80px;
-            color: #4BB543;
-            margin-bottom: 25px;
-            display: block;
-            animation: bounce 1s infinite alternate;
-        }
-
-        @keyframes bounce {
-            from {
-                transform: translateY(0);
-            }
-
-            to {
-                transform: translateY(-10px);
-            }
-        }
-
-        .success-card h2 {
-            font-weight: 850;
-            color: #222;
-            margin-bottom: 15px;
-            font-size: 2rem;
-        }
-
-        .success-card p {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-
+        .modal-overlay.show .success-card { transform: scale(1); }
+        .success-icon { font-size: 80px; margin-bottom: 25px; display: block; animation: bounce 1s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+        .success-card h2 { font-weight: 850; color: #222; margin-bottom: 15px; font-size: 2rem; }
+        .success-card p  { color: #666; margin-bottom: 30px; font-size: 1.1rem; line-height: 1.6; }
         .continue-btn {
-            background: var(--pink);
-            color: white;
-            padding: 15px 40px;
-            border-radius: 99px;
-            border: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
+            background: var(--pink); color: white;
+            padding: 15px 40px; border-radius: 99px; border: none;
+            font-weight: 700; font-size: 1.1rem; cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(233, 30, 140, 0.3);
+            box-shadow: 0 10px 20px rgba(233,30,140,0.3);
         }
-
-        .continue-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(233, 30, 140, 0.4);
-        }
+        .continue-btn:hover { transform: translateY(-3px); }
+        .readonly-field { background: #f8f9fa !important; color: #555; font-weight: 600; }
     </style>
 </head>
 
@@ -230,15 +124,40 @@
         </div>
     </nav>
 
+    <!-- BOOKING FORM -->
     <div id="bookingFormSection" style="display:none;">
         <div class="booking-card">
-            <!-- Hidden simple success div - kept for logic compatibility if needed, but we use the modal now -->
-            <div id="bookingSuccess" style="display:none;"></div>
-            <h4 class="booking-title" id="roomName"></h4>
-            <p><strong>Bed Type:</strong> <span id="bedType"></span></p>
-            <p><strong>Price:</strong> ₹<span id="roomPrice"></span> / night</p>
+
+            <!-- Loading spinner -->
+            <div id="roomLoading" class="text-center py-3">
+                <div class="spinner-border spinner-border-sm" style="color:var(--pink);"></div>
+                <span class="ms-2 text-muted">Loading room details...</span>
+            </div>
+
+            <!-- Room details -->
+            <div id="roomDetails" style="display:none;">
+                <h4 class="booking-title" id="roomName"></h4>
+                <div class="row mb-2">
+                    <div class="col-6"><p><strong>Room Type:</strong> <span id="roomType"></span></p></div>
+                    <div class="col-6"><p><strong>Bed Type:</strong> <span id="bedType"></span></p></div>
+                </div>
+                <p><strong>Base Price:</strong> ₹<span id="roomPrice"></span> / night</p>
+            </div>
+
             <hr style="border-color:#f5e0ee;" />
+
             <form id="bookingForm">
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <label class="form-label fw-bold">User ID</label>
+                        <input type="text" id="displayUserId" class="form-control readonly-field" readonly />
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Room ID</label>
+                        <input type="text" id="displayRoomId" class="form-control readonly-field" readonly />
+                    </div>
+                </div>
+
                 <div class="row g-3 mb-3">
                     <div class="col-6">
                         <label class="form-label fw-bold">Check-in Date</label>
@@ -249,6 +168,7 @@
                         <input type="date" id="checkOut" class="form-control" required />
                     </div>
                 </div>
+
                 <div class="row g-3 mb-3">
                     <div class="col-4">
                         <label class="form-label fw-bold">Rooms</label>
@@ -260,19 +180,31 @@
                     </div>
                     <div class="col-4">
                         <label class="form-label fw-bold">Children</label>
-                        <input type="number" id="children" class="form-control" value="0" min="0" required />
+                        <input type="number" id="children" class="form-control" value="0" min="0" />
                     </div>
                 </div>
+
                 <div class="mb-4">
                     <label class="form-label fw-bold">Payment Method</label>
-                    <select id="paymentMethod" class="form-select" style="border:1.5px solid #f5e0ee; box-shadow:none;"
-                        required>
+                    <select id="paymentMethod" class="form-select"
+                        style="border:1.5px solid #f5e0ee; box-shadow:none;" required>
                         <option value="CARD">Credit / Debit Card</option>
                         <option value="UPI">UPI</option>
                         <option value="NETBANKING">Net Banking</option>
                         <option value="PAY_AT_HOTEL">Pay at Hotel</option>
                     </select>
                 </div>
+
+                <div class="mb-4 p-3 rounded" style="background:#fff0f6; border:1px dashed var(--pink);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Total Stay Amount:</span>
+                        <span class="h4 mb-0 fw-bolder" style="color:var(--pink);">
+                            ₹<span id="displayTotalAmount">0</span>
+                        </span>
+                    </div>
+                    <small class="text-muted" id="nightsInfo"></small>
+                </div>
+
                 <button type="submit" class="btn btn-pink w-100 rounded-pill py-3 fw-bold" style="font-size:1.05rem;">
                     <i class="fa fa-check me-2"></i>Confirm Booking
                 </button>
@@ -280,7 +212,7 @@
         </div>
     </div>
 
-    <!-- MY BOOKINGS LIST (when no room selected) -->
+    <!-- MY BOOKINGS LIST -->
     <div id="myBookingsSection" style="display:none;" class="bookings-section">
         <div class="container">
             <h4 class="fw-bold mb-1">My Bookings</h4>
@@ -294,7 +226,7 @@
         </div>
     </div>
 
-    <!-- Success Popup Modal -->
+    <!-- Success Modal -->
     <div id="successModal" class="modal-overlay">
         <div class="success-card">
             <span class="success-icon">✨🥳✨</span>
@@ -307,16 +239,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
 
-        const BOOK_API = 'http://localhost:8080/api';
-        const urlParams = new URLSearchParams(window.location.search);
-        const bookRoomId = urlParams.get('roomId');
-        const bookRoomName = urlParams.get('room');
-        const bookBedType = urlParams.get('bed');
+        const BOOK_API      = 'http://localhost:8080/api';
+        const urlParams     = new URLSearchParams(window.location.search);
+        const bookRoomId    = urlParams.get('roomId');
+        const bookRoomName  = urlParams.get('room');
+        const bookBedType   = urlParams.get('bed');
         const bookRoomPrice = urlParams.get('price');
 
-        // ✅ Build Basic Auth headers from sessionStorage
+        let pricePerNight  = parseFloat(bookRoomPrice) || 0;
+        let loggedInUserId = null;
+
         function getAuthHeaders() {
-            const email = sessionStorage.getItem('userEmail');
+            const email    = sessionStorage.getItem('userEmail');
             const password = sessionStorage.getItem('userPassword');
             if (!email || !password) return { 'Content-Type': 'application/json' };
             return {
@@ -326,122 +260,181 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-
-            // ✅ FIXED: check userRole + userEmail instead of missing 'user' object
-            const userRole = sessionStorage.getItem('userRole');
+            const userRole  = sessionStorage.getItem('userRole');
             const userEmail = sessionStorage.getItem('userEmail');
 
             if (!userRole || !userEmail || userRole !== 'USER') {
-                // Save where they were trying to go
                 sessionStorage.setItem('redirectAfterLogin', window.location.href);
                 window.location.href = 'login.html';
                 return;
             }
 
-            const hasRoom = bookRoomId || bookRoomName;
-
-            if (hasRoom) {
+            if (bookRoomId || bookRoomName) {
                 document.getElementById('bookingFormSection').style.display = 'block';
-                await initRoom();
-                initBookingForm();
+                await fetchUserIdFromDB(userEmail); // ✅ Step 1: fetch userId from DB
+                await fetchRoomFromDB();             // ✅ Step 2: fetch room from DB
+                initBookingForm();                   // ✅ Step 3: setup form
             } else {
                 document.getElementById('myBookingsSection').style.display = 'block';
                 await loadMyBookings();
             }
         });
 
-        // ── Fill room info from URL params or API ──
-        function fillRoom(room) {
-            const nameEl = document.getElementById('roomName');
-            const bedEl = document.getElementById('bedType');
-            const priceEl = document.getElementById('roomPrice');
-            if (nameEl) nameEl.innerText = `Book ${room.roomType ?? room.roomSize ?? bookRoomName ?? ''} Room`;
-            if (bedEl) bedEl.innerText = room.bedType ?? bookBedType ?? '';
-            if (priceEl) priceEl.innerText = room.baseFare ?? room.price ?? bookRoomPrice ?? '';
+        // ✅ Uses existing /api/users/email/{email} endpoint — isAuthenticated() so USER can access
+        async function fetchUserIdFromDB(userEmail) {
+            try {
+                const res = await fetch(
+                    `${BOOK_API}/users/email/${encodeURIComponent(userEmail)}`,
+                    { credentials: 'include', headers: getAuthHeaders() }
+                );
+                if (res.ok) {
+                    const userData = await res.json();
+                    loggedInUserId = userData.userId ?? userData.user_id;
+                    document.getElementById('displayUserId').value = loggedInUserId ?? 'N/A';
+                    sessionStorage.setItem('userId', loggedInUserId); // cache for future
+                } else {
+                    console.error('Failed to fetch user, status:', res.status);
+                    document.getElementById('displayUserId').value = 'N/A';
+                }
+            } catch (err) {
+                console.error('Failed to fetch userId:', err);
+                document.getElementById('displayUserId').value = 'N/A';
+            }
         }
 
-        async function initRoom() {
-            if (bookRoomId) {
-                try {
+        // ✅ Fetch room details from DB using roomId from URL
+        async function fetchRoomFromDB() {
+            const loadingEl = document.getElementById('roomLoading');
+            const detailsEl = document.getElementById('roomDetails');
+
+            try {
+                if (bookRoomId) {
                     const res = await fetch(`${BOOK_API}/rooms/getbyid/${bookRoomId}`, {
                         credentials: 'include',
                         headers: getAuthHeaders()
                     });
+
                     if (res.ok) {
-                        fillRoom(await res.json());
-                        return;
+                        const room     = await res.json();
+                        const roomType = room.roomType ?? room.room_type ?? bookRoomName ?? 'Standard';
+                        const roomSize = room.roomSize ?? room.room_size ?? roomType;
+                        const bedType  = room.bedType  ?? room.bed_type  ?? bookBedType  ?? 'N/A';
+                        const baseFare = room.baseFare ?? room.base_fare ?? bookRoomPrice ?? 0;
+                        const roomId   = room.roomId   ?? bookRoomId;
+
+                        pricePerNight = parseFloat(baseFare); // ✅ price from DB
+
+                        document.getElementById('roomName').innerText  = `Book ${roomSize} Room`;
+                        document.getElementById('roomType').innerText  = roomType;
+                        document.getElementById('bedType').innerText   = bedType;
+                        document.getElementById('roomPrice').innerText = baseFare;
+                        document.getElementById('displayRoomId').value = roomId;
+                    } else {
+                        throw new Error('Room not found');
                     }
-                } catch (err) {
-                    console.error('Room fetch failed:', err);
+                } else {
+                    // Fallback to URL params
+                    pricePerNight = parseFloat(bookRoomPrice) || 0;
+                    document.getElementById('roomName').innerText  = `Book ${bookRoomName ?? ''} Room`;
+                    document.getElementById('roomType').innerText  = bookRoomName  ?? 'N/A';
+                    document.getElementById('bedType').innerText   = bookBedType   ?? 'N/A';
+                    document.getElementById('roomPrice').innerText = bookRoomPrice ?? '0';
+                    document.getElementById('displayRoomId').value = 'N/A';
                 }
+            } catch (err) {
+                console.error('Room fetch failed, using URL params:', err);
+                pricePerNight = parseFloat(bookRoomPrice) || 0;
+                document.getElementById('roomName').innerText  = `Book ${bookRoomName ?? ''} Room`;
+                document.getElementById('roomType').innerText  = bookRoomName  ?? 'N/A';
+                document.getElementById('bedType').innerText   = bookBedType   ?? 'N/A';
+                document.getElementById('roomPrice').innerText = bookRoomPrice ?? '0';
+                document.getElementById('displayRoomId').value = bookRoomId ?? 'N/A';
             }
-            // Fallback to URL params
-            fillRoom({ roomType: bookRoomName, bedType: bookBedType, baseFare: bookRoomPrice });
+
+            loadingEl.style.display = 'none';
+            detailsEl.style.display = 'block';
         }
 
-        // ── Booking Form Submit ──
+        // ── Booking Form Setup ──
         function initBookingForm() {
-            const form = document.getElementById('bookingForm');
-            if (!form) return;
+            const checkInInput   = document.getElementById('checkIn');
+            const checkOutInput  = document.getElementById('checkOut');
+            const noOfRoomsInput = document.getElementById('noOfRooms');
+            const form           = document.getElementById('bookingForm');
 
-            // Set min date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('checkIn').min = today;
-            document.getElementById('checkOut').min = today;
+            const today      = new Date().toISOString().split('T')[0];
+            checkInInput.min  = today;
+            checkOutInput.min = today;
 
+            // ✅ Live total calculation
+            function updateTotal() {
+                const cin   = checkInInput.value;
+                const cout  = checkOutInput.value;
+                const rooms = parseInt(noOfRoomsInput.value || '1', 10);
+                if (cin && cout) {
+                    const dIn  = new Date(cin);
+                    const dOut = new Date(cout);
+                    if (dOut > dIn) {
+                        const nights = Math.ceil((dOut - dIn) / (1000 * 3600 * 24));
+                        const total  = nights * rooms * pricePerNight;
+                        document.getElementById('displayTotalAmount').innerText = total.toFixed(2);
+                        document.getElementById('nightsInfo').innerText =
+                            `${nights} night(s) × ${rooms} room(s) × ₹${pricePerNight}/night`;
+                    } else {
+                        document.getElementById('displayTotalAmount').innerText = '0';
+                        document.getElementById('nightsInfo').innerText = '';
+                    }
+                }
+            }
+
+            [checkInInput, checkOutInput, noOfRoomsInput].forEach(el => {
+                el.addEventListener('change', updateTotal);
+                el.addEventListener('input',  updateTotal);
+            });
+
+            updateTotal(); // ✅ show total on page load
+
+            // ── Submit ──
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                const checkIn = document.getElementById('checkIn').value;
-                const checkOut = document.getElementById('checkOut').value;
-                const noOfRooms = parseInt(document.getElementById('noOfRooms').value || '1', 10);
-                const adults = parseInt(document.getElementById('adults').value || '1', 10);
-                const children = parseInt(document.getElementById('children').value || '0', 10);
-                const paymentMethod = document.getElementById('paymentMethod').value || 'PAY_AT_HOTEL';
+                const checkIn       = checkInInput.value;
+                const checkOut      = checkOutInput.value;
+                const noOfRooms     = parseInt(noOfRoomsInput.value || '1', 10);
+                const adults        = parseInt(document.getElementById('adults').value    || '1', 10);
+                const children      = parseInt(document.getElementById('children').value || '0', 10);
+                const paymentMethod = document.getElementById('paymentMethod').value;
 
                 if (!checkIn || !checkOut) {
                     alert('Please select both check-in and check-out dates.');
                     return;
                 }
 
-                const dateIn = new Date(checkIn);
-                const dateOut = new Date(checkOut);
-                if (dateOut <= dateIn) {
+                const dIn  = new Date(checkIn);
+                const dOut = new Date(checkOut);
+                if (dOut <= dIn) {
                     alert('Check-out date must be after check-in date.');
                     return;
                 }
 
-                const nights = Math.ceil((dateOut - dateIn) / (1000 * 3600 * 24));
-                const pricePerNight = parseFloat(document.getElementById('roomPrice').innerText || bookRoomPrice || '0');
-                const totalAmount = nights * noOfRooms * pricePerNight || 0;
-                const paymentStatus = paymentMethod === 'PAY_AT_HOTEL' ? 'PENDING' : 'PAID';
-
-                // ✅ Get userId from backend using stored email
-                let userId = null;
-                try {
-                    const userEmail = sessionStorage.getItem('userEmail');
-                    const userRes = await fetch(`${BOOK_API}/users/getbyemail?email=${encodeURIComponent(userEmail)}`, {
-                        credentials: 'include',
-                        headers: getAuthHeaders()
-                    });
-                    if (userRes.ok) {
-                        const userData = await userRes.json();
-                        userId = userData.userId ?? userData.id;
-                    }
-                } catch (err) {
-                    console.error('Failed to fetch userId:', err);
+                if (!loggedInUserId) {
+                    alert('Unable to identify user. Please logout and login again.');
+                    return;
                 }
 
+                const nights        = Math.ceil((dOut - dIn) / (1000 * 3600 * 24));
+                const totalAmount   = parseFloat((nights * noOfRooms * pricePerNight).toFixed(2));
+                const paymentStatus = paymentMethod === 'PAY_AT_HOTEL' ? 'PENDING' : 'PAID';
+
                 const bookingPayload = {
-                    userId: userId,
-                    roomId: bookRoomId ? parseInt(bookRoomId, 10) : null,
-                    checkIn: checkIn,
-                    checkOut: checkOut,
-                    noOfRooms: noOfRooms,
-                    adults: adults,
-                    children: children,
-                    totalAmount: totalAmount,
-                    bookingStatus: 'CONFIRMED',
+                    userId:        parseInt(loggedInUserId, 10),                  // ✅ from DB
+                    roomId:        bookRoomId ? parseInt(bookRoomId, 10) : null,  // ✅ from URL
+                    checkIn:       checkIn,
+                    checkOut:      checkOut,
+                    noOfRooms:     noOfRooms,
+                    adults:        adults,
+                    children:      children,
+                    totalAmount:   totalAmount,                                    // ✅ from DB price
                     paymentStatus: paymentStatus
                 };
 
@@ -458,7 +451,7 @@
                         throw new Error(err || 'Booking failed');
                     }
 
-                    // ✅ Show the attractive popup modal
+                    // ✅ Show success modal
                     const modal = document.getElementById('successModal');
                     modal.style.display = 'flex';
                     setTimeout(() => modal.classList.add('show'), 10);
@@ -476,22 +469,33 @@
 
         // ── Load My Bookings List ──
         async function loadMyBookings() {
-            const list = document.getElementById('bookingsList');
+            const list      = document.getElementById('bookingsList');
             const userEmail = sessionStorage.getItem('userEmail');
 
             try {
-                // ✅ Fetch user by email to get their bookings
-                const res = await fetch(`${BOOK_API}/users/getbyemail?email=${encodeURIComponent(userEmail)}`, {
+                // ✅ Fetch logged-in user by email to get their userId
+                const userRes = await fetch(
+                    `${BOOK_API}/users/email/${encodeURIComponent(userEmail)}`,
+                    { credentials: 'include', headers: getAuthHeaders() }
+                );
+                if (!userRes.ok) throw new Error('Failed to fetch user');
+                const userData = await userRes.json();
+                const userId   = userData.userId ?? userData.user_id;
+
+                // ✅ Fetch all bookings and filter by userId
+                const bRes = await fetch(`${BOOK_API}/bookings/getall`, {
                     credentials: 'include',
                     headers: getAuthHeaders()
                 });
+                if (!bRes.ok) throw new Error('Failed to fetch bookings');
+                const allBookings = await bRes.json();
 
-                if (!res.ok) throw new Error('Failed to fetch user data');
-                const userData = await res.json();
-                const userId = userData.userId ?? userData.id;
-                const bookings = userData.bookings ?? [];
+                // ✅ Filter only this user's bookings
+                const myBookings = allBookings.filter(b =>
+                    (b.userId ?? b.user?.userId) === userId
+                );
 
-                if (bookings.length === 0) {
+                if (myBookings.length === 0) {
                     list.innerHTML = `
                         <div class="text-center py-5">
                             <i class="fa fa-calendar-times" style="font-size:3rem; color:#f5e0ee;"></i>
@@ -500,7 +504,7 @@
                     return;
                 }
 
-                list.innerHTML = bookings.map(b => `
+                list.innerHTML = myBookings.map(b => `
                     <div class="booking-row">
                         <div class="booking-info">
                             <h6>Booking #${b.bookingId ?? b.id ?? 'N/A'}</h6>
@@ -533,12 +537,11 @@
             }
         }
 
-        // ── Cancel a Booking ──
         async function cancelMyBooking(id) {
             if (!confirm('Cancel this booking? This cannot be undone.')) return;
             try {
                 const res = await fetch(`${BOOK_API}/bookings/cancel/${id}`, {
-                    method: 'PUT', // ✅ Changed from DELETE to PUT (matches your cancel endpoint)
+                    method: 'PUT',
                     credentials: 'include',
                     headers: getAuthHeaders()
                 });
@@ -551,5 +554,4 @@
         }
     </script>
 </body>
-
 </html>
