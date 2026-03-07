@@ -51,7 +51,7 @@ public class BookingRestController {
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_OWNER','ROLE_ADMIN')")
 	@PutMapping("/cancel/{bookingId}")
     public ResponseEntity<BookingsDTO> cancelBooking(@PathVariable Long bookingId) {
         BookingsDTO cancelledBooking = bookingService.cancelBooking(bookingId);
