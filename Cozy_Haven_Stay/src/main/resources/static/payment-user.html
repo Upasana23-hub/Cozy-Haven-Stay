@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Payments - Cozy Haven Stay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .booking-card {
+            background: #fff;
+            border: 1px solid #f5e0ee;
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            transition: box-shadow 0.2s;
+        }
+        .booking-card:hover {
+            box-shadow: 0 3px 14px rgba(233, 30, 140, 0.10);
+        }
+        .booking-id {
+            font-size: 0.8rem;
+            background: #fdf2f8;
+            color: var(--pink);
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .status-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 11px;
+            border-radius: 99px;
+            display: inline-block;
+        }
+        .payment-paid     { background: #e8f5e9; color: #2e7d32; }
+        .payment-pending  { background: #fff8e1; color: #f57f17; }
+        .payment-refunded { background: #e3f2fd; color: #0d47a1; }
+
+        .no-payments {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+        }
+        .no-payments i {
+            font-size: 3rem;
+            color: #f5e0ee;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .info-label {
+            font-size: 0.72rem;
+            color: #bbb;
+            margin-bottom: 1px;
+            white-space: nowrap;
+        }
+        .info-value {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+        }
+        .divider-v {
+            width: 1px;
+            background: #f5e0ee;
+            align-self: stretch;
+            margin: 0 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid mt-4">
+        <div class="row">
+
+            <!-- SIDEBAR -->
+            <div class="col-md-3">
+                <div class="dash-sidebar text-center">
+                    <div class="mb-4">
+                        <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
+                            style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
+                        <h6 id="sidebarUserName">Loading...</h6>
+                        <small style="color:#888;" id="sidebarUserRole">User</small>
+                    </div>
+                    <hr>
+                    <div class="dash-nav">
+                        <a href="user-dashboard.html"><i class="fa fa-home"></i> Dashboard</a>
+                        <a href="hotels.html"><i class="fa fa-hotel"></i> Search Hotels</a>
+                        <a href="booking-user.html"><i class="fa fa-calendar"></i> My Bookings</a>
+                        <a href="payment-user.html" class="active"><i class="fa fa-credit-card"></i> Payments</a>
+                        <a href="my-reviews.html"><i class="fa fa-star"></i> Reviews</a>
+                        <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
+                        <a href="#" id="sidebarLogout"><i class="fa fa-sign-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div class="col-md-9">
+
+                <!-- Header -->
+                <div class="welcome-bar mb-4">
+                    <h5>My Payments</h5>
+                    <p>Review all your payment transactions for hotel bookings</p>
+                </div>
+
+                <!-- Summary badges -->
+                <div class="d-flex gap-2 flex-wrap mb-3">
+                    <span class="badge rounded-pill px-3 py-2"
+                        style="background:#fdf2f8; color:var(--pink); font-size:0.85rem; font-weight:600;">
+                        <i class="fa fa-credit-card me-1"></i>
+                        <span id="paymentCount">0</span> Transaction(s)
+                    </span>
+                    <span class="badge rounded-pill px-3 py-2"
+                        style="background:#e8f5e9; color:#2e7d32; font-size:0.85rem; font-weight:600;">
+                        <i class="fa fa-indian-rupee-sign me-1"></i>
+                        Total Paid: ₹<span id="totalPaid">0</span>
+                    </span>
+                    <span class="badge rounded-pill px-3 py-2"
+                        style="background:#fff8e1; color:#f57f17; font-size:0.85rem; font-weight:600;">
+                        <i class="fa fa-clock me-1"></i>
+                        Pending: <span id="pendingCount">0</span>
+                    </span>
+                </div>
+
+                <!-- Error banner -->
+                <div id="errorBanner" class="alert alert-danger rounded-3 d-none mb-3"></div>
+
+                <!-- Payments list -->
+                <div id="paymentsList">
+                    <div class="text-center py-5">
+                        <div class="spinner-border" style="color:var(--pink);"></div>
+                        <p class="mt-2 text-muted">Loading your payments...</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const BASE_URL = 'http://localhost:8080/api';
+
+        // ✅ Fixed template literals — was broken in original
+        function getAuthHeaders() {
+            const email    = sessionStorage.getItem('userEmail');
+            const password = sessionStorage.getItem('userPassword');
+            if (!email || !password) return { 'Content-Type': 'application/json' };
+            return {
+                'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        async function apiFetch(path) {
+            const res = await fetch(`${BASE_URL}${path}`, {
+                credentials: 'include',
+                headers: getAuthHeaders()
+            });
+            if (!res.ok) throw new Error(`${path} → HTTP ${res.status}`);
+            return res.json();
+        }
+
+        const fmtDate = d => d
+            ? new Date(d).toLocaleDateString('en-IN', {
+                day: '2-digit', month: 'short', year: 'numeric'
+              })
+            : '—';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const role  = sessionStorage.getItem('userRole');
+            const email = sessionStorage.getItem('userEmail');
+
+            if (!role || role !== 'USER') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('sidebarUserName').innerText = email;
+
+            document.getElementById('sidebarLogout').addEventListener('click', (e) => {
+                e.preventDefault();
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            });
+
+            // ✅ Fixed template literal in fetch URL
+            let userId = sessionStorage.getItem('userId');
+            if (!userId) {
+                try {
+                    const u = await apiFetch(`/users/email/${encodeURIComponent(email)}`);
+                    userId  = u.userId ?? u.user_id ?? u.id;
+                    if (userId) sessionStorage.setItem('userId', userId);
+                } catch (err) {
+                    document.getElementById('errorBanner').textContent =
+                        'Could not resolve user. Please log in again.';
+                    document.getElementById('errorBanner').classList.remove('d-none');
+                    document.getElementById('paymentsList').innerHTML = '';
+                    return;
+                }
+            }
+
+            await loadPayments(userId);
+        });
+
+        async function loadPayments(userId) {
+            const container = document.getElementById('paymentsList');
+
+            try {
+                // ✅ Fixed template literal in fetch URL
+                const bookings = await apiFetch(`/bookings/user/${userId}`);
+
+                // ── Summary stats ──
+                const paidBookings    = bookings.filter(b => (b.paymentStatus ?? '').toUpperCase() === 'PAID');
+                const pendingBookings = bookings.filter(b => (b.paymentStatus ?? '').toUpperCase() === 'PENDING');
+                const totalPaid       = paidBookings.reduce((sum, b) => sum + parseFloat(b.totalAmount ?? 0), 0);
+
+                document.getElementById('paymentCount').innerText = bookings.length;
+                document.getElementById('totalPaid').innerText    = Number(totalPaid).toLocaleString('en-IN');
+                document.getElementById('pendingCount').innerText = pendingBookings.length;
+
+                if (bookings.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-payments">
+                            <i class="fa fa-wallet"></i>
+                            <h5>No payments yet</h5>
+                            <p>You haven't made any payments yet.</p>
+                            <a href="hotels.html" class="btn btn-primary rounded-pill px-4 fw-bold mt-2">
+                                <i class="fa fa-hotel me-2"></i>Explore Hotels
+                            </a>
+                        </div>`;
+                    return;
+                }
+
+                // Sort newest first
+                bookings.sort((a, b) =>
+                    new Date(b.bookedAt ?? b.checkIn ?? 0) - new Date(a.bookedAt ?? a.checkIn ?? 0)
+                );
+
+                container.innerHTML = bookings.map(b => {
+                    const bookingId     = b.bookingId ?? '—';
+                    const paymentStatus = (b.paymentStatus ?? 'PENDING').toUpperCase();
+                    const bookingStatus = (b.bookingStatus ?? 'PENDING').toUpperCase();
+                    const totalAmount   = parseFloat(b.totalAmount ?? 0);
+                    const bookedAt      = b.bookedAt  ?? '';
+                    const checkIn       = b.checkIn   ?? b.checkInDate  ?? '';
+                    const checkOut      = b.checkOut  ?? b.checkOutDate ?? '';
+                    const noOfRooms     = b.noOfRooms ?? 1;
+                    const adults        = b.adults    ?? 1;
+                    const children      = b.children  ?? 0;
+
+                    const payClass = paymentStatus === 'PAID'     ? 'payment-paid'
+                                   : paymentStatus === 'REFUNDED' ? 'payment-refunded'
+                                   : 'payment-pending';
+
+                    // ✅ Fixed template literals in button/badge rendering
+                    const actionBtn = paymentStatus === 'PENDING'
+                        ? `<button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold"
+                                onclick="payNow(${bookingId})">
+                                <i class="fa fa-credit-card me-1"></i>Pay Now
+                           </button>`
+                        : paymentStatus === 'REFUNDED'
+                        ? `<span class="badge bg-info text-dark rounded-pill px-3 py-2">
+                                <i class="fa fa-rotate-left me-1"></i>Refunded
+                           </span>`
+                        : `<span class="badge bg-success rounded-pill px-3 py-2">
+                                <i class="fa fa-check-circle me-1"></i>Completed
+                           </span>`;
+
+                    let nights = '';
+                    if (checkIn && checkOut) {
+                        const diff = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
+                        if (diff > 0) nights = `${diff}N`;
+                    }
+
+                    return `
+                        <div class="booking-card d-flex align-items-center flex-wrap gap-3">
+
+                            <!-- Booking ID + statuses -->
+                            <div style="min-width:140px;">
+                                <span class="booking-id">
+                                    <i class="fa fa-hashtag me-1"></i>Booking #${bookingId}
+                                </span>
+                                <div class="d-flex gap-1 mt-2 flex-wrap">
+                                    <span class="status-badge ${payClass}">${paymentStatus}</span>
+                                    <span class="status-badge
+                                        ${bookingStatus === 'CANCELLED' ? 'payment-refunded' :
+                                          bookingStatus === 'CONFIRMED' || bookingStatus === 'BOOKED'
+                                          ? 'payment-paid' : 'payment-pending'}">
+                                        ${bookingStatus}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="divider-v d-none d-md-block"></div>
+
+                            <!-- Booked on -->
+                            <div>
+                                <div class="info-label">
+                                    <i class="fa fa-calendar me-1"></i>Booked On
+                                </div>
+                                <div class="info-value">${fmtDate(bookedAt) || '—'}</div>
+                            </div>
+
+                            <div class="divider-v d-none d-md-block"></div>
+
+                            <!-- Check-in → Check-out -->
+                            <div>
+                                <div class="info-label">
+                                    <i class="fa fa-sign-in-alt me-1"></i>Check-In → Out
+                                </div>
+                                <div class="info-value">
+                                    ${fmtDate(checkIn)} → ${fmtDate(checkOut)}
+                                    ${nights ? `<span style="color:#888; font-size:0.75rem;">(${nights})</span>` : ''}
+                                </div>
+                            </div>
+
+                            <div class="divider-v d-none d-md-block"></div>
+
+                            <!-- Guests -->
+                            <div>
+                                <div class="info-label">
+                                    <i class="fa fa-users me-1"></i>Guests / Rooms
+                                </div>
+                                <div class="info-value">
+                                    ${adults}A${children > 0 ? ` ${children}C` : ''} · ${noOfRooms} room${noOfRooms > 1 ? 's' : ''}
+                                </div>
+                            </div>
+
+                            <div class="divider-v d-none d-md-block"></div>
+
+                            <!-- Amount -->
+                            <div>
+                                <div class="info-label">
+                                    <i class="fa fa-indian-rupee-sign me-1"></i>Amount
+                                </div>
+                                <div class="info-value" style="color:var(--pink); font-size:1rem;">
+                                    ₹${Number(totalAmount).toLocaleString('en-IN')}
+                                </div>
+                            </div>
+
+                            <!-- Action button -->
+                            <div class="ms-auto">${actionBtn}</div>
+
+                        </div>`;
+                }).join('');
+
+            } catch (err) {
+                console.error('Error loading payments:', err);
+                document.getElementById('errorBanner').textContent =
+                    'Failed to load payments: ' + err.message;
+                document.getElementById('errorBanner').classList.remove('d-none');
+                container.innerHTML = '';
+            }
+        }
+
+        // Pay Now — extend this when you add a payment gateway
+        async function payNow(bookingId) {
+            if (!confirm(`Proceed to payment for Booking #${bookingId}?`)) return;
+            // 🔧 Replace this with your payment gateway integration
+            alert(`Payment gateway integration needed for Booking #${bookingId}`);
+        }
+    </script>
+</body>
+
+</html>
