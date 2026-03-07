@@ -9,4 +9,5 @@ public interface ReviewService {
 	List<ReviewDTO> getReviewsByHotel(Long hotelId);
 	List<ReviewDTO> getReviewsByUser(Long userId);
 	void deleteReview(Long reviewId);
+	ReviewDTO updateReview(Long reviewId, Long requestingUserId, int newRating, String newComment);
 }

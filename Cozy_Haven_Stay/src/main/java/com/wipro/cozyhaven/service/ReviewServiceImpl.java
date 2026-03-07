@@ -94,4 +94,25 @@ public class ReviewServiceImpl implements ReviewService {
 	    reviewRepository.delete(review);
 	}
 
+	@Override
+	public ReviewDTO updateReview(Long reviewId, Long requestingUserId, int newRating, String newComment) {
+	    
+	    Review review = reviewRepository.findByReviewIdAndUser_UserId(reviewId, requestingUserId)
+	            .orElseThrow(() -> new ResourceNotFoundException(
+	                    "Review not found or you are not allowed to update this review."));
+
+	    review.setRating(newRating);
+	    review.setComment(newComment);
+	    Review updatedReview = reviewRepository.save(review);
+
+	    // Map back to DTO — same pattern as your getReviewsByHotel
+	    ReviewDTO dto = new ReviewDTO();
+	    dto.setReviewId(updatedReview.getReviewId());
+	    dto.setUserId(updatedReview.getUser().getUserId());
+	    dto.setHotelId(updatedReview.getHotel().getHotelId());
+	    dto.setRating(updatedReview.getRating());
+	    dto.setComment(updatedReview.getComment());
+	    dto.setCreatedAt(updatedReview.getCreatedAt());
+	    return dto;
+	}
 }

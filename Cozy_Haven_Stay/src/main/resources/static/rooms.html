@@ -84,20 +84,160 @@
             justify-content: flex-end;
             gap: 5px;
         }
-
         .star-rating input { display: none; }
-
         .star-rating label {
             font-size: 1.5rem;
             color: #d1d5db;
             cursor: pointer;
             transition: color 0.2s;
         }
-
         .star-rating label:hover,
         .star-rating label:hover ~ label,
-        .star-rating input:checked ~ label {
-            color: #f59e0b;
+        .star-rating input:checked ~ label { color: #f59e0b; }
+
+        /* ── 3-dot menu ── */
+        .review-menu-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.05rem;
+            cursor: pointer;
+            padding: 2px 7px;
+            border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+            line-height: 1;
+        }
+        .review-menu-btn:hover { background: #fdf2f8; color: #e91e8c; }
+
+        .review-dropdown {
+            position: absolute;
+            top: 34px;
+            right: 0;
+            background: #fff;
+            border: 1px solid #f5e0ee;
+            border-radius: 12px;
+            box-shadow: 0 8px 28px rgba(233,30,140,0.13);
+            z-index: 100;
+            min-width: 155px;
+            overflow: hidden;
+            display: none;
+        }
+        .review-dropdown.open { display: block; animation: fadeDown 0.15s ease both; }
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .review-dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 11px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .review-dropdown .btn-edit  { color: #2563eb; }
+        .review-dropdown .btn-edit:hover  { background: #eff6ff; }
+        .review-dropdown .btn-delete { color: #c0392b; }
+        .review-dropdown .btn-delete:hover { background: #fff4f4; }
+
+        /* ── Shared modal base ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(20,5,30,0.52);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show { display: flex; }
+
+        @keyframes popIn {
+            from { opacity:0; transform: scale(0.86) translateY(28px); }
+            to   { opacity:1; transform: scale(1) translateY(0); }
+        }
+
+        /* ── Edit Modal ── */
+        .edit-modal-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 36px 32px 28px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 24px 70px rgba(233,30,140,0.18);
+            position: relative;
+            animation: popIn 0.22s cubic-bezier(.4,1.6,.6,1) both;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 14px; right: 18px;
+            background: none; border: none;
+            font-size: 1.25rem; color: #bbb; cursor: pointer;
+            transition: color 0.15s;
+        }
+        .modal-close-btn:hover { color: #e91e8c; }
+
+        .edit-star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+        .edit-star-rating input { display: none; }
+        .edit-star-rating label {
+            font-size: 1.6rem;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .edit-star-rating label:hover,
+        .edit-star-rating label:hover ~ label,
+        .edit-star-rating input:checked ~ label { color: #f59e0b; }
+
+        /* ── Admin Login Modal ── */
+        .admin-modal-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 38px 34px 30px;
+            width: 100%;
+            max-width: 390px;
+            box-shadow: 0 24px 70px rgba(233,30,140,0.18);
+            position: relative;
+            animation: popIn 0.22s cubic-bezier(.4,1.6,.6,1) both;
+        }
+        .modal-error-box {
+            display: none;
+            background: #fff0f0;
+            color: #c0392b;
+            border-radius: 10px;
+            padding: 9px 14px;
+            font-size: 0.88rem;
+            margin-bottom: 12px;
+            border: 1px solid #fcc;
+        }
+
+        /* ── Confirm Delete Modal ── */
+        #confirmDeleteModal { z-index: 10000; }
+        .confirm-modal-box {
+            background: #fff;
+            border-radius: 20px;
+            padding: 34px 28px 26px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 16px 52px rgba(233,30,140,0.16);
+            text-align: center;
+            animation: popIn 0.2s cubic-bezier(.4,1.6,.6,1) both;
+        }
+        .confirm-modal-box .confirm-icon {
+            font-size: 2.4rem;
+            color: #e91e8c;
+            margin-bottom: 12px;
         }
     </style>
 </head>
@@ -142,7 +282,7 @@
     <section class="container py-5" id="reviewsSection">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="fw-bold mb-0"><i class="fa fa-star me-2" style="color:#f59e0b;"></i>Guest Reviews</h3>
-            <button class="btn btn-pink rounded-pill px-4 fw-bold" id="btnWriteReview" onclick="toggleReviewForm()">
+            <button class="btn btn-pink rounded-pill px-4 fw-bold" onclick="toggleReviewForm()">
                 Write a Review
             </button>
         </div>
@@ -156,15 +296,15 @@
                     <label class="form-label fw-bold">Rating</label>
                     <div class="star-rating">
                         <input type="radio" id="star5" name="rating" value="5" required />
-                        <label for="star5" title="5 stars"><i class="fa fa-star"></i></label>
+                        <label for="star5"><i class="fa fa-star"></i></label>
                         <input type="radio" id="star4" name="rating" value="4" />
-                        <label for="star4" title="4 stars"><i class="fa fa-star"></i></label>
+                        <label for="star4"><i class="fa fa-star"></i></label>
                         <input type="radio" id="star3" name="rating" value="3" />
-                        <label for="star3" title="3 stars"><i class="fa fa-star"></i></label>
+                        <label for="star3"><i class="fa fa-star"></i></label>
                         <input type="radio" id="star2" name="rating" value="2" />
-                        <label for="star2" title="2 stars"><i class="fa fa-star"></i></label>
+                        <label for="star2"><i class="fa fa-star"></i></label>
                         <input type="radio" id="star1" name="rating" value="1" />
-                        <label for="star1" title="1 star"><i class="fa fa-star"></i></label>
+                        <label for="star1"><i class="fa fa-star"></i></label>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -188,14 +328,142 @@
         </div>
     </section>
 
+    <!-- ══════════════════════════════════════════
+         EDIT REVIEW MODAL
+    ══════════════════════════════════════════ -->
+    <div id="editReviewModal" class="modal-overlay">
+        <div class="edit-modal-box">
+            <button class="modal-close-btn" onclick="closeEditModal()">
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="text-center mb-4">
+                <div style="font-size:2rem; color:#e91e8c; margin-bottom:8px;">
+                    <i class="fa fa-pen-to-square"></i>
+                </div>
+                <h5 style="font-weight:800; color:#1a0a24; margin-bottom:4px;">Edit Your Review</h5>
+                <p class="text-muted" style="font-size:0.88rem; margin-bottom:0;">Update your rating and comment below</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="font-size:0.9rem;">Rating</label>
+                <div class="edit-star-rating">
+                    <input type="radio" id="editStar5" name="editRating" value="5" />
+                    <label for="editStar5"><i class="fa fa-star"></i></label>
+                    <input type="radio" id="editStar4" name="editRating" value="4" />
+                    <label for="editStar4"><i class="fa fa-star"></i></label>
+                    <input type="radio" id="editStar3" name="editRating" value="3" />
+                    <label for="editStar3"><i class="fa fa-star"></i></label>
+                    <input type="radio" id="editStar2" name="editRating" value="2" />
+                    <label for="editStar2"><i class="fa fa-star"></i></label>
+                    <input type="radio" id="editStar1" name="editRating" value="1" />
+                    <label for="editStar1"><i class="fa fa-star"></i></label>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold" style="font-size:0.9rem;">Comment</label>
+                <textarea id="editReviewComment" class="form-control" rows="3"
+                    placeholder="Update your comment..."
+                    style="border-color:#f5e0ee; resize:none;"></textarea>
+            </div>
+
+            <div id="editReviewError" class="modal-error-box">
+                <i class="fa fa-circle-exclamation me-1"></i>
+                <span id="editReviewErrorMsg"></span>
+            </div>
+
+            <div class="d-flex gap-3">
+                <button class="btn btn-outline-secondary rounded-pill px-4 flex-grow-1"
+                    onclick="closeEditModal()">Cancel</button>
+                <button class="btn btn-pink rounded-pill px-4 fw-bold flex-grow-1"
+                    id="submitEditBtn" onclick="submitEditReview()">
+                    <i class="fa fa-check me-1"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         ADMIN LOGIN MODAL
+    ══════════════════════════════════════════ -->
+    <div id="adminLoginModal" class="modal-overlay">
+        <div class="admin-modal-box">
+            <button class="modal-close-btn" onclick="closeAdminModal()">
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="text-center mb-3">
+                <div style="font-size:2.4rem; color:#e91e8c; margin-bottom:8px;">
+                    <i class="fa fa-shield-halved"></i>
+                </div>
+                <h5 style="font-weight:800; color:#1a0a24; margin-bottom:4px;">Admin Access Required</h5>
+                <p class="text-muted" style="font-size:0.88rem; margin-bottom:0;">Sign in as admin to delete this review</p>
+            </div>
+
+            <div id="adminLoginError" class="modal-error-box">
+                <i class="fa fa-circle-exclamation me-1"></i>
+                <span id="adminLoginErrorMsg">Invalid credentials. Please try again.</span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold" style="font-size:0.9rem;">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="border-color:#f5e0ee; background:#fdf2f8;">
+                        <i class="fa fa-user" style="color:#e91e8c;"></i>
+                    </span>
+                    <input type="email" id="adminEmail" class="form-control"
+                        placeholder="admin@example.com" style="border-color:#f5e0ee;" />
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold" style="font-size:0.9rem;">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text" style="border-color:#f5e0ee; background:#fdf2f8;">
+                        <i class="fa fa-lock" style="color:#e91e8c;"></i>
+                    </span>
+                    <input type="password" id="adminPassword" class="form-control"
+                        placeholder="••••••••" style="border-color:#f5e0ee;" />
+                    <button class="input-group-text"
+                        style="border-color:#f5e0ee; background:#fdf2f8; cursor:pointer;"
+                        onclick="toggleAdminPasswordVisibility()">
+                        <i class="fa fa-eye" id="adminPwEyeIcon" style="color:#aaa;"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="btn btn-pink w-100 rounded-pill py-2 fw-bold" id="adminLoginBtn"
+                onclick="handleAdminLogin()">
+                <i class="fa fa-right-to-bracket me-2"></i>Login & Delete Review
+            </button>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         CONFIRM DELETE MODAL
+    ══════════════════════════════════════════ -->
+    <div id="confirmDeleteModal" class="modal-overlay">
+        <div class="confirm-modal-box">
+            <div class="confirm-icon"><i class="fa fa-trash-can"></i></div>
+            <h6 style="font-weight:800; font-size:1.05rem;">Delete this review?</h6>
+            <p class="text-muted" style="font-size:0.88rem; margin-bottom:22px;">
+                This action cannot be undone. The review will be permanently removed.
+            </p>
+            <div class="d-flex gap-3 justify-content-center">
+                <button class="btn btn-outline-secondary rounded-pill px-4"
+                    onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn rounded-pill px-4 fw-bold" id="confirmDeleteBtn"
+                    style="background:#e91e8c; color:#fff;" onclick="executeDelete()">
+                    <i class="fa fa-trash me-1"></i>Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer style="background: #1a0a24; color: #cbb; padding: 40px 0; margin-top: 40px;">
         <div class="container">
             <div class="row g-4">
                 <div class="col-md-4">
                     <img src="images/cozy.png" height="40" alt="logo" class="mb-2" />
-                    <p style="font-size:.85rem;color:#a08898;">Your home away from home. Villas and homestays across
-                        beautiful destinations.</p>
+                    <p style="font-size:.85rem;color:#a08898;">Your home away from home. Villas and homestays across beautiful destinations.</p>
                 </div>
                 <div class="col-6 col-md-2">
                     <h6 style="color:#fff;">Explore</h6>
@@ -224,8 +492,7 @@
                 </div>
             </div>
             <hr style="border-color:#3a1a3a;" />
-            <p class="text-center mb-0" style="font-size:.82rem;color:#a08898;">&copy; 2026 Cozy Haven Stay. All rights
-                reserved.</p>
+            <p class="text-center mb-0" style="font-size:.82rem;color:#a08898;">&copy; 2026 Cozy Haven Stay. All rights reserved.</p>
         </div>
     </footer>
 
@@ -235,26 +502,71 @@
 
         const BASE_URL = 'http://localhost:8080/api';
 
-        // ✅ Basic Auth headers
+        let pendingDeleteReviewId = null;
+        let pendingEditReviewId   = null;
+
+        // ── AUTH HEADERS ──
         function getAuthHeaders() {
             const email    = sessionStorage.getItem('userEmail');
             const password = sessionStorage.getItem('userPassword');
-            if (!email || !password) return {};
+            if (!email || !password) return { 'Content-Type': 'application/json' };
             return {
                 'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
                 'Content-Type': 'application/json'
             };
         }
 
-        // ✅ Get hotelId from URL
+        function getAdminAuthHeaders(email, password) {
+            return {
+                'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
         function getHotelIdFromUrl() {
             return new URLSearchParams(window.location.search).get('hotelId');
         }
 
+        // ── ON PAGE LOAD ──
         document.addEventListener('DOMContentLoaded', () => {
+            fetchAndStoreUserId();
             loadRooms();
             loadReviews();
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.review-menu-wrapper')) {
+                    document.querySelectorAll('.review-dropdown.open')
+                        .forEach(d => d.classList.remove('open'));
+                }
+            });
+
+            document.getElementById('adminPassword').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleAdminLogin();
+            });
+            document.getElementById('adminEmail').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') handleAdminLogin();
+            });
         });
+
+        // ── FETCH & STORE userId ──
+        // Required so we can compare logged-in user with review owner
+        async function fetchAndStoreUserId() {
+            if (sessionStorage.getItem('userId')) return;
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (!userEmail) return;
+            try {
+                const res = await fetch(
+                    `${BASE_URL}/users/email/${encodeURIComponent(userEmail)}`,
+                    { credentials: 'include', headers: getAuthHeaders() }
+                );
+                if (!res.ok) return;
+                const data = await res.json();
+                const userId = data.userId ?? data.user_id;
+                if (userId) sessionStorage.setItem('userId', userId);
+            } catch (err) {
+                console.warn('Could not fetch userId:', err);
+            }
+        }
 
         // ── LOAD ROOMS ──
         async function loadRooms() {
@@ -262,17 +574,20 @@
             const hotelId   = getHotelIdFromUrl();
 
             try {
-                // ✅ Filter by hotelId if present, otherwise load all
                 const url = hotelId
                     ? `${BASE_URL}/rooms/getbyhotel/${hotelId}`
                     : `${BASE_URL}/rooms/getall`;
 
-                const res = await fetch(url, { credentials: 'include' });
+                const res = await fetch(url, {
+                    credentials: 'include',
+                    headers: getAuthHeaders()
+                });
 
-                // Fallback to getall if hotel-specific endpoint fails
                 let rooms;
                 if (!res.ok && hotelId) {
-                    const fallback = await fetch(`${BASE_URL}/rooms/getall`, { credentials: 'include' });
+                    const fallback = await fetch(`${BASE_URL}/rooms/getall`, {
+                        credentials: 'include', headers: getAuthHeaders()
+                    });
                     rooms = await fallback.json();
                 } else {
                     rooms = await res.json();
@@ -288,15 +603,15 @@
                 }
 
                 container.innerHTML = rooms.map(room => {
-                    const roomId   = room.roomId   ?? room.room_id  ?? '';
-                    const roomType = room.roomType ?? room.room_type ?? 'Standard Room';
-                    const roomSize = room.roomSize ?? room.room_size ?? roomType;
-                    const bedType  = room.bedType  ?? room.bed_type  ?? 'Double Bed';
-                    const baseFare = room.baseFare ?? room.base_fare ?? room.price ?? 0;
+                    const roomId    = room.roomId    ?? room.room_id  ?? '';
+                    const roomType  = room.roomType  ?? room.room_type ?? 'Standard Room';
+                    const roomSize  = room.roomSize  ?? room.room_size ?? roomType;
+                    const bedType   = room.bedType   ?? room.bed_type  ?? 'Double Bed';
+                    const baseFare  = room.baseFare  ?? room.base_fare ?? room.price ?? 0;
                     const maxPeople = room.maxPeople ?? room.max_people ?? room.maxOccupancy ?? 2;
-                    const hasAC    = room.acAvailable ?? room.ac_available ?? false;
+                    const hasAC     = room.acAvailable ?? room.ac_available ?? false;
                     const available = room.availability ?? true;
-                    const image    = room.image ?? 'images/room.png';
+                    const image     = room.image ?? 'images/room.png';
 
                     const bookUrl = `my-bookings.html?roomId=${roomId}&room=${encodeURIComponent(roomSize)}&bed=${encodeURIComponent(bedType)}&price=${baseFare}`;
 
@@ -334,7 +649,7 @@
 
             } catch (err) {
                 console.error('Error fetching rooms:', err);
-                container.innerHTML = '<div class="col-12 text-center text-danger py-5">Failed to load rooms. Check your backend/server.</div>';
+                container.innerHTML = '<div class="col-12 text-center text-danger py-5">Failed to load rooms. Please check your connection.</div>';
             }
         }
 
@@ -367,19 +682,19 @@
                     return;
                 }
 
+                // Get logged-in userId for ownership check
+                const loggedInUserId = sessionStorage.getItem('userId');
+
                 container.innerHTML = reviews.map(review => {
-                    // ✅ Fixed field mapping to match DB columns
-                    const name    = review.userName
-                                 ?? review.user?.name
-                                 ?? review.user?.email
-                                 ?? 'Anonymous';
+                    const reviewId     = review.reviewId ?? review.review_id ?? review.id ?? '';
+                    const reviewUserId = review.userId   ?? review.user_id   ?? '';
+                    const name         = review.userName
+                                      ?? review.user?.name
+                                      ?? review.user?.email
+                                      ?? 'Anonymous';
                     const rating  = review.rating  ?? 5;
                     const comment = review.comment ?? '';
-                    // ✅ Fixed: use createdAt / created_at matching DB column
-                    const date    = review.createdAt
-                                 ?? review.created_at
-                                 ?? review.reviewDate
-                                 ?? '';
+                    const date    = review.createdAt ?? review.created_at ?? review.reviewDate ?? '';
 
                     const formattedDate = date
                         ? new Date(date).toLocaleDateString('en-IN', {
@@ -391,14 +706,39 @@
                         `<i class="fa fa-star ${i < rating ? 'star-filled' : 'star-empty'}"></i>`
                     ).join('');
 
+                    // ✅ Show Edit only if this is the logged-in user's own review
+                    const isOwner = loggedInUserId && String(loggedInUserId) === String(reviewUserId);
+
+                    // Escape comment for safe use in onclick attribute
+                    const safeComment = comment.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+
                     return `
                     <div class="col-md-6 col-lg-4">
                         <div class="card p-3 h-100 review-card">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fa fa-user-circle me-2" style="font-size:2rem;color:#e91e8c;"></i>
-                                <div>
+                                <div class="flex-grow-1">
                                     <h6 class="mb-0 fw-bold">${name}</h6>
                                     <small class="text-muted">${formattedDate}</small>
+                                </div>
+
+                                <!-- 3-dot menu -->
+                                <div class="review-menu-wrapper position-relative" style="flex-shrink:0;">
+                                    <button class="review-menu-btn"
+                                        onclick="toggleReviewMenu(event, 'menu-${reviewId}')"
+                                        title="Options">
+                                        <i class="fa fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <div class="review-dropdown" id="menu-${reviewId}">
+                                        ${isOwner ? `
+                                        <button class="btn-edit"
+                                            onclick="onEditClick('${reviewId}', ${rating}, '${safeComment}')">
+                                            <i class="fa fa-pen"></i> Edit Review
+                                        </button>` : ''}
+                                        <button class="btn-delete" onclick="onDeleteClick('${reviewId}')">
+                                            <i class="fa fa-trash"></i> Delete Review
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="mb-2">${stars}</div>
@@ -413,7 +753,280 @@
             }
         }
 
-        // ── TOGGLE REVIEW FORM ──
+        // ── TOGGLE 3-DOT DROPDOWN ──
+        function toggleReviewMenu(e, menuId) {
+            e.stopPropagation();
+            document.querySelectorAll('.review-dropdown.open').forEach(d => {
+                if (d.id !== menuId) d.classList.remove('open');
+            });
+            const menu = document.getElementById(menuId);
+            if (menu) menu.classList.toggle('open');
+        }
+
+        // ════════════════════════════════════════
+        // EDIT REVIEW
+        // ════════════════════════════════════════
+
+        function onEditClick(reviewId, currentRating, currentComment) {
+            document.querySelectorAll('.review-dropdown.open').forEach(d => d.classList.remove('open'));
+
+            // Must be logged in as USER
+            const userRole = sessionStorage.getItem('userRole');
+            if (!userRole || userRole !== 'USER') {
+                alert('Please sign in to edit your review.');
+                sessionStorage.setItem('redirectAfterLogin', window.location.href);
+                window.location.href = 'login.html';
+                return;
+            }
+
+            pendingEditReviewId = reviewId;
+
+            // Pre-fill star rating
+            const starInput = document.querySelector(`input[name="editRating"][value="${currentRating}"]`);
+            if (starInput) starInput.checked = true;
+
+            // Pre-fill comment
+            document.getElementById('editReviewComment').value = currentComment;
+
+            // Clear errors
+            document.getElementById('editReviewError').style.display = 'none';
+
+            document.getElementById('editReviewModal').classList.add('show');
+            setTimeout(() => document.getElementById('editReviewComment').focus(), 150);
+        }
+
+        function closeEditModal() {
+            document.getElementById('editReviewModal').classList.remove('show');
+            pendingEditReviewId = null;
+            document.querySelectorAll('input[name="editRating"]').forEach(r => r.checked = false);
+            document.getElementById('editReviewComment').value = '';
+            document.getElementById('editReviewError').style.display = 'none';
+        }
+
+        async function submitEditReview() {
+            if (!pendingEditReviewId) return;
+
+            const rating    = document.querySelector('input[name="editRating"]:checked')?.value;
+            const comment   = document.getElementById('editReviewComment').value.trim();
+            const errorEl   = document.getElementById('editReviewError');
+            const msgEl     = document.getElementById('editReviewErrorMsg');
+            const btn       = document.getElementById('submitEditBtn');
+
+            // Validate
+            if (!rating) {
+                msgEl.textContent = 'Please select a star rating.';
+                errorEl.style.display = 'block';
+                return;
+            }
+            if (!comment) {
+                msgEl.textContent = 'Please enter a comment.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const userId = sessionStorage.getItem('userId');
+            if (!userId) {
+                msgEl.textContent = 'Session expired. Please log in again.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Saving...';
+            errorEl.style.display = 'none';
+
+            try {
+                // PUT /api/reviews/update/{reviewId}/user/{userId}
+                // Body: { rating, comment }
+                const res = await fetch(
+                    `${BASE_URL}/reviews/update/${pendingEditReviewId}/user/${userId}`,
+                    {
+                        method: 'PUT',
+                        credentials: 'include',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({
+                            rating:  parseInt(rating),
+                            comment: comment
+                        })
+                    }
+                );
+
+                if (res.status === 403) {
+                    throw new Error('You can only edit your own reviews.');
+                }
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText || `Error ${res.status}`);
+                }
+
+                closeEditModal();
+                showToast('Review updated successfully!', 'success');
+                loadReviews();
+
+            } catch (err) {
+                msgEl.textContent = err.message;
+                errorEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-check me-1"></i>Save Changes';
+            }
+        }
+
+        // ════════════════════════════════════════
+        // DELETE REVIEW (Admin only)
+        // ════════════════════════════════════════
+
+        function onDeleteClick(reviewId) {
+            document.querySelectorAll('.review-dropdown.open').forEach(d => d.classList.remove('open'));
+            pendingDeleteReviewId = reviewId;
+
+            const adminEmail    = sessionStorage.getItem('adminEmail');
+            const adminPassword = sessionStorage.getItem('adminPassword');
+
+            if (adminEmail && adminPassword) {
+                openConfirmModal();
+            } else {
+                openAdminModal();
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminEmail').value    = '';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminLoginError').style.display = 'none';
+            document.getElementById('adminLoginModal').classList.add('show');
+            setTimeout(() => document.getElementById('adminEmail').focus(), 100);
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminLoginModal').classList.remove('show');
+            pendingDeleteReviewId = null;
+        }
+
+        function toggleAdminPasswordVisibility() {
+            const input = document.getElementById('adminPassword');
+            const icon  = document.getElementById('adminPwEyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa fa-eye';
+            }
+        }
+
+        async function handleAdminLogin() {
+            const email    = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const errorEl  = document.getElementById('adminLoginError');
+            const msgEl    = document.getElementById('adminLoginErrorMsg');
+            const btn      = document.getElementById('adminLoginBtn');
+
+            if (!email || !password) {
+                msgEl.textContent = 'Please enter both email and password.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Verifying...';
+            errorEl.style.display = 'none';
+
+            try {
+                const res = await fetch(`${BASE_URL}/users/email/${encodeURIComponent(email)}`, {
+                    credentials: 'include',
+                    headers: getAdminAuthHeaders(email, password)
+                });
+                if (!res.ok) throw new Error('Invalid credentials');
+
+                const userData = await res.json();
+                const role = userData.role ?? userData.userRole ?? '';
+                if (role !== 'ADMIN') throw new Error('This account does not have admin privileges.');
+
+                sessionStorage.setItem('adminEmail',    email);
+                sessionStorage.setItem('adminPassword', password);
+
+                document.getElementById('adminLoginModal').classList.remove('show');
+                openConfirmModal();
+
+            } catch (err) {
+                msgEl.textContent = err.message || 'Login failed. Please try again.';
+                errorEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-right-to-bracket me-2"></i>Login & Delete Review';
+            }
+        }
+
+        function openConfirmModal() {
+            document.getElementById('confirmDeleteModal').classList.add('show');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmDeleteModal').classList.remove('show');
+            pendingDeleteReviewId = null;
+        }
+
+        async function executeDelete() {
+            if (!pendingDeleteReviewId) return;
+
+            const reviewId      = pendingDeleteReviewId;
+            const adminEmail    = sessionStorage.getItem('adminEmail');
+            const adminPassword = sessionStorage.getItem('adminPassword');
+            const btn           = document.getElementById('confirmDeleteBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Deleting...';
+
+            try {
+                const res = await fetch(`${BASE_URL}/reviews/delete/${reviewId}`, {
+                    method: 'DELETE',
+                    credentials: 'include',
+                    headers: getAdminAuthHeaders(adminEmail, adminPassword)
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText || `Failed with status ${res.status}`);
+                }
+
+                closeConfirmModal();
+                showToast('Review deleted successfully.', 'success');
+                loadReviews();
+
+            } catch (err) {
+                closeConfirmModal();
+                showToast('Error: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-trash me-1"></i>Yes, Delete';
+                pendingDeleteReviewId = null;
+            }
+        }
+
+        // ── TOAST ──
+        function showToast(message, type = 'success') {
+            const existing = document.getElementById('toastNotif');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'toastNotif';
+            toast.style.cssText = `
+                position: fixed; bottom: 28px; right: 28px; z-index: 99999;
+                background: ${type === 'success' ? '#e91e8c' : '#c0392b'};
+                color: #fff; padding: 14px 22px; border-radius: 14px;
+                font-size: 0.92rem; font-weight: 600;
+                box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+                display: flex; align-items: center; gap: 10px;
+                animation: popIn 0.2s ease both;
+            `;
+            toast.innerHTML = `<i class="fa ${type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark'}"></i>${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; }, 3000);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        // ── TOGGLE WRITE REVIEW FORM ──
         function toggleReviewForm() {
             const userRole = sessionStorage.getItem('userRole');
             if (!userRole || userRole !== 'USER') {
@@ -424,12 +1037,10 @@
             }
             const wrapper = document.getElementById('reviewFormWrapper');
             wrapper.style.display = wrapper.style.display === 'none' ? 'block' : 'none';
-            if (wrapper.style.display === 'block') {
-                wrapper.scrollIntoView({ behavior: 'smooth' });
-            }
+            if (wrapper.style.display === 'block') wrapper.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ── SUBMIT REVIEW ──
+        // ── SUBMIT NEW REVIEW ──
         document.getElementById('reviewForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -444,7 +1055,6 @@
             }
 
             try {
-                // ✅ Use correct endpoint: /api/users/email/{email}
                 const userRes = await fetch(
                     `${BASE_URL}/users/email/${encodeURIComponent(userEmail)}`,
                     { credentials: 'include', headers: getAuthHeaders() }
@@ -453,18 +1063,16 @@
                 const userData = await userRes.json();
                 const userId   = userData.userId ?? userData.user_id;
 
-                const payload = {
-                    hotelId:  parseInt(hotelId),
-                    userId:   userId,
-                    rating:   parseInt(rating),
-                    comment:  comment
-                };
-
                 const res = await fetch(`${BASE_URL}/reviews/add`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: getAuthHeaders(),
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        hotelId: parseInt(hotelId),
+                        userId:  userId,
+                        rating:  parseInt(rating),
+                        comment: comment
+                    })
                 });
 
                 if (!res.ok) {
@@ -472,18 +1080,17 @@
                     throw new Error(errMsg || 'Submission failed');
                 }
 
-                alert('Thank you! Your review has been submitted.');
+                showToast('Thank you! Your review has been submitted.', 'success');
                 document.getElementById('reviewForm').reset();
                 toggleReviewForm();
-                loadReviews(); // ✅ Refresh reviews list
+                loadReviews();
 
             } catch (err) {
                 alert('Error: ' + err.message);
-                console.error(err);
             }
         });
 
-        // ── BOOKING CLICK — LOGIN CHECK ──
+        // ── BOOKING CLICK ──
         function handleBookingClick(e, destUrl) {
             e.preventDefault();
             const userRole = sessionStorage.getItem('userRole');
@@ -492,11 +1099,12 @@
                     window.location.href = destUrl;
                 }
             } else {
-                alert('Please sign in to proceed with your booking. We will redirect you back after login.');
+                alert('Please sign in to proceed with your booking.');
                 sessionStorage.setItem('redirectAfterLogin', destUrl);
                 window.location.href = 'login.html';
             }
         }
+
     </script>
 </body>
 </html>

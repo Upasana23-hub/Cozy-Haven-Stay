@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,5 +54,22 @@ public class ReviewRestController {
         reviewService.deleteReview(reviewId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+	
+	
+	@PreAuthorize("hasAuthority('ROLE_USER')")
+	@PutMapping("/update/{reviewId}/user/{requestingUserId}")
+	public ResponseEntity<ReviewDTO> updateReview(
+	        @PathVariable Long reviewId,
+	        @PathVariable Long requestingUserId,
+	        @RequestBody ReviewDTO reviewDTO) {
+
+	    ReviewDTO updated = reviewService.updateReview(
+	            reviewId,
+	            requestingUserId,
+	            reviewDTO.getRating(),
+	            reviewDTO.getComment()
+	    );
+	    return new ResponseEntity<>(updated, HttpStatus.OK);
+	}
 	
 }
