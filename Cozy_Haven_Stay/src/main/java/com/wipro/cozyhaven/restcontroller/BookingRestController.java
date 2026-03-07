@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wipro.cozyhaven.dto.BookingPaymentDTO;
 import com.wipro.cozyhaven.dto.BookingsDTO;
 import com.wipro.cozyhaven.service.BookingService;
 
@@ -79,5 +80,15 @@ public class BookingRestController {
 
 	    List<BookingsDTO> bookings = bookingService.getBookingsByHotelId(hotelId);
 	    return new ResponseEntity<>(bookings, HttpStatus.OK);
+	}
+	
+	
+	@PreAuthorize("hasRole('USER')")
+	@PostMapping("/book-room")
+	public ResponseEntity<String> bookRoom(@RequestBody BookingPaymentDTO dto) {
+
+	    String response = bookingService.createBookingWithPayment(dto);
+
+	    return ResponseEntity.ok(response);
 	}
 }

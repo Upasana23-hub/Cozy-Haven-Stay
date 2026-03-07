@@ -7,14 +7,20 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.wipro.cozyhaven.dto.BookingPaymentDTO;
 import com.wipro.cozyhaven.dto.BookingsDTO;
 import com.wipro.cozyhaven.entity.Bookings;
+import com.wipro.cozyhaven.entity.Payment;
 import com.wipro.cozyhaven.entity.Room;
 import com.wipro.cozyhaven.entity.User;
 import com.wipro.cozyhaven.exception.ResourceNotFoundException;
 import com.wipro.cozyhaven.repository.BookingsRepository;
+import com.wipro.cozyhaven.repository.HotelRepository;
+import com.wipro.cozyhaven.repository.PaymentRepository;
 import com.wipro.cozyhaven.repository.RoomRepository;
 import com.wipro.cozyhaven.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -27,6 +33,13 @@ public class BookingServiceImpl implements BookingService {
 	
 	@Autowired 
 	private RoomRepository roomRepository;
+	
+	@Autowired
+	private PaymentRepository paymentRepository;
+	
+	
+	@Autowired
+	private HotelRepository hotelRepository;
 
 	@Override
 	public BookingsDTO createBooking(BookingsDTO bookingDTO) {
@@ -215,6 +228,70 @@ public class BookingServiceImpl implements BookingService {
 	    }
 
 	    return bookingDTOs;
+	}
+	
+	
+	@Override
+	@Transactional
+	public String createBookingWithPayment(BookingPaymentDTO dto) {
+
+	    // Create Booking
+	    Bookings booking = new Bookings();
+
+	    booking.setCheckIn(dto.getCheckIn());
+	    booking.setCheckOut(dto.getCheckOut());
+	    booking.setAdults(dto.getAdults());
+	    booking.setChildren(dto.getChildren());
+	    booking.setNoOfRooms(dto.getNoOfRooms());
+	    booking.setTotalAmount(dto.getTotalAmount());
+	    booking.setBookingStatus("CONFIRMED");
+	    booking.setBookedAt(LocalDateTime.now());
+
+	    // Set User, Hotel, Room
+	    booking.setUser(userRepository.findById(dto.getUserId()).orElse(null));
+	    booking.setHotel(hotelRepository.findById(dto.getHotelId()).orElse(null));
+	    booking.setRoom(roomRepository.findById(dto.getRoomId()).orElse(null));
+
+	    // Payment mode from DTO
+	    String paymentMode = dto.getPaymentMode();
+
+	    // Set payment status in Booking
+	    if(paymentMode.equalsIgnoreCase("CARD") ||
+	       paymentMode.equalsIgnoreCase("UPI") ||
+	       paymentMode.equalsIgnoreCase("BANK")) {
+
+	        booking.setPaymentStatus("PAID");
+
+	    } else {
+	        booking.setPaymentStatus("PENDING");
+	    }
+
+	    // Save Booking
+	    Bookings savedBooking = bookingRepository.save(booking);
+
+	    // Create Payment
+	    Payment payment = new Payment();
+
+	    payment.setBooking(savedBooking);
+	    payment.setAmount(dto.getTotalAmount());
+	    payment.setPaymentMode(paymentMode);
+	    payment.setPaymentDate(LocalDateTime.now());
+
+	    // Set payment status in Payment table
+	    if(paymentMode.equalsIgnoreCase("CARD") ||
+	       paymentMode.equalsIgnoreCase("UPI") ||
+	       paymentMode.equalsIgnoreCase("BANK")) {
+
+	        payment.setPaymentStatus("SUCCESS");
+
+	    } else {
+	        payment.setPaymentStatus("PENDING");
+	    }
+
+	    // Save Payment
+	    paymentRepository.save(payment);
+
+	    return "Booking and Payment Successful";
 	}
 }
 	
