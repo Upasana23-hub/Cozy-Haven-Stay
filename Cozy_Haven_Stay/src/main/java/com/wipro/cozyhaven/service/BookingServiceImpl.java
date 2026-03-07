@@ -101,6 +101,9 @@ public class BookingServiceImpl implements BookingService {
             dto.setPaymentStatus(booking.getPaymentStatus());
             dto.setTotalAmount(booking.getTotalAmount());
             dto.setBookingStatus(booking.getBookingStatus()); 
+            dto.setCheckIn(booking.getCheckIn());     
+            dto.setCheckOut(booking.getCheckOut());   
+            dto.setBookedAt(booking.getBookedAt());
 
             bookingDTOs.add(dto);
         }
@@ -146,6 +149,10 @@ public class BookingServiceImpl implements BookingService {
         dto.setRoomId(updatedBooking.getRoom().getRoomId());
         dto.setCheckIn(updatedBooking.getCheckIn());
         dto.setCheckOut(updatedBooking.getCheckOut());
+        dto.setBookedAt(updatedBooking.getBookedAt());       
+        dto.setAdults(updatedBooking.getAdults());           
+        dto.setChildren(updatedBooking.getChildren());     
+        dto.setNoOfRooms(updatedBooking.getNoOfRooms());
         dto.setPaymentStatus(updatedBooking.getPaymentStatus());
         dto.setTotalAmount(updatedBooking.getTotalAmount());
         dto.setBookingStatus(booking.getBookingStatus()); 
@@ -188,6 +195,7 @@ public class BookingServiceImpl implements BookingService {
 	        dto.setRoomId(booking.getRoom().getRoomId());
 	        dto.setCheckIn(booking.getCheckIn());
 	        dto.setCheckOut(booking.getCheckOut());
+	        dto.setBookedAt(booking.getBookedAt());
 	        dto.setPaymentStatus(booking.getPaymentStatus());
 	        dto.setTotalAmount(booking.getTotalAmount());
 	        dto.setBookingStatus(booking.getBookingStatus());
@@ -203,7 +211,7 @@ public class BookingServiceImpl implements BookingService {
 	@Override
 	public List<BookingsDTO> getBookingsByHotelId(Long hotelId) {
 
-	    List<Bookings> bookings = bookingRepository.findAll();
+		List<Bookings> bookings = bookingRepository.getBookingsByHotelId(hotelId);
 	    List<BookingsDTO> bookingDTOs = new ArrayList<>();
 
 	    for (Bookings booking : bookings) {
@@ -214,6 +222,9 @@ public class BookingServiceImpl implements BookingService {
 	            dto.setBookingId(booking.getBookingId());
 	            dto.setUserId(booking.getUser().getUserId());
 	            dto.setRoomId(booking.getRoom().getRoomId());
+	            dto.setCheckIn(booking.getCheckIn());       
+	            dto.setCheckOut(booking.getCheckOut());    
+	            dto.setBookedAt(booking.getBookedAt()); 
 	            dto.setCheckIn(booking.getCheckIn());
 	            dto.setCheckOut(booking.getCheckOut());
 	            dto.setPaymentStatus(booking.getPaymentStatus());

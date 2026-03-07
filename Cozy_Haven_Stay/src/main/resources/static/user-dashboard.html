@@ -1,66 +1,524 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User Dashboard - Cozy Haven Stay</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Cozy Haven Stay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ── Stat Cards ── */
+        .stat-card {
+            border-radius: 18px;
+            padding: 22px 24px;
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            color: #fff;
+        }
+        .stat-card .stat-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.22);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .stat-card .stat-num   { font-size: 1.9rem; font-weight: 800; line-height: 1; }
+        .stat-card .stat-label { font-size: 0.82rem; opacity: 0.88; margin-top: 3px; }
+
+        .bg-pink   { background: linear-gradient(135deg, #e91e8c, #f06292); }
+        .bg-violet { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+        .bg-teal   { background: linear-gradient(135deg, #0d9488, #34d399); }
+        .bg-amber  { background: linear-gradient(135deg, #d97706, #fbbf24); }
+
+        /* ── Booking Cards ── */
+        .booking-card {
+            background: #fff;
+            border: 1px solid #f5e0ee;
+            border-radius: 14px;
+            padding: 13px 18px;
+            margin-bottom: 8px;
+            transition: box-shadow 0.2s;
+        }
+        .booking-card:hover { box-shadow: 0 3px 14px rgba(233,30,140,0.10); }
+
+        .pay-badge {
+            font-size: 0.72rem; font-weight: 700;
+            padding: 3px 11px; border-radius: 99px;
+            display: inline-block;
+        }
+        .paid      { background: #e8f5e9; color: #2e7d32; }
+        .pending   { background: #fff8e1; color: #f57f17; }
+        .refunded  { background: #e3f2fd; color: #0d47a1; }
+        .cancelled { background: #fdecea; color: #c62828; }
+        .booked    { background: #cfe2ff; color: #084298; }
+        .confirmed { background: #d4edda; color: #155724; }
+
+        .section-title {
+            font-weight: 800; font-size: 1rem;
+            color: #333; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .no-data {
+            text-align: center; padding: 36px 20px; color: #bbb;
+        }
+        .no-data i {
+            font-size: 2.5rem; display: block;
+            margin-bottom: 10px; color: #f5e0ee;
+        }
+        .divider-v {
+            width: 1px; background: #f5e0ee;
+            align-self: stretch; margin: 0 6px;
+        }
+
+        /* Quick action buttons */
+        .quick-btn {
+            border-radius: 14px;
+            padding: 18px 20px;
+            background: #fff;
+            border: 1.5px solid #f5e0ee;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s;
+            display: block;
+        }
+        .quick-btn:hover {
+            background: #fdf2f8;
+            border-color: #e91e8c;
+            color: #e91e8c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(233,30,140,0.10);
+        }
+        .quick-btn i {
+            font-size: 1.6rem;
+            display: block;
+            margin-bottom: 8px;
+            color: #e91e8c;
+        }
+        .quick-btn span {
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+    </style>
 </head>
+
 <body>
-<div class="container-fluid mt-4">
-  <div class="row">
-    <div class="col-md-3">
-      <div class="dash-sidebar text-center">
-        <div class="mb-4">
-          <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK" style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
-          <h6 id="sidebarUserName">Loading...</h6>
-          <small style="color:#888;" id="sidebarUserRole">User</small>
+    <div class="container-fluid mt-4">
+        <div class="row">
+
+            <!-- SIDEBAR -->
+            <div class="col-md-3">
+                <div class="dash-sidebar text-center">
+                    <div class="mb-4">
+                        <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
+                            style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
+                        <h6 id="sidebarUserName">Loading...</h6>
+                        <small style="color:#888;" id="sidebarUserRole">User</small>
+                    </div>
+                    <hr>
+                    <div class="dash-nav">
+                        <a href="user-dashboard.html" class="active"><i class="fa fa-home"></i> Dashboard</a>
+                        <a href="hotels.html"><i class="fa fa-hotel"></i> Search Hotels</a>
+                        <a href="booking-user.html"><i class="fa fa-calendar"></i> My Bookings</a>
+                        <a href="payment-user.html"><i class="fa fa-credit-card"></i> Payments</a>
+                        <a href="my-reviews.html"><i class="fa fa-star"></i> Reviews</a>
+                        <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
+                        <a href="#" id="sidebarLogout"><i class="fa fa-sign-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div class="col-md-9">
+
+                <!-- Welcome bar -->
+                <div class="welcome-bar mb-4">
+                    <h5>Welcome back, <span id="welcomeName">User</span>!</h5>
+                    <p>Here's a summary of your bookings, payments and stays</p>
+                </div>
+
+                <!-- ── STAT CARDS ── -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6 col-xl-3">
+                        <a href="booking-user.html" class="stat-card bg-pink">
+                            <div class="stat-icon"><i class="fa fa-calendar-check"></i></div>
+                            <div>
+                                <div class="stat-num" id="statTotalBookings">—</div>
+                                <div class="stat-label">Total Bookings</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <a href="booking-user.html" class="stat-card bg-violet">
+                            <div class="stat-icon"><i class="fa fa-bed"></i></div>
+                            <div>
+                                <div class="stat-num" id="statActiveBookings">—</div>
+                                <div class="stat-label">Active Bookings</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <a href="payment-user.html" class="stat-card bg-teal">
+                            <div class="stat-icon"><i class="fa fa-indian-rupee-sign"></i></div>
+                            <div>
+                                <div class="stat-num" id="statTotalSpent">—</div>
+                                <div class="stat-label">Total Spent</div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <a href="hotels.html" class="stat-card bg-amber">
+                            <div class="stat-icon"><i class="fa fa-hotel"></i></div>
+                            <div>
+                                <div class="stat-num" id="statHotels">—</div>
+                                <div class="stat-label">Hotels Available</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ── QUICK ACTIONS ── -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <a href="hotels.html" class="quick-btn">
+                            <i class="fa fa-search"></i>
+                            <span>Search Hotels</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="booking-user.html" class="quick-btn">
+                            <i class="fa fa-calendar"></i>
+                            <span>My Bookings</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="payment-user.html" class="quick-btn">
+                            <i class="fa fa-credit-card"></i>
+                            <span>My Payments</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="my-reviews.html" class="quick-btn">
+                            <i class="fa fa-star"></i>
+                            <span>My Reviews</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ── RECENT BOOKINGS ── -->
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body">
+                        <div class="section-title">
+                            <i class="fa fa-calendar" style="color:#e91e8c;"></i>
+                            Recent Bookings
+                            <a href="booking-user.html"
+                                class="btn btn-sm btn-outline-secondary rounded-pill ms-auto px-3"
+                                style="font-size:0.78rem;">
+                                View All <i class="fa fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                        <div id="recentBookingsList">
+                            <div class="text-center py-4">
+                                <div class="spinner-border spinner-border-sm" style="color:#e91e8c;"></div>
+                                <span class="ms-2 text-muted">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── RECENT PAYMENTS ── -->
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+                        <div class="section-title">
+                            <i class="fa fa-credit-card" style="color:#0d9488;"></i>
+                            Recent Payments
+                            <a href="payment-user.html"
+                                class="btn btn-sm btn-outline-secondary rounded-pill ms-auto px-3"
+                                style="font-size:0.78rem;">
+                                View All <i class="fa fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                        <div id="recentPaymentsList">
+                            <div class="text-center py-4">
+                                <div class="spinner-border spinner-border-sm" style="color:#0d9488;"></div>
+                                <span class="ms-2 text-muted">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <hr>
-        <div class="dash-nav">
-          <a href="user-dashboard.html" class="active"><i class="fa fa-home"></i> Dashboard</a>
-          <a href="hotels.html"><i class="fa fa-hotel"></i> Search Hotels</a>
-          <a href="booking-user.html"><i class="fa fa-calendar"></i> My Bookings</a>
-          <a href="my-reviews.html"><i class="fa fa-star"></i> Reviews</a>
-          <a href="user-profile.html"><i class="fa fa-user"></i> Profile</a>
-          <a href="#" id="sidebarLogout"><i class="fa fa-sign-out"></i> Logout</a>
-        </div>
-      </div>
     </div>
-    <div class="col-md-9">
-      <div class="welcome-bar">
-        <h5>Welcome, <span id="welcomeName">User</span>!</h5>
-        <p>Manage your bookings and explore hotels easily</p>
-      </div>
-      <!-- Stats and other content here -->
-    </div>
-  </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-	  const role = sessionStorage.getItem('userRole');
-	  if (!role || role !== 'USER') {
-	    window.location.href = 'login.html';
-	    return;
-	  }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
 
-	  // Display user info
-	  const email = sessionStorage.getItem('userEmail');
-	  document.getElementById('sidebarUserName').innerText = email;
-	  document.getElementById('welcomeName').innerText = email;
+        function getAuthHeaders() {
+            const email    = sessionStorage.getItem('userEmail');
+            const password = sessionStorage.getItem('userPassword');
+            if (!email || !password) return { 'Content-Type': 'application/json' };
+            return {
+                'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
+                'Content-Type': 'application/json'
+            };
+        }
 
-	  // Logout
-	  document.getElementById('sidebarLogout').addEventListener('click', () => {
-	    sessionStorage.clear();
-	    window.location.href = 'login.html';
-	  });
+        async function apiFetch(path) {
+            const res = await fetch(`${API_BASE}${path}`, {
+                credentials: 'include',
+                headers: getAuthHeaders()
+            });
+            if (!res.ok) throw new Error(`${path} → HTTP ${res.status}`);
+            return res.json();
+        }
 
-	  // Optionally, fetch stats for hotels/bookings here
-	  // fetch('/api/...').then(...);
-	});
-</script>
+        const fmtDate = d => d
+            ? new Date(d).toLocaleDateString('en-IN', {
+                day: '2-digit', month: 'short', year: 'numeric'
+              })
+            : '—';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const role  = sessionStorage.getItem('userRole');
+            const email = sessionStorage.getItem('userEmail');
+
+            if (!role || role !== 'USER') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('sidebarUserName').innerText = email;
+            document.getElementById('welcomeName').innerText     = email;
+
+            document.getElementById('sidebarLogout').addEventListener('click', (e) => {
+                e.preventDefault();
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            });
+
+            await loadDashboard(email);
+        });
+
+        async function loadDashboard(email) {
+            try {
+
+                // ── STEP 1: get userId ──
+                let userId = sessionStorage.getItem('userId');
+                if (!userId) {
+                    const u = await apiFetch(`/users/email/${encodeURIComponent(email)}`);
+                    userId  = u.userId ?? u.user_id ?? u.id;
+                    if (userId) sessionStorage.setItem('userId', userId);
+                }
+                if (!userId) throw new Error('Could not resolve user account.');
+
+                // ── STEP 2: fetch user's bookings + hotels count in parallel ──
+                const [bookings, hotels] = await Promise.all([
+                    apiFetch(`/bookings/user/${userId}`),
+                    apiFetch('/hotels/getall').catch(() => [])
+                ]);
+
+                // ── Stats ──
+                const totalBookings = bookings.length;
+                const activeBookings = bookings.filter(b => {
+                    const s = (b.bookingStatus ?? '').toUpperCase();
+                    return s === 'BOOKED' || s === 'CONFIRMED';
+                }).length;
+
+                const totalSpent = bookings
+                    .filter(b => (b.paymentStatus ?? '').toUpperCase() === 'PAID')
+                    .reduce((sum, b) => sum + parseFloat(b.totalAmount ?? 0), 0);
+
+                document.getElementById('statTotalBookings').innerText  = totalBookings;
+                document.getElementById('statActiveBookings').innerText = activeBookings;
+                document.getElementById('statTotalSpent').innerText =
+                    '₹' + Number(totalSpent).toLocaleString('en-IN');
+                document.getElementById('statHotels').innerText = hotels.length;
+
+                // Sort newest first
+                const sorted = [...bookings].sort((a, b) =>
+                    new Date(b.bookedAt ?? b.checkIn ?? 0) - new Date(a.bookedAt ?? a.checkIn ?? 0)
+                );
+
+                // ── Recent Bookings (latest 5) ──
+                renderRecentBookings(sorted.slice(0, 5));
+
+                // ── Recent Payments (only PAID, latest 5) ──
+                const paidBookings = sorted.filter(b =>
+                    (b.paymentStatus ?? '').toUpperCase() === 'PAID'
+                );
+                renderRecentPayments(paidBookings.slice(0, 5));
+
+            } catch (err) {
+                console.error('Dashboard error:', err);
+                document.getElementById('recentBookingsList').innerHTML =
+                    `<div class="text-center text-danger py-3">
+                        <i class="fa fa-exclamation-circle me-2"></i>${err.message}
+                     </div>`;
+            }
+        }
+
+        function renderRecentBookings(bookings) {
+            const container = document.getElementById('recentBookingsList');
+
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="no-data">
+                        <i class="fa fa-calendar-times"></i>
+                        <p>No bookings yet. <a href="hotels.html" style="color:#e91e8c;">Explore hotels</a></p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = bookings.map(b => {
+                const bookingId     = b.bookingId ?? '—';
+                const checkIn       = b.checkIn  ?? b.checkInDate  ?? '';
+                const checkOut      = b.checkOut ?? b.checkOutDate ?? '';
+                const bookingStatus = (b.bookingStatus ?? 'PENDING').toUpperCase();
+                const payStatus     = (b.paymentStatus ?? 'PENDING').toUpperCase();
+                const amount        = parseFloat(b.totalAmount ?? 0);
+                const adults        = b.adults   ?? 1;
+                const children      = b.children ?? 0;
+                const noOfRooms     = b.noOfRooms ?? 1;
+
+                let nights = '';
+                if (checkIn && checkOut) {
+                    const diff = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
+                    if (diff > 0) nights = `${diff} night${diff > 1 ? 's' : ''}`;
+                }
+
+                const statusClass = bookingStatus === 'CANCELLED' ? 'cancelled'
+                                  : bookingStatus === 'CONFIRMED' ? 'confirmed'
+                                  : 'booked';
+
+                const payClass = payStatus === 'PAID'     ? 'paid'
+                               : payStatus === 'REFUNDED' ? 'refunded'
+                               : 'pending';
+
+                return `
+                    <div class="booking-card d-flex align-items-center flex-wrap gap-3">
+
+                        <div style="min-width:110px;">
+                            <div style="font-size:0.78rem; background:#fdf2f8; color:var(--pink);
+                                        padding:2px 10px; border-radius:99px; font-weight:700;
+                                        display:inline-block;">
+                                <i class="fa fa-hashtag me-1"></i>#${bookingId}
+                            </div>
+                            <div class="d-flex gap-1 mt-1">
+                                <span class="pay-badge ${statusClass}">${bookingStatus}</span>
+                                <span class="pay-badge ${payClass}">${payStatus}</span>
+                            </div>
+                        </div>
+
+                        <div class="divider-v d-none d-md-block"></div>
+
+                        <div>
+                            <div style="font-size:0.7rem; color:#bbb;">
+                                <i class="fa fa-sign-in-alt me-1"></i>Check-In
+                            </div>
+                            <div style="font-size:0.85rem; font-weight:700;">${fmtDate(checkIn)}</div>
+                        </div>
+
+                        <div class="divider-v d-none d-md-block"></div>
+
+                        <div>
+                            <div style="font-size:0.7rem; color:#bbb;">
+                                <i class="fa fa-sign-out-alt me-1"></i>Check-Out
+                            </div>
+                            <div style="font-size:0.85rem; font-weight:700;">${fmtDate(checkOut)}</div>
+                        </div>
+
+                        ${nights ? `
+                        <div class="divider-v d-none d-md-block"></div>
+                        <div>
+                            <div style="font-size:0.7rem; color:#bbb;"><i class="fa fa-moon me-1"></i>Duration</div>
+                            <div style="font-size:0.85rem; font-weight:700;">${nights}</div>
+                        </div>` : ''}
+
+                        <div class="divider-v d-none d-md-block"></div>
+
+                        <div>
+                            <div style="font-size:0.7rem; color:#bbb;">Guests / Rooms</div>
+                            <div style="font-size:0.85rem; font-weight:700;">
+                                ${adults}A${children > 0 ? ` ${children}C` : ''} · ${noOfRooms} room${noOfRooms > 1 ? 's' : ''}
+                            </div>
+                        </div>
+
+                        <div class="ms-auto">
+                            <div style="font-size:0.7rem; color:#bbb; text-align:right;">Amount</div>
+                            <div style="font-size:1rem; font-weight:800; color:#e91e8c;">
+                                ₹${Number(amount).toLocaleString('en-IN')}
+                            </div>
+                        </div>
+
+                    </div>`;
+            }).join('');
+        }
+
+        function renderRecentPayments(bookings) {
+            const container = document.getElementById('recentPaymentsList');
+
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="no-data">
+                        <i class="fa fa-credit-card"></i>
+                        <p>No payments yet.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Check-In</th>
+                                <th>Check-Out</th>
+                                <th>Rooms</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${bookings.map(b => {
+                                const bookingId = b.bookingId ?? '—';
+                                const checkIn   = b.checkIn  ?? b.checkInDate  ?? '';
+                                const checkOut  = b.checkOut ?? b.checkOutDate ?? '';
+                                const amount    = parseFloat(b.totalAmount ?? 0);
+                                const noOfRooms = b.noOfRooms ?? 1;
+                                const payStatus = (b.paymentStatus ?? 'PAID').toUpperCase();
+                                const payClass  = payStatus === 'PAID' ? 'paid' : 'refunded';
+
+                                return `
+                                    <tr>
+                                        <td><strong>#${bookingId}</strong></td>
+                                        <td>${fmtDate(checkIn)}</td>
+                                        <td>${fmtDate(checkOut)}</td>
+                                        <td>${noOfRooms}</td>
+                                        <td style="font-weight:800; color:#0d9488;">
+                                            ₹${Number(amount).toLocaleString('en-IN')}
+                                        </td>
+                                        <td><span class="pay-badge ${payClass}">${payStatus}</span></td>
+                                    </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+        }
+    </script>
 </body>
 </html>

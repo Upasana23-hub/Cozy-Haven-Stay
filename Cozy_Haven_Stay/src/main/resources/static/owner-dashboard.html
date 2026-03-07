@@ -9,21 +9,83 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Stat Cards ── */
+    .stat-card {
+      border-radius: 18px;
+      padding: 22px 24px;
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .stat-card .stat-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.22);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .stat-card .stat-num  { font-size: 1.9rem; font-weight: 800; line-height: 1; }
+    .stat-card .stat-label{ font-size: 0.82rem; opacity: 0.88; margin-top: 3px; }
+
+    .bg-pink    { background: linear-gradient(135deg, #e91e8c, #f06292); }
+    .bg-violet  { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+    .bg-teal    { background: linear-gradient(135deg, #0d9488, #34d399); }
+    .bg-amber   { background: linear-gradient(135deg, #d97706, #fbbf24); }
+
+    /* ── Payment row cards ── */
+    .pay-card {
+      background: #fff;
+      border: 1px solid #f5e0ee;
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 8px;
+      transition: box-shadow 0.2s;
+    }
+    .pay-card:hover { box-shadow: 0 3px 14px rgba(233,30,140,0.10); }
+
+    .pay-badge {
+      font-size: 0.72rem; font-weight: 700;
+      padding: 3px 11px; border-radius: 99px;
+      display: inline-block;
+    }
+    .paid     { background:#e8f5e9; color:#2e7d32; }
+    .pending  { background:#fff8e1; color:#f57f17; }
+    .refunded { background:#e3f2fd; color:#0d47a1; }
+    .cancelled{ background:#fdecea; color:#c62828; }
+
+    .section-title {
+      font-weight: 800; font-size: 1rem;
+      color: #333; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .no-data {
+      text-align: center; padding: 36px 20px; color: #bbb;
+    }
+    .no-data i { font-size: 2.5rem; display:block; margin-bottom:10px; color:#f5e0ee; }
+
+    .divider-v {
+      width: 1px; background: #f5e0ee;
+      align-self: stretch; margin: 0 6px;
+    }
+  </style>
 </head>
 
 <body>
-
   <div class="container-fluid mt-4">
     <div class="row">
+
       <!-- SIDEBAR -->
       <div class="col-md-3">
         <div class="dash-sidebar text-center">
           <div class="mb-4">
-            <img
-              src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
+            <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQkAg6KSS1O5eXQy0iXXghPdSOrBPBMpQkpJcz5_UpAF9uGUuJK"
               style="width:70px;height:70px;border-radius:50%;margin-bottom:8px;">
             <h6 id="ownerName">Loading...</h6>
-            <small style="color:#888;" id="ownerRole">Owner</small>
+            <small style="color:#888;">Owner</small>
           </div>
           <hr>
           <div class="dash-nav text-start">
@@ -33,42 +95,417 @@
             <a href="addroom.html"><i class="fa fa-bed"></i> Add Room</a>
             <a href="manage-rooms.html"><i class="fa fa-list"></i> Manage Rooms</a>
             <a href="booking-owner.html"><i class="fa fa-calendar"></i> Hotel Bookings</a>
+            <a href="payment-owner.html"><i class="fa fa-credit-card"></i> Payments</a>
             <a href="owner-profile.html"><i class="fa fa-user"></i> Profile</a>
-            <a href="index.html" id="ownerLogout"><i class="fa fa-sign-out"></i> Logout</a>
+            <a href="#" id="ownerLogout"><i class="fa fa-sign-out"></i> Logout</a>
           </div>
         </div>
       </div>
 
       <!-- MAIN CONTENT -->
       <div class="col-md-9">
+
+        <!-- Welcome bar -->
         <div class="welcome-bar mb-4">
-          <h5>Welcome, <span id="welcomeOwner">Owner</span>!</h5>
-          <p>Manage your hotel rooms and bookings</p>
+          <h5>Welcome back, <span id="welcomeOwner">Owner</span>!</h5>
+          <p>Here's a live summary of your hotels, bookings and payments</p>
         </div>
+
+        <!-- ── STAT CARDS ── -->
+        <div class="row g-3 mb-4">
+          <div class="col-sm-6 col-xl-3">
+            <div class="stat-card bg-pink">
+              <div class="stat-icon"><i class="fa fa-hotel"></i></div>
+              <div>
+                <div class="stat-num" id="statHotels">—</div>
+                <div class="stat-label">My Hotels</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="stat-card bg-violet">
+              <div class="stat-icon"><i class="fa fa-calendar-check"></i></div>
+              <div>
+                <div class="stat-num" id="statBookings">—</div>
+                <div class="stat-label">Total Bookings</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="stat-card bg-teal">
+              <div class="stat-icon"><i class="fa fa-indian-rupee-sign"></i></div>
+              <div>
+                <div class="stat-num" id="statRevenue">—</div>
+                <div class="stat-label">Revenue (PAID)</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="stat-card bg-amber">
+              <div class="stat-icon"><i class="fa fa-bed"></i></div>
+              <div>
+                <div class="stat-num" id="statRooms">—</div>
+                <div class="stat-label">Total Rooms</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── RECENT PAID BOOKINGS ── -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+          <div class="card-body">
+            <div class="section-title">
+              <i class="fa fa-circle-check" style="color:#2e7d32;"></i>
+              Recent Paid Bookings
+              <span class="badge ms-auto rounded-pill px-3"
+                style="background:#e8f5e9; color:#2e7d32; font-size:0.78rem; font-weight:600;">
+                ₹<span id="paidTotal">0</span> received
+              </span>
+            </div>
+            <div id="paidBookingsList">
+              <div class="text-center py-4">
+                <div class="spinner-border spinner-border-sm" style="color:#e91e8c;"></div>
+                <span class="ms-2 text-muted">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ALL RECENT BOOKINGS ── -->
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body">
+            <div class="section-title">
+              <i class="fa fa-calendar" style="color:#e91e8c;"></i>
+              All Recent Bookings
+              <a href="booking-owner.html"
+                class="btn btn-sm btn-outline-secondary rounded-pill ms-auto px-3"
+                style="font-size:0.78rem;">
+                View All <i class="fa fa-arrow-right ms-1"></i>
+              </a>
+            </div>
+            <div id="allBookingsList">
+              <div class="text-center py-4">
+                <div class="spinner-border spinner-border-sm" style="color:#e91e8c;"></div>
+                <span class="ms-2 text-muted">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const role = sessionStorage.getItem('userRole');
+    const API_BASE = 'http://localhost:8080/api';
+
+    function getAuthHeaders() {
+      const email    = sessionStorage.getItem('userEmail');
+      const password = sessionStorage.getItem('userPassword');
+      if (!email || !password) return { 'Content-Type': 'application/json' };
+      return {
+        'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
+        'Content-Type': 'application/json'
+      };
+    }
+
+    async function apiFetch(path) {
+      const res = await fetch(`${API_BASE}${path}`, {
+        credentials: 'include',
+        headers: getAuthHeaders()
+      });
+      if (!res.ok) throw new Error(`${path} → HTTP ${res.status}`);
+      return res.json();
+    }
+
+    const fmtDate = d => d
+      ? new Date(d).toLocaleDateString('en-IN', {
+          day: '2-digit', month: 'short', year: 'numeric'
+        })
+      : '—';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const role  = sessionStorage.getItem('userRole');
+      const email = sessionStorage.getItem('userEmail');
+
       if (!role || role !== 'OWNER') {
         window.location.href = 'login.html';
         return;
       }
 
-      const email = sessionStorage.getItem('userEmail');
-      document.getElementById('ownerName').innerText = email;
+      document.getElementById('ownerName').innerText    = email;
       document.getElementById('welcomeOwner').innerText = email;
 
-      // ✅ Fixed: was 'sidebarLogout' but element id is 'ownerLogout'
-      document.getElementById('ownerLogout').addEventListener('click', () => {
+      document.getElementById('ownerLogout').addEventListener('click', (e) => {
+        e.preventDefault();
         sessionStorage.clear();
         window.location.href = 'login.html';
       });
+
+      await loadDashboard(email);
     });
+
+    async function loadDashboard(email) {
+      try {
+
+        // ── STEP 1: userId ──
+        let userId = sessionStorage.getItem('userId');
+        if (!userId) {
+          const u = await apiFetch(`/users/email/${encodeURIComponent(email)}`);
+          userId  = u.userId ?? u.user_id ?? u.id;
+          if (userId) sessionStorage.setItem('userId', userId);
+        }
+        if (!userId) throw new Error('Could not resolve user.');
+
+        // ── STEP 2: ownerId ──
+        let ownerId = sessionStorage.getItem('ownerId');
+        if (!ownerId) {
+          const o = await apiFetch(`/owners/user/${userId}`);
+          ownerId  = o.ownerId ?? o.owner_id;
+          if (ownerId) sessionStorage.setItem('ownerId', ownerId);
+        }
+        if (!ownerId) throw new Error('Owner profile not found.');
+
+        // ── STEP 3: Get this owner's hotels ──
+        const allHotels = await apiFetch('/hotels/getall');
+        const myHotels  = allHotels.filter(h =>
+          String(h.ownerId ?? h.owner?.ownerId ?? h.owner_id) === String(ownerId)
+        );
+        document.getElementById('statHotels').innerText = myHotels.length;
+
+        if (myHotels.length === 0) {
+          document.getElementById('statBookings').innerText = 0;
+          document.getElementById('statRevenue').innerText  = '₹0';
+          document.getElementById('paidBookingsList').innerHTML = noDataHTML('No hotels yet. Add a hotel to get started.');
+          document.getElementById('allBookingsList').innerHTML  = noDataHTML('No bookings yet.');
+          return;
+        }
+
+        // ── STEP 4: Fetch rooms count — fetch all rooms once, filter by owner's hotelIds ──
+        const myHotelIds = myHotels.map(h => String(h.hotelId ?? h.id));
+        let totalRooms = 0;
+        try {
+          const allRooms = await apiFetch('/rooms/getall');
+          // Match against ALL possible ways the hotelId could appear in room object
+          totalRooms = (allRooms ?? []).filter(r => {
+            const rHotelId = String(
+              r.hotelId        ??   // flat field
+              r.hotel_id       ??   // snake_case
+              r.hotel?.hotelId ??   // nested object
+              r.hotel?.id      ??   // nested object alt
+              ''
+            );
+            return myHotelIds.includes(rHotelId);
+          }).length;
+        } catch (e) {
+          console.warn('Could not fetch rooms:', e.message);
+          totalRooms = 0;
+        }
+        document.getElementById('statRooms').innerText = totalRooms;
+
+        // ── STEP 5: Fetch bookings per hotel ──
+        // ✅ Uses /bookings/hotel/{hotelId} — ROLE_OWNER accessible
+        let allBookings = [];
+        await Promise.all(myHotels.map(async hotel => {
+          const hotelId   = hotel.hotelId ?? hotel.id;
+          const hotelName = hotel.name ?? `Hotel #${hotelId}`;
+          try {
+            const bookings = await apiFetch(`/bookings/hotel/${hotelId}`);
+            (bookings ?? []).forEach(b =>
+              allBookings.push({ ...b, _hotelName: hotelName })
+            );
+          } catch (e) {
+            console.warn(`Bookings fetch failed for hotel ${hotelId}:`, e.message);
+          }
+        }));
+
+        // Sort newest first
+        allBookings.sort((a, b) =>
+          new Date(b.bookedAt ?? 0) - new Date(a.bookedAt ?? 0)
+        );
+
+        // ── Stats ──
+        document.getElementById('statBookings').innerText = allBookings.length;
+
+        const paidBookings = allBookings.filter(b =>
+          (b.paymentStatus ?? '').toUpperCase() === 'PAID'
+        );
+        const totalRevenue = paidBookings.reduce((sum, b) =>
+          sum + parseFloat(b.totalAmount ?? 0), 0
+        );
+        document.getElementById('statRevenue').innerText =
+          '₹' + Number(totalRevenue).toLocaleString('en-IN');
+        document.getElementById('paidTotal').innerText =
+          Number(totalRevenue).toLocaleString('en-IN');
+
+        // ── Render PAID bookings ──
+        renderPaidBookings(paidBookings);
+
+        // ── Render ALL recent bookings (latest 10) ──
+        renderAllBookings(allBookings.slice(0, 10));
+
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+        document.getElementById('paidBookingsList').innerHTML =
+          `<div class="text-center text-danger py-3">
+             <i class="fa fa-exclamation-circle me-2"></i>${err.message}
+           </div>`;
+      }
+    }
+
+    // ── Render PAID bookings section ──
+    function renderPaidBookings(bookings) {
+      const container = document.getElementById('paidBookingsList');
+
+      if (bookings.length === 0) {
+        container.innerHTML = noDataHTML('No paid bookings yet. Payments will appear here once guests pay.');
+        return;
+      }
+
+      container.innerHTML = bookings.map(b => {
+        const bookingId = b.bookingId ?? '—';
+        const hotelName = b._hotelName ?? '—';
+        const checkIn   = b.checkIn  ?? b.checkInDate  ?? '';
+        const checkOut  = b.checkOut ?? b.checkOutDate ?? '';
+        const amount    = parseFloat(b.totalAmount ?? 0);
+        const bookedAt  = b.bookedAt ?? '';
+        const userId    = b.userId ?? '—';
+        const roomId    = b.roomId ?? '—';
+
+        let nights = '—';
+        if (checkIn && checkOut) {
+          const diff = Math.ceil((new Date(checkOut) - new Date(checkIn)) / 86400000);
+          if (diff > 0) nights = `${diff}N`;
+        }
+
+        return `
+          <div class="pay-card d-flex align-items-center flex-wrap gap-3">
+
+            <!-- Booking ID + Hotel -->
+            <div style="min-width:150px;">
+              <div style="font-size:0.78rem; background:#fdf2f8; color:var(--pink);
+                          padding:2px 10px; border-radius:99px; font-weight:700;
+                          display:inline-block;">
+                <i class="fa fa-hashtag me-1"></i>#${bookingId}
+              </div>
+              <div style="font-size:0.75rem; color:#888; margin-top:4px;">
+                <i class="fa fa-hotel me-1"></i>${hotelName}
+              </div>
+            </div>
+
+            <div class="divider-v d-none d-md-block"></div>
+
+            <div>
+              <div style="font-size:0.7rem; color:#bbb;">Guest (User ID)</div>
+              <div style="font-size:0.85rem; font-weight:700;">${userId}</div>
+            </div>
+
+            <div class="divider-v d-none d-md-block"></div>
+
+            <div>
+              <div style="font-size:0.7rem; color:#bbb;">Room ID</div>
+              <div style="font-size:0.85rem; font-weight:700;">${roomId}</div>
+            </div>
+
+            <div class="divider-v d-none d-md-block"></div>
+
+            <div>
+              <div style="font-size:0.7rem; color:#bbb;">Check-In → Out</div>
+              <div style="font-size:0.85rem; font-weight:700;">
+                ${fmtDate(checkIn)} → ${fmtDate(checkOut)}
+                ${nights !== '—' ? `<span style="color:#888; font-size:0.75rem;">(${nights})</span>` : ''}
+              </div>
+            </div>
+
+            <div class="divider-v d-none d-md-block"></div>
+
+            <div>
+              <div style="font-size:0.7rem; color:#bbb;">Booked On</div>
+              <div style="font-size:0.85rem; font-weight:700;">${fmtDate(bookedAt)}</div>
+            </div>
+
+            <div class="ms-auto d-flex align-items-center gap-2">
+              <span class="pay-badge paid">PAID</span>
+              <span style="font-size:1.1rem; font-weight:800; color:#2e7d32;">
+                ₹${Number(amount).toLocaleString('en-IN')}
+              </span>
+            </div>
+
+          </div>`;
+      }).join('');
+    }
+
+    // ── Render ALL recent bookings section ──
+    function renderAllBookings(bookings) {
+      const container = document.getElementById('allBookingsList');
+
+      if (bookings.length === 0) {
+        container.innerHTML = noDataHTML('No bookings yet for your hotels.');
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="table-responsive">
+          <table class="table table-striped align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Booking ID</th>
+                <th>Hotel</th>
+                <th>User ID</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${bookings.map(b => {
+                const bookingId     = b.bookingId ?? '—';
+                const hotelName     = b._hotelName ?? '—';
+                const userId        = b.userId ?? '—';
+                const checkIn       = b.checkIn  ?? b.checkInDate  ?? '';
+                const checkOut      = b.checkOut ?? b.checkOutDate ?? '';
+                const amount        = parseFloat(b.totalAmount ?? 0);
+                const payStatus     = (b.paymentStatus  ?? 'PENDING').toUpperCase();
+                const bookingStatus = (b.bookingStatus  ?? 'PENDING').toUpperCase();
+
+                const payClass = payStatus === 'PAID'     ? 'paid'
+                               : payStatus === 'REFUNDED' ? 'refunded'
+                               : 'pending';
+
+                const statusClass = bookingStatus === 'CANCELLED' ? 'cancelled'
+                                  : bookingStatus === 'BOOKED' || bookingStatus === 'CONFIRMED'
+                                  ? 'paid' : 'pending';
+
+                return `
+                  <tr>
+                    <td><strong>#${bookingId}</strong></td>
+                    <td style="font-size:0.85rem;">${hotelName}</td>
+                    <td>${userId}</td>
+                    <td>${fmtDate(checkIn)}</td>
+                    <td>${fmtDate(checkOut)}</td>
+                    <td style="font-weight:700; color:#e91e8c;">
+                      ₹${Number(amount).toLocaleString('en-IN')}
+                    </td>
+                    <td><span class="pay-badge ${payClass}">${payStatus}</span></td>
+                    <td><span class="pay-badge ${statusClass}">${bookingStatus}</span></td>
+                  </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }
+
+    function noDataHTML(msg) {
+      return `
+        <div class="no-data">
+          <i class="fa fa-calendar-times"></i>
+          <p>${msg}</p>
+        </div>`;
+    }
   </script>
 
 </body>
-
 </html>
