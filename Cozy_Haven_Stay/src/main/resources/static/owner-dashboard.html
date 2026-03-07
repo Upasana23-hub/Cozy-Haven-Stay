@@ -140,15 +140,7 @@
               </div>
             </div>
           </div>
-          <div class="col-sm-6 col-xl-3">
-            <div class="stat-card bg-amber">
-              <div class="stat-icon"><i class="fa fa-bed"></i></div>
-              <div>
-                <div class="stat-num" id="statRooms">—</div>
-                <div class="stat-label">Total Rooms</div>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         <!-- ── RECENT PAID BOOKINGS ── -->
@@ -282,29 +274,7 @@
           return;
         }
 
-        // ── STEP 4: Fetch rooms count — fetch all rooms once, filter by owner's hotelIds ──
-        const myHotelIds = myHotels.map(h => String(h.hotelId ?? h.id));
-        let totalRooms = 0;
-        try {
-          const allRooms = await apiFetch('/rooms/getall');
-          // Match against ALL possible ways the hotelId could appear in room object
-          totalRooms = (allRooms ?? []).filter(r => {
-            const rHotelId = String(
-              r.hotelId        ??   // flat field
-              r.hotel_id       ??   // snake_case
-              r.hotel?.hotelId ??   // nested object
-              r.hotel?.id      ??   // nested object alt
-              ''
-            );
-            return myHotelIds.includes(rHotelId);
-          }).length;
-        } catch (e) {
-          console.warn('Could not fetch rooms:', e.message);
-          totalRooms = 0;
-        }
-        document.getElementById('statRooms').innerText = totalRooms;
-
-        // ── STEP 5: Fetch bookings per hotel ──
+        // ── STEP 4: Fetch bookings per hotel ──
         // ✅ Uses /bookings/hotel/{hotelId} — ROLE_OWNER accessible
         let allBookings = [];
         await Promise.all(myHotels.map(async hotel => {
