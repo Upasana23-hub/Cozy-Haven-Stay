@@ -91,13 +91,11 @@
     <div id="bookingFormSection" style="display:none;">
         <div class="booking-card">
 
-            <!-- Loading spinner -->
             <div id="roomLoading" class="text-center py-3">
                 <div class="spinner-border spinner-border-sm" style="color:var(--pink);"></div>
                 <span class="ms-2 text-muted">Loading room details...</span>
             </div>
 
-            <!-- Room details -->
             <div id="roomDetails" style="display:none;">
                 <h4 class="booking-title" id="roomName"></h4>
                 <div class="row mb-2">
@@ -153,7 +151,7 @@
                         style="border:1.5px solid #f5e0ee; box-shadow:none;" required>
                         <option value="CARD">Credit / Debit Card</option>
                         <option value="UPI">UPI</option>
-                        <option value="NETBANKING">Net Banking</option>
+                        <option value="BANK">Net Banking</option>
                         <option value="PAY_AT_HOTEL">Pay at Hotel</option>
                     </select>
                 </div>
@@ -202,6 +200,13 @@
         let pricePerNight  = parseFloat(bookRoomPrice) || 0;
         let loggedInUserId = null;
 
+        // ✅ Read hotelId from sessionStorage (saved by rooms.html)
+        let currentHotelId = sessionStorage.getItem('bookingHotelId')
+            ? parseInt(sessionStorage.getItem('bookingHotelId'), 10)
+            : null;
+
+        console.log('hotelId from session:', currentHotelId);
+
         function getAuthHeaders() {
             const email    = sessionStorage.getItem('userEmail');
             const password = sessionStorage.getItem('userPassword');
@@ -233,7 +238,6 @@
             }
         });
 
-        // ✅ Fetch userId using /api/users/email/{email}
         async function fetchUserIdFromDB(userEmail) {
             try {
                 const res = await fetch(
@@ -246,7 +250,6 @@
                     document.getElementById('displayUserId').value = loggedInUserId ?? 'N/A';
                     sessionStorage.setItem('userId', loggedInUserId);
                 } else {
-                    console.error('Failed to fetch user, status:', res.status);
                     document.getElementById('displayUserId').value = 'N/A';
                 }
             } catch (err) {
@@ -255,7 +258,6 @@
             }
         }
 
-        // ✅ Fetch room details from DB
         async function fetchRoomFromDB() {
             const loadingEl = document.getElementById('roomLoading');
             const detailsEl = document.getElementById('roomDetails');
@@ -307,7 +309,6 @@
             detailsEl.style.display = 'block';
         }
 
-        // ── Booking Form Setup ──
         function initBookingForm() {
             const checkInInput   = document.getElementById('checkIn');
             const checkOutInput  = document.getElementById('checkOut');
@@ -345,6 +346,7 @@
 
             updateTotal();
 
+            // ── FORM SUBMIT ──
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
@@ -372,24 +374,33 @@
                     return;
                 }
 
-                const nights        = Math.ceil((dOut - dIn) / (1000 * 3600 * 24));
-                const totalAmount   = parseFloat((nights * noOfRooms * pricePerNight).toFixed(2));
-                const paymentStatus = paymentMethod === 'PAY_AT_HOTEL' ? 'PENDING' : 'PAID';
+                if (!currentHotelId) {
+                    alert('Hotel information could not be loaded. Please go back to the rooms page and try again.');
+                    return;
+                }
 
+                const nights      = Math.ceil((dOut - dIn) / (1000 * 3600 * 24));
+                const totalAmount = parseFloat((nights * noOfRooms * pricePerNight).toFixed(2));
+
+                // ✅ Exactly matches BookingPaymentDTO
                 const bookingPayload = {
-                    userId:        parseInt(loggedInUserId, 10),
-                    roomId:        bookRoomId ? parseInt(bookRoomId, 10) : null,
-                    checkIn:       checkIn,
-                    checkOut:      checkOut,
-                    noOfRooms:     noOfRooms,
-                    adults:        adults,
-                    children:      children,
-                    totalAmount:   totalAmount,
-                    paymentStatus: paymentStatus
+                    userId:      parseInt(loggedInUserId, 10),
+                    hotelId:     parseInt(currentHotelId, 10),
+                    roomId:      parseInt(bookRoomId, 10),
+                    checkIn:     checkIn,
+                    checkOut:    checkOut,
+                    adults:      adults,
+                    children:    children,
+                    noOfRooms:   noOfRooms,
+                    totalAmount: totalAmount,
+                    paymentMode: paymentMethod   // ✅ matches DTO field name
                 };
 
+                console.log('=== BOOKING PAYLOAD ===', JSON.stringify(bookingPayload));
+
                 try {
-                    const res = await fetch(`${BOOK_API}/bookings/create`, {
+                    // ── Single call — handles booking + payment together ──
+                    const res = await fetch(`${BOOK_API}/bookings/book-room`, {
                         method: 'POST',
                         credentials: 'include',
                         headers: getAuthHeaders(),
@@ -397,14 +408,27 @@
                     });
 
                     if (!res.ok) {
-                        const err = await res.text();
-                        throw new Error(err || 'Booking failed');
+                        const errText = await res.text();
+                        throw new Error(errText || 'Booking failed');
                     }
 
-                    const savedBooking = await res.json();
-                    const newBookingId = savedBooking.bookingId;
+                    // /book-room returns plain String — fetch latest booking to get bookingId
+                    const bookingsRes = await fetch(`${BOOK_API}/bookings/user/${loggedInUserId}`, {
+                        credentials: 'include',
+                        headers: getAuthHeaders()
+                    });
+
+                    if (!bookingsRes.ok) throw new Error('Booking saved but could not fetch details');
+
+                    const bookings     = await bookingsRes.json();
+                    const latest       = bookings[bookings.length - 1];
+                    const newBookingId = latest.bookingId;
 
                     sessionStorage.setItem('lastBookingId', newBookingId);
+
+                    // ✅ Clear bookingHotelId from session after successful booking
+                    sessionStorage.removeItem('bookingHotelId');
+
                     window.location.href = `booking-details.html?bookingId=${newBookingId}`;
 
                 } catch (err) {
@@ -415,13 +439,11 @@
         }
 
         // ── Load My Bookings List ──
-        // ✅ Uses /api/bookings/user/{userId} directly — no getbyid loop needed
         async function loadMyBookings() {
             const list      = document.getElementById('bookingsList');
             const userEmail = sessionStorage.getItem('userEmail');
 
             try {
-                // Step 1: get userId from email
                 const userRes = await fetch(
                     `${BOOK_API}/users/email/${encodeURIComponent(userEmail)}`,
                     { credentials: 'include', headers: getAuthHeaders() }
@@ -430,7 +452,6 @@
                 const userData = await userRes.json();
                 const userId   = userData.userId ?? userData.user_id;
 
-                // Step 2: fetch all bookings for this user directly
                 const bookRes = await fetch(`${BOOK_API}/bookings/user/${userId}`, {
                     credentials: 'include',
                     headers: getAuthHeaders()

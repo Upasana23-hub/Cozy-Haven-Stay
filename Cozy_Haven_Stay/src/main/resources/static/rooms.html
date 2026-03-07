@@ -95,7 +95,6 @@
         .star-rating label:hover ~ label,
         .star-rating input:checked ~ label { color: #f59e0b; }
 
-        /* ── 3-dot menu ── */
         .review-menu-btn {
             background: none;
             border: none;
@@ -145,7 +144,6 @@
         .review-dropdown .btn-delete { color: #c0392b; }
         .review-dropdown .btn-delete:hover { background: #fff4f4; }
 
-        /* ── Shared modal base ── */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -163,7 +161,6 @@
             to   { opacity:1; transform: scale(1) translateY(0); }
         }
 
-        /* ── Edit Modal ── */
         .edit-modal-box {
             background: #fff;
             border-radius: 24px;
@@ -200,7 +197,6 @@
         .edit-star-rating label:hover ~ label,
         .edit-star-rating input:checked ~ label { color: #f59e0b; }
 
-        /* ── Admin Login Modal ── */
         .admin-modal-box {
             background: #fff;
             border-radius: 24px;
@@ -222,7 +218,6 @@
             border: 1px solid #fcc;
         }
 
-        /* ── Confirm Delete Modal ── */
         #confirmDeleteModal { z-index: 10000; }
         .confirm-modal-box {
             background: #fff;
@@ -287,7 +282,6 @@
             </button>
         </div>
 
-        <!-- Write Review Form -->
         <div id="reviewFormWrapper" class="mb-5 p-4 rounded-4 shadow-sm"
             style="display:none; background:#fff; border:1px solid #f5e0ee;">
             <h5 class="fw-bold mb-3">Share your experience</h5>
@@ -328,9 +322,7 @@
         </div>
     </section>
 
-    <!-- ══════════════════════════════════════════
-         EDIT REVIEW MODAL
-    ══════════════════════════════════════════ -->
+    <!-- EDIT REVIEW MODAL -->
     <div id="editReviewModal" class="modal-overlay">
         <div class="edit-modal-box">
             <button class="modal-close-btn" onclick="closeEditModal()">
@@ -343,7 +335,6 @@
                 <h5 style="font-weight:800; color:#1a0a24; margin-bottom:4px;">Edit Your Review</h5>
                 <p class="text-muted" style="font-size:0.88rem; margin-bottom:0;">Update your rating and comment below</p>
             </div>
-
             <div class="mb-3">
                 <label class="form-label fw-bold" style="font-size:0.9rem;">Rating</label>
                 <div class="edit-star-rating">
@@ -359,19 +350,16 @@
                     <label for="editStar1"><i class="fa fa-star"></i></label>
                 </div>
             </div>
-
             <div class="mb-4">
                 <label class="form-label fw-bold" style="font-size:0.9rem;">Comment</label>
                 <textarea id="editReviewComment" class="form-control" rows="3"
                     placeholder="Update your comment..."
                     style="border-color:#f5e0ee; resize:none;"></textarea>
             </div>
-
             <div id="editReviewError" class="modal-error-box">
                 <i class="fa fa-circle-exclamation me-1"></i>
                 <span id="editReviewErrorMsg"></span>
             </div>
-
             <div class="d-flex gap-3">
                 <button class="btn btn-outline-secondary rounded-pill px-4 flex-grow-1"
                     onclick="closeEditModal()">Cancel</button>
@@ -383,9 +371,7 @@
         </div>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         ADMIN LOGIN MODAL
-    ══════════════════════════════════════════ -->
+    <!-- ADMIN LOGIN MODAL -->
     <div id="adminLoginModal" class="modal-overlay">
         <div class="admin-modal-box">
             <button class="modal-close-btn" onclick="closeAdminModal()">
@@ -398,12 +384,10 @@
                 <h5 style="font-weight:800; color:#1a0a24; margin-bottom:4px;">Admin Access Required</h5>
                 <p class="text-muted" style="font-size:0.88rem; margin-bottom:0;">Sign in as admin to delete this review</p>
             </div>
-
             <div id="adminLoginError" class="modal-error-box">
                 <i class="fa fa-circle-exclamation me-1"></i>
                 <span id="adminLoginErrorMsg">Invalid credentials. Please try again.</span>
             </div>
-
             <div class="mb-3">
                 <label class="form-label fw-bold" style="font-size:0.9rem;">Email</label>
                 <div class="input-group">
@@ -436,9 +420,7 @@
         </div>
     </div>
 
-    <!-- ══════════════════════════════════════════
-         CONFIRM DELETE MODAL
-    ══════════════════════════════════════════ -->
+    <!-- CONFIRM DELETE MODAL -->
     <div id="confirmDeleteModal" class="modal-overlay">
         <div class="confirm-modal-box">
             <div class="confirm-icon"><i class="fa fa-trash-can"></i></div>
@@ -505,7 +487,6 @@
         let pendingDeleteReviewId = null;
         let pendingEditReviewId   = null;
 
-        // ── AUTH HEADERS ──
         function getAuthHeaders() {
             const email    = sessionStorage.getItem('userEmail');
             const password = sessionStorage.getItem('userPassword');
@@ -529,6 +510,14 @@
 
         // ── ON PAGE LOAD ──
         document.addEventListener('DOMContentLoaded', () => {
+
+            // ✅ Save hotelId to sessionStorage so booking page can use it
+            const hotelId = getHotelIdFromUrl();
+            if (hotelId) {
+                sessionStorage.setItem('bookingHotelId', hotelId);
+                console.log('hotelId saved to session:', hotelId);
+            }
+
             fetchAndStoreUserId();
             loadRooms();
             loadReviews();
@@ -548,8 +537,6 @@
             });
         });
 
-        // ── FETCH & STORE userId ──
-        // Required so we can compare logged-in user with review owner
         async function fetchAndStoreUserId() {
             if (sessionStorage.getItem('userId')) return;
             const userEmail = sessionStorage.getItem('userEmail');
@@ -613,6 +600,7 @@
                     const available = room.availability ?? true;
                     const image     = room.image ?? 'images/room.png';
 
+                    // ✅ No hotelId needed in URL — it's stored in sessionStorage
                     const bookUrl = `my-bookings.html?roomId=${roomId}&room=${encodeURIComponent(roomSize)}&bed=${encodeURIComponent(bedType)}&price=${baseFare}`;
 
                     return `
@@ -682,7 +670,6 @@
                     return;
                 }
 
-                // Get logged-in userId for ownership check
                 const loggedInUserId = sessionStorage.getItem('userId');
 
                 container.innerHTML = reviews.map(review => {
@@ -706,10 +693,7 @@
                         `<i class="fa fa-star ${i < rating ? 'star-filled' : 'star-empty'}"></i>`
                     ).join('');
 
-                    // ✅ Show Edit only if this is the logged-in user's own review
                     const isOwner = loggedInUserId && String(loggedInUserId) === String(reviewUserId);
-
-                    // Escape comment for safe use in onclick attribute
                     const safeComment = comment.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
 
                     return `
@@ -721,8 +705,6 @@
                                     <h6 class="mb-0 fw-bold">${name}</h6>
                                     <small class="text-muted">${formattedDate}</small>
                                 </div>
-
-                                <!-- 3-dot menu -->
                                 <div class="review-menu-wrapper position-relative" style="flex-shrink:0;">
                                     <button class="review-menu-btn"
                                         onclick="toggleReviewMenu(event, 'menu-${reviewId}')"
@@ -753,7 +735,6 @@
             }
         }
 
-        // ── TOGGLE 3-DOT DROPDOWN ──
         function toggleReviewMenu(e, menuId) {
             e.stopPropagation();
             document.querySelectorAll('.review-dropdown.open').forEach(d => {
@@ -763,14 +744,8 @@
             if (menu) menu.classList.toggle('open');
         }
 
-        // ════════════════════════════════════════
-        // EDIT REVIEW
-        // ════════════════════════════════════════
-
         function onEditClick(reviewId, currentRating, currentComment) {
             document.querySelectorAll('.review-dropdown.open').forEach(d => d.classList.remove('open'));
-
-            // Must be logged in as USER
             const userRole = sessionStorage.getItem('userRole');
             if (!userRole || userRole !== 'USER') {
                 alert('Please sign in to edit your review.');
@@ -778,19 +753,11 @@
                 window.location.href = 'login.html';
                 return;
             }
-
             pendingEditReviewId = reviewId;
-
-            // Pre-fill star rating
             const starInput = document.querySelector(`input[name="editRating"][value="${currentRating}"]`);
             if (starInput) starInput.checked = true;
-
-            // Pre-fill comment
             document.getElementById('editReviewComment').value = currentComment;
-
-            // Clear errors
             document.getElementById('editReviewError').style.display = 'none';
-
             document.getElementById('editReviewModal').classList.add('show');
             setTimeout(() => document.getElementById('editReviewComment').focus(), 150);
         }
@@ -805,64 +772,37 @@
 
         async function submitEditReview() {
             if (!pendingEditReviewId) return;
+            const rating  = document.querySelector('input[name="editRating"]:checked')?.value;
+            const comment = document.getElementById('editReviewComment').value.trim();
+            const errorEl = document.getElementById('editReviewError');
+            const msgEl   = document.getElementById('editReviewErrorMsg');
+            const btn     = document.getElementById('submitEditBtn');
 
-            const rating    = document.querySelector('input[name="editRating"]:checked')?.value;
-            const comment   = document.getElementById('editReviewComment').value.trim();
-            const errorEl   = document.getElementById('editReviewError');
-            const msgEl     = document.getElementById('editReviewErrorMsg');
-            const btn       = document.getElementById('submitEditBtn');
-
-            // Validate
-            if (!rating) {
-                msgEl.textContent = 'Please select a star rating.';
-                errorEl.style.display = 'block';
-                return;
-            }
-            if (!comment) {
-                msgEl.textContent = 'Please enter a comment.';
-                errorEl.style.display = 'block';
-                return;
-            }
+            if (!rating) { msgEl.textContent = 'Please select a star rating.'; errorEl.style.display = 'block'; return; }
+            if (!comment) { msgEl.textContent = 'Please enter a comment.'; errorEl.style.display = 'block'; return; }
 
             const userId = sessionStorage.getItem('userId');
-            if (!userId) {
-                msgEl.textContent = 'Session expired. Please log in again.';
-                errorEl.style.display = 'block';
-                return;
-            }
+            if (!userId) { msgEl.textContent = 'Session expired. Please log in again.'; errorEl.style.display = 'block'; return; }
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Saving...';
             errorEl.style.display = 'none';
 
             try {
-                // PUT /api/reviews/update/{reviewId}/user/{userId}
-                // Body: { rating, comment }
                 const res = await fetch(
                     `${BASE_URL}/reviews/update/${pendingEditReviewId}/user/${userId}`,
                     {
                         method: 'PUT',
                         credentials: 'include',
                         headers: getAuthHeaders(),
-                        body: JSON.stringify({
-                            rating:  parseInt(rating),
-                            comment: comment
-                        })
+                        body: JSON.stringify({ rating: parseInt(rating), comment })
                     }
                 );
-
-                if (res.status === 403) {
-                    throw new Error('You can only edit your own reviews.');
-                }
-                if (!res.ok) {
-                    const errText = await res.text();
-                    throw new Error(errText || `Error ${res.status}`);
-                }
-
+                if (res.status === 403) throw new Error('You can only edit your own reviews.');
+                if (!res.ok) { const errText = await res.text(); throw new Error(errText || `Error ${res.status}`); }
                 closeEditModal();
                 showToast('Review updated successfully!', 'success');
                 loadReviews();
-
             } catch (err) {
                 msgEl.textContent = err.message;
                 errorEl.style.display = 'block';
@@ -872,22 +812,12 @@
             }
         }
 
-        // ════════════════════════════════════════
-        // DELETE REVIEW (Admin only)
-        // ════════════════════════════════════════
-
         function onDeleteClick(reviewId) {
             document.querySelectorAll('.review-dropdown.open').forEach(d => d.classList.remove('open'));
             pendingDeleteReviewId = reviewId;
-
             const adminEmail    = sessionStorage.getItem('adminEmail');
             const adminPassword = sessionStorage.getItem('adminPassword');
-
-            if (adminEmail && adminPassword) {
-                openConfirmModal();
-            } else {
-                openAdminModal();
-            }
+            if (adminEmail && adminPassword) { openConfirmModal(); } else { openAdminModal(); }
         }
 
         function openAdminModal() {
@@ -906,13 +836,8 @@
         function toggleAdminPasswordVisibility() {
             const input = document.getElementById('adminPassword');
             const icon  = document.getElementById('adminPwEyeIcon');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'fa fa-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'fa fa-eye';
-            }
+            if (input.type === 'password') { input.type = 'text'; icon.className = 'fa fa-eye-slash'; }
+            else { input.type = 'password'; icon.className = 'fa fa-eye'; }
         }
 
         async function handleAdminLogin() {
@@ -922,11 +847,7 @@
             const msgEl    = document.getElementById('adminLoginErrorMsg');
             const btn      = document.getElementById('adminLoginBtn');
 
-            if (!email || !password) {
-                msgEl.textContent = 'Please enter both email and password.';
-                errorEl.style.display = 'block';
-                return;
-            }
+            if (!email || !password) { msgEl.textContent = 'Please enter both email and password.'; errorEl.style.display = 'block'; return; }
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Verifying...';
@@ -938,17 +859,13 @@
                     headers: getAdminAuthHeaders(email, password)
                 });
                 if (!res.ok) throw new Error('Invalid credentials');
-
                 const userData = await res.json();
                 const role = userData.role ?? userData.userRole ?? '';
                 if (role !== 'ADMIN') throw new Error('This account does not have admin privileges.');
-
-                sessionStorage.setItem('adminEmail',    email);
+                sessionStorage.setItem('adminEmail', email);
                 sessionStorage.setItem('adminPassword', password);
-
                 document.getElementById('adminLoginModal').classList.remove('show');
                 openConfirmModal();
-
             } catch (err) {
                 msgEl.textContent = err.message || 'Login failed. Please try again.';
                 errorEl.style.display = 'block';
@@ -958,42 +875,27 @@
             }
         }
 
-        function openConfirmModal() {
-            document.getElementById('confirmDeleteModal').classList.add('show');
-        }
-
-        function closeConfirmModal() {
-            document.getElementById('confirmDeleteModal').classList.remove('show');
-            pendingDeleteReviewId = null;
-        }
+        function openConfirmModal() { document.getElementById('confirmDeleteModal').classList.add('show'); }
+        function closeConfirmModal() { document.getElementById('confirmDeleteModal').classList.remove('show'); pendingDeleteReviewId = null; }
 
         async function executeDelete() {
             if (!pendingDeleteReviewId) return;
-
             const reviewId      = pendingDeleteReviewId;
             const adminEmail    = sessionStorage.getItem('adminEmail');
             const adminPassword = sessionStorage.getItem('adminPassword');
             const btn           = document.getElementById('confirmDeleteBtn');
-
             btn.disabled = true;
             btn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i>Deleting...';
-
             try {
                 const res = await fetch(`${BASE_URL}/reviews/delete/${reviewId}`, {
                     method: 'DELETE',
                     credentials: 'include',
                     headers: getAdminAuthHeaders(adminEmail, adminPassword)
                 });
-
-                if (!res.ok) {
-                    const errText = await res.text();
-                    throw new Error(errText || `Failed with status ${res.status}`);
-                }
-
+                if (!res.ok) { const errText = await res.text(); throw new Error(errText || `Failed with status ${res.status}`); }
                 closeConfirmModal();
                 showToast('Review deleted successfully.', 'success');
                 loadReviews();
-
             } catch (err) {
                 closeConfirmModal();
                 showToast('Error: ' + err.message, 'error');
@@ -1004,11 +906,9 @@
             }
         }
 
-        // ── TOAST ──
         function showToast(message, type = 'success') {
             const existing = document.getElementById('toastNotif');
             if (existing) existing.remove();
-
             const toast = document.createElement('div');
             toast.id = 'toastNotif';
             toast.style.cssText = `
@@ -1026,7 +926,6 @@
             setTimeout(() => toast.remove(), 3500);
         }
 
-        // ── TOGGLE WRITE REVIEW FORM ──
         function toggleReviewForm() {
             const userRole = sessionStorage.getItem('userRole');
             if (!userRole || userRole !== 'USER') {
@@ -1040,20 +939,16 @@
             if (wrapper.style.display === 'block') wrapper.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ── SUBMIT NEW REVIEW ──
         document.getElementById('reviewForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const hotelId   = getHotelIdFromUrl();
             const rating    = document.querySelector('input[name="rating"]:checked')?.value;
             const comment   = document.getElementById('reviewComment').value.trim();
             const userEmail = sessionStorage.getItem('userEmail');
-
             if (!hotelId || !rating || !comment || !userEmail) {
                 alert('Please fill all fields and ensure you are logged in.');
                 return;
             }
-
             try {
                 const userRes = await fetch(
                     `${BASE_URL}/users/email/${encodeURIComponent(userEmail)}`,
@@ -1062,35 +957,22 @@
                 if (!userRes.ok) throw new Error('Could not identify user');
                 const userData = await userRes.json();
                 const userId   = userData.userId ?? userData.user_id;
-
                 const res = await fetch(`${BASE_URL}/reviews/add`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: getAuthHeaders(),
-                    body: JSON.stringify({
-                        hotelId: parseInt(hotelId),
-                        userId:  userId,
-                        rating:  parseInt(rating),
-                        comment: comment
-                    })
+                    body: JSON.stringify({ hotelId: parseInt(hotelId), userId, rating: parseInt(rating), comment })
                 });
-
-                if (!res.ok) {
-                    const errMsg = await res.text();
-                    throw new Error(errMsg || 'Submission failed');
-                }
-
+                if (!res.ok) { const errMsg = await res.text(); throw new Error(errMsg || 'Submission failed'); }
                 showToast('Thank you! Your review has been submitted.', 'success');
                 document.getElementById('reviewForm').reset();
                 toggleReviewForm();
                 loadReviews();
-
             } catch (err) {
                 alert('Error: ' + err.message);
             }
         });
 
-        // ── BOOKING CLICK ──
         function handleBookingClick(e, destUrl) {
             e.preventDefault();
             const userRole = sessionStorage.getItem('userRole');

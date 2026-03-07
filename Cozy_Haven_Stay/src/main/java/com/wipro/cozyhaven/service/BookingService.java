@@ -2,6 +2,7 @@ package com.wipro.cozyhaven.service;
 
 import java.util.List;
 
+import com.wipro.cozyhaven.dto.BookingPaymentDTO;
 import com.wipro.cozyhaven.dto.BookingsDTO;
 
 
@@ -17,4 +18,6 @@ public interface BookingService {
      List<BookingsDTO> getBookingsByUserId(Long userId);
 
      List<BookingsDTO> getBookingsByHotelId(Long hotelId);
+     
+     String createBookingWithPayment(BookingPaymentDTO dto);
 }
