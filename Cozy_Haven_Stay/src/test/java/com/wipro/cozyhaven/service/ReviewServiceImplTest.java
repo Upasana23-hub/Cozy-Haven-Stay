@@ -39,7 +39,7 @@ class ReviewServiceImplTest {
     @Autowired
     private HotelOwnerRepository hotelOwnerRepository;
 
-    // Utility method to create a user
+    
     private User createUser(String name, String email) {
         User user = new User();
         user.setName(name);
@@ -48,7 +48,7 @@ class ReviewServiceImplTest {
         return userRepository.save(user);
     }
 
-    // Utility method to create hotel owner
+    
     private HotelOwner createOwner(User user, String businessName) {
         HotelOwner owner = new HotelOwner();
         owner.setUser(user);
@@ -56,7 +56,7 @@ class ReviewServiceImplTest {
         return hotelOwnerRepository.save(owner);
     }
 
-    // Utility method to create hotel
+    
     private Hotel createHotel(HotelOwner owner, String hotelName) {
         Hotel hotel = new Hotel();
         hotel.setName(hotelName);
@@ -137,11 +137,32 @@ class ReviewServiceImplTest {
 
         ReviewDTO savedReview = reviewService.addReview(reviewDTO);
         Long reviewId = savedReview.getReviewId();
-
-        // Delete review
         reviewService.deleteReview(reviewId);
-
-        // Should throw exception when deleting again
         assertThrows(ResourceNotFoundException.class, () -> reviewService.deleteReview(reviewId));
+    }
+    
+    
+    @Test
+    void testUpdateReview() {
+      
+        User ownerUser = createUser("Owner4", "owner4@example.com");
+        HotelOwner owner = createOwner(ownerUser, "Owner Business4");
+        User reviewUser = createUser("ReviewUser4", "reviewuser4@example.com");
+        Hotel hotel = createHotel(owner, "Test Hotel4");
+
+        ReviewDTO reviewDTO = new ReviewDTO();
+        reviewDTO.setUserId(reviewUser.getUserId());
+        reviewDTO.setHotelId(hotel.getHotelId());
+        reviewDTO.setRating(3);
+        reviewDTO.setComment("It was decent");
+        ReviewDTO savedReview = reviewService.addReview(reviewDTO);
+
+        ReviewDTO updatedReview = reviewService.updateReview(
+                savedReview.getReviewId(),
+                reviewUser.getUserId(),
+                5,
+                "Actually it was amazing!"
+        );
+        assert(updatedReview.getReviewId().equals(savedReview.getReviewId()));
     }
 }

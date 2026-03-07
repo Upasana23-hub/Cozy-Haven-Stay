@@ -1,6 +1,7 @@
 package com.wipro.cozyhaven.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,4 +15,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
 	
 	@Transactional
 	void deleteByUser_UserId(Long userId);
+	
+	Optional<Review> findByReviewIdAndUser_UserId(Long reviewId, Long userId);
 }
