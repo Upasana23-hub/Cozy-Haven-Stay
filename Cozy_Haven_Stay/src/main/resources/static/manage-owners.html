@@ -108,7 +108,6 @@
 
 <script>
 
-// ✅ Helper: builds Basic Auth header from stored credentials
 function getAuthHeaders() {
   const email    = sessionStorage.getItem('userEmail');
   const password = sessionStorage.getItem('userPassword');
@@ -147,7 +146,7 @@ function loadOwners() {
   fetch('http://localhost:8080/api/owners/getall', {
     method: 'GET',
     credentials: 'include',
-    headers: getAuthHeaders() // ✅ Send Basic Auth every request
+    headers: getAuthHeaders() 
   })
   .then(res => {
     if (res.status === 401) {
@@ -174,7 +173,6 @@ function loadOwners() {
       const address      = owner.address      ?? 'N/A';
       const gstNumber    = owner.gstNumber    ?? owner.gst_number    ?? 'N/A';
 
-      // ✅ userId lives inside the nested user object
       const userId = owner.user?.userId ?? owner.user?.user_id ?? owner.userId ?? 'N/A';
 
       const createdDate  = owner.createdDate  ?? owner.created_date  ?? '';
@@ -236,7 +234,7 @@ function approveOwner(ownerId) {
   fetch(`http://localhost:8080/api/owners/${ownerId}/approve`, {
     method: 'PUT',
     credentials: 'include',
-    headers: getAuthHeaders() // ✅ Send Basic Auth every request
+    headers: getAuthHeaders()
   })
   .then(res => {
     if (res.status === 401) {
@@ -252,7 +250,6 @@ function approveOwner(ownerId) {
 
     alert(`Owner #${ownerId} approved successfully!`);
 
-    // ✅ Update badge and button inline without full reload
     const statusCell = document.getElementById(`status-${ownerId}`);
     if (statusCell) {
       statusCell.innerHTML = `<span class="badge-approved"><i class="fa fa-check-circle me-1"></i>Approved</span>`;

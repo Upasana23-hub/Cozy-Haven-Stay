@@ -289,14 +289,12 @@ function loadAdminProfile() {
     return res.json();
   })
   .then(user => {
-    // Sidebar
+    
     document.getElementById('sidebarName').innerText = user.name || email;
 
-    // Welcome bar
     document.getElementById('welcomeName').innerText  = user.name  || email;
     document.getElementById('welcomeEmail').innerText = user.email || email;
 
-    // Fields
     document.getElementById('profileName').value    = user.name    || '';
     document.getElementById('profileEmail').value   = user.email   || '';
     document.getElementById('profilePhone').value   = user.phone   || '';

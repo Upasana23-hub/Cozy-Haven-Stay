@@ -67,7 +67,7 @@
 
 <script>
 
-// ✅ Helper: builds Basic Auth header from stored credentials
+
 function getAuthHeaders() {
   const email    = sessionStorage.getItem('userEmail');
   const password = sessionStorage.getItem('userPassword');
@@ -106,7 +106,7 @@ function loadBookings() {
   fetch('http://localhost:8080/api/bookings/getall', {
     method: 'GET',
     credentials: 'include',
-    headers: getAuthHeaders() // ✅ Basic Auth header
+    headers: getAuthHeaders() 
   })
   .then(res => {
     if (res.status === 401) {
@@ -128,7 +128,6 @@ function loadBookings() {
     }
 
     bookings.forEach((booking) => {
-      // ✅ Support nested objects — user and room may be objects
       const bookingId = booking.bookingId ?? booking.booking_id ?? 'N/A';
       const userEmail = booking.user?.email ?? booking.userId ?? booking.user_id ?? 'N/A';
       const roomNumber = booking.room?.roomNumber ?? booking.roomId ?? booking.room_id ?? 'N/A';
@@ -136,12 +135,10 @@ function loadBookings() {
       const checkOut  = booking.checkOut ?? booking.check_out ?? '';
       const status    = booking.bookingStatus ?? booking.status ?? 'Unknown';
 
-      // ✅ Format dates nicely
       const formatDate = (d) => d
         ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
         : 'N/A';
 
-      // ✅ Status badge
       let statusBadge = '';
       switch (status) {
         case 'CONFIRMED':
@@ -197,7 +194,7 @@ function cancelBooking(bookingId) {
   fetch(`http://localhost:8080/api/bookings/cancel/${bookingId}`, {
     method: 'PUT',
     credentials: 'include',
-    headers: getAuthHeaders() // ✅ Basic Auth header
+    headers: getAuthHeaders()
   })
   .then(res => {
     if (res.status === 401) {
@@ -213,7 +210,6 @@ function cancelBooking(bookingId) {
 
     alert(`Booking #${bookingId} cancelled successfully!`);
 
-    // ✅ Update row inline — no full reload needed
     const statusCell = document.querySelector(`#booking-row-${bookingId} td:nth-child(6)`);
     if (statusCell) {
       statusCell.innerHTML = `<span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2">Cancelled</span>`;

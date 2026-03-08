@@ -246,7 +246,6 @@ public class BookingServiceImpl implements BookingService {
 	@Transactional
 	public String createBookingWithPayment(BookingPaymentDTO dto) {
 
-	    // Create Booking
 	    Bookings booking = new Bookings();
 
 	    booking.setCheckIn(dto.getCheckIn());
@@ -258,15 +257,12 @@ public class BookingServiceImpl implements BookingService {
 	    booking.setBookingStatus("CONFIRMED");
 	    booking.setBookedAt(LocalDateTime.now());
 
-	    // Set User, Hotel, Room
 	    booking.setUser(userRepository.findById(dto.getUserId()).orElse(null));
 	    booking.setHotel(hotelRepository.findById(dto.getHotelId()).orElse(null));
 	    booking.setRoom(roomRepository.findById(dto.getRoomId()).orElse(null));
 
-	    // Payment mode from DTO
 	    String paymentMode = dto.getPaymentMode();
 
-	    // Set payment status in Booking
 	    if(paymentMode.equalsIgnoreCase("CARD") ||
 	       paymentMode.equalsIgnoreCase("UPI") ||
 	       paymentMode.equalsIgnoreCase("BANK")) {
@@ -277,10 +273,8 @@ public class BookingServiceImpl implements BookingService {
 	        booking.setPaymentStatus("PENDING");
 	    }
 
-	    // Save Booking
 	    Bookings savedBooking = bookingRepository.save(booking);
 
-	    // Create Payment
 	    Payment payment = new Payment();
 
 	    payment.setBooking(savedBooking);
@@ -288,7 +282,6 @@ public class BookingServiceImpl implements BookingService {
 	    payment.setPaymentMode(paymentMode);
 	    payment.setPaymentDate(LocalDateTime.now());
 
-	    // Set payment status in Payment table
 	    if(paymentMode.equalsIgnoreCase("CARD") ||
 	       paymentMode.equalsIgnoreCase("UPI") ||
 	       paymentMode.equalsIgnoreCase("BANK")) {
@@ -299,7 +292,6 @@ public class BookingServiceImpl implements BookingService {
 	        payment.setPaymentStatus("PENDING");
 	    }
 
-	    // Save Payment
 	    paymentRepository.save(payment);
 
 	    return "Booking and Payment Successful";

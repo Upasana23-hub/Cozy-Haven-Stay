@@ -105,7 +105,6 @@ public class ReviewServiceImpl implements ReviewService {
 	    review.setComment(newComment);
 	    Review updatedReview = reviewRepository.save(review);
 
-	    // Map back to DTO — same pattern as your getReviewsByHotel
 	    ReviewDTO dto = new ReviewDTO();
 	    dto.setReviewId(updatedReview.getReviewId());
 	    dto.setUserId(updatedReview.getUser().getUserId());
