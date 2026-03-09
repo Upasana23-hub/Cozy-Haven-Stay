@@ -188,8 +188,9 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
 
+		<script>
+		
 		const BOOK_API = 'http://localhost:8080/api';
 		
 		const urlParams = new URLSearchParams(window.location.search);
@@ -205,7 +206,11 @@
 		    ? parseInt(sessionStorage.getItem('bookingHotelId'), 10)
 		    : null;
 		
+		console.log('hotelId from session:', currentHotelId);
+		
+		
 		function getAuthHeaders() {
+		
 		    const email = sessionStorage.getItem('userEmail');
 		    const password = sessionStorage.getItem('userPassword');
 		
@@ -219,6 +224,7 @@
 		    };
 		}
 		
+		
 		document.addEventListener('DOMContentLoaded', async () => {
 		
 		    const userRole = sessionStorage.getItem('userRole');
@@ -230,11 +236,20 @@
 		        return;
 		    }
 		
-		    document.getElementById('bookingFormSection').style.display = 'block';
+		    if (bookRoomId || bookRoomName) {
 		
-		    await fetchUserIdFromDB(userEmail);
-		    await fetchRoomFromDB();
-		    initBookingForm();
+		        document.getElementById('bookingFormSection').style.display = 'block';
+		
+		        await fetchUserIdFromDB(userEmail);
+		        await fetchRoomFromDB();
+		        initBookingForm();
+		
+		    } else {
+		
+		        document.getElementById('myBookingsSection').style.display = 'block';
+		        await loadMyBookings();
+		
+		    }
 		});
 		
 		
@@ -278,38 +293,52 @@
 		
 		    try {
 		
-		        const res = await fetch(`${BOOK_API}/rooms/getbyid/${bookRoomId}`, {
-		            credentials: 'include',
-		            headers: getAuthHeaders()
-		        });
+		        if (bookRoomId) {
 		
-		        if (!res.ok) throw new Error('Room not found');
+		            const res = await fetch(`${BOOK_API}/rooms/getbyid/${bookRoomId}`, {
+		                credentials: 'include',
+		                headers: getAuthHeaders()
+		            });
 		
-		        const room = await res.json();
+		            if (!res.ok) throw new Error('Room not found');
 		
-		        const roomType = room.roomType ?? room.room_type ?? bookRoomName ?? 'Standard';
-		        const roomSize = room.roomSize ?? room.room_size ?? roomType;
-		        const bedType = room.bedType ?? room.bed_type ?? bookBedType ?? 'N/A';
-		        const baseFare = room.baseFare ?? room.base_fare ?? bookRoomPrice ?? 0;
-		        const roomId = room.roomId ?? bookRoomId;
+		            const room = await res.json();
 		
-		        pricePerNight = parseFloat(baseFare);
+		            const roomType = room.roomType ?? room.room_type ?? bookRoomName ?? 'Standard';
+		            const roomSize = room.roomSize ?? room.room_size ?? roomType;
+		            const bedType = room.bedType ?? room.bed_type ?? bookBedType ?? 'N/A';
+		            const baseFare = room.baseFare ?? room.base_fare ?? bookRoomPrice ?? 0;
+		            const roomId = room.roomId ?? bookRoomId;
 		
-		        document.getElementById('roomName').innerText = `Book ${roomSize} Room`;
-		        document.getElementById('roomType').innerText = roomType;
-		        document.getElementById('bedType').innerText = bedType;
-		        document.getElementById('roomPrice').innerText = baseFare;
+		            pricePerNight = parseFloat(baseFare);
 		
-		        document.getElementById('displayRoomId').value = roomId;
+		            document.getElementById('roomName').innerText = `Book ${roomSize} Room`;
+		            document.getElementById('roomType').innerText = roomType;
+		            document.getElementById('bedType').innerText = bedType;
+		            document.getElementById('roomPrice').innerText = baseFare;
+		
+		            document.getElementById('displayRoomId').value = roomId;
+		
+		        }
 		
 		    } catch (err) {
 		
-		        console.error('Room fetch failed:', err);
+		        console.error('Room fetch failed, using URL params:', err);
+		
+		        pricePerNight = parseFloat(bookRoomPrice) || 0;
+		
+		        document.getElementById('roomName').innerText = `Book ${bookRoomName ?? ''} Room`;
+		        document.getElementById('roomType').innerText = bookRoomName ?? 'N/A';
+		        document.getElementById('bedType').innerText = bookBedType ?? 'N/A';
+		        document.getElementById('roomPrice').innerText = bookRoomPrice ?? '0';
+		
+		        document.getElementById('displayRoomId').value = bookRoomId ?? 'N/A';
 		
 		    }
 		
 		    loadingEl.style.display = 'none';
 		    detailsEl.style.display = 'block';
+		
 		}
 		
 		
@@ -330,7 +359,7 @@
 		
 		        const cin = checkInInput.value;
 		        const cout = checkOutInput.value;
-		        const rooms = parseInt(noOfRoomsInput.value || '1');
+		        const rooms = parseInt(noOfRoomsInput.value || '1', 10);
 		
 		        if (cin && cout) {
 		
@@ -347,11 +376,17 @@
 		                document.getElementById('nightsInfo').innerText =
 		                    `${nights} night(s) × ${rooms} room(s) × ₹${pricePerNight}/night`;
 		
+		            } else {
+		
+		                document.getElementById('displayTotalAmount').innerText = '0';
+		                document.getElementById('nightsInfo').innerText = '';
+		
 		            }
 		
 		        }
 		
 		    }
+		
 		
 		    [checkInInput, checkOutInput, noOfRoomsInput].forEach(el => {
 		
@@ -359,6 +394,8 @@
 		        el.addEventListener('input', updateTotal);
 		
 		    });
+		
+		    updateTotal();
 		
 		
 		    form.addEventListener('submit', async (e) => {
@@ -368,37 +405,68 @@
 		        const checkIn = checkInInput.value;
 		        const checkOut = checkOutInput.value;
 		
-		        const noOfRooms = parseInt(noOfRoomsInput.value);
-		        const adults = parseInt(document.getElementById('adults').value);
-		        const children = parseInt(document.getElementById('children').value);
-		
+		        const noOfRooms = parseInt(noOfRoomsInput.value || '1', 10);
+		        const adults = parseInt(document.getElementById('adults').value || '1', 10);
+		        const children = parseInt(document.getElementById('children').value || '0', 10);
 		        const paymentMethod = document.getElementById('paymentMethod').value;
 		
-		        if (!currentHotelId) {
 		
-		            alert('Hotel information could not be loaded.');
+		        if (!checkIn || !checkOut) {
+		
+		            alert('Please select both check-in and check-out dates.');
 		            return;
 		
 		        }
 		
-		        const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 3600 * 24));
+		        const dIn = new Date(checkIn);
+		        const dOut = new Date(checkOut);
 		
-		        const totalAmount = nights * noOfRooms * pricePerNight;
+		        if (dOut <= dIn) {
+		
+		            alert('Check-out date must be after check-in date.');
+		            return;
+		
+		        }
+		
+		        if (!loggedInUserId) {
+		
+		            alert('Unable to identify user. Please login again.');
+		            return;
+		
+		        }
+		
+		        if (!currentHotelId) {
+		
+		            alert('Hotel information could not be loaded. Please go back to the rooms page and try again.');
+		            return;
+		
+		        }
+		
+		        const nights = Math.ceil((dOut - dIn) / (1000 * 3600 * 24));
+		        const totalAmount = parseFloat((nights * noOfRooms * pricePerNight).toFixed(2));
+		
 		
 		        const bookingPayload = {
 		
-		            userId: loggedInUserId,
-		            hotelId: currentHotelId,
-		            roomId: parseInt(bookRoomId),
+		            userId: parseInt(loggedInUserId, 10),
+		            hotelId: parseInt(currentHotelId, 10),
+		            roomId: parseInt(bookRoomId, 10),
+		
 		            checkIn: checkIn,
 		            checkOut: checkOut,
+		
 		            adults: adults,
 		            children: children,
 		            noOfRooms: noOfRooms,
+		
 		            totalAmount: totalAmount,
 		            paymentMode: paymentMethod
 		
 		        };
+		
+		
+		        console.log('=== BOOKING PAYLOAD ===', JSON.stringify(bookingPayload));
+		
 		
 		        try {
 		
@@ -411,7 +479,13 @@
 		
 		            });
 		
-		            if (!res.ok) throw new Error('Booking failed');
+		            if (!res.ok) {
+		
+		                const errText = await res.text();
+		                throw new Error(errText || 'Booking failed');
+		
+		            }
+		
 		
 		            const bookingsRes = await fetch(`${BOOK_API}/bookings/user/${loggedInUserId}`, {
 		
@@ -420,11 +494,16 @@
 		
 		            });
 		
+		            if (!bookingsRes.ok) throw new Error('Booking saved but could not fetch details');
+		
+		
 		            const bookings = await bookingsRes.json();
 		
 		            const latest = bookings[bookings.length - 1];
-		
 		            const newBookingId = latest.bookingId;
+		
+		            sessionStorage.setItem('lastBookingId', newBookingId);
+		            sessionStorage.removeItem('bookingHotelId');
 		
 		            window.location.href = `booking-details.html?bookingId=${newBookingId}`;
 		
@@ -433,13 +512,14 @@
 		        catch (err) {
 		
 		            alert('Booking failed: ' + err.message);
+		            console.error(err);
 		
 		        }
 		
 		    });
 		
 		}
-
-</script>
+		
+		</script>
 </body>
 </html>
