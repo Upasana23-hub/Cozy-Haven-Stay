@@ -86,7 +86,7 @@ class HotelOwnerServiceImplTest {
     @Test
     void testIsOwnerActive() {
         HotelOwner owner = createOwner(1008L);
-        owner.setActive(true); // mark active
+        owner.setActive(true); 
         assertTrue(ownerService.isOwnerActive(owner.getOwnerId()));
     }
 
@@ -108,7 +108,7 @@ class HotelOwnerServiceImplTest {
         user = userRepository.save(user);
 
         HotelOwner owner = new HotelOwner();
-        owner.setUser(user); // link the user
+        owner.setUser(user); 
         owner.setBuisnessName("JW Marriot");
         owner.setGstNumber("GST" + userSuffix);
         owner.setAddress("Kolkata");

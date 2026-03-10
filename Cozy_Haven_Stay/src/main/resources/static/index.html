@@ -12,7 +12,7 @@
 
 <body>
 
-  <!-- NAVBAR -->
+ 
   <nav class="navbar navbar-expand-lg sticky-top" style="
       background: rgba(255,255,255,0.97);
       backdrop-filter: blur(12px);
@@ -42,7 +42,7 @@
               onmouseover="this.style.color='var(--pink)'; this.style.background='#fce7f3';"
               onmouseout="this.style.color='#333'; this.style.background='transparent';">My Bookings</a>
           </li>
-          <!-- Visual divider -->
+         
           <li class="nav-item d-none d-lg-block">
             <div style="width:1.5px; height:28px; background:#f0d0e8; margin:0 10px;"></div>
           </li>
@@ -84,7 +84,7 @@
     </div>
   </nav>
 
-  <!-- HERO -->
+  
   <section class="hero"
     style="background: linear-gradient(135deg, rgba(233,30,140,0.5) 0%, rgba(192,132,252,0.6) 100%), url('https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat; padding: 100px 0 120px;">
     <div class="container">
@@ -125,7 +125,7 @@
     </div>
   </section>
 
-  <!-- DESTINATIONS -->
+ 
   <section class="py-5" style="background:#fdf2f8">
     <div class="container">
       <h2 class="section-title center text-center mb-1">Popular Destinations</h2>
@@ -155,7 +155,7 @@
     </div>
   </section>
 
-  <!-- FEATURED -->
+ 
   <section class="py-5">
     <div class="container">
       <h2 class="section-title center text-center mb-1">Featured Properties</h2>
@@ -171,7 +171,7 @@
     </div>
   </section>
 
-  <!-- WHY US -->
+  
   <section class="py-5" style="background:#fdf2f8">
     <div class="container">
       <h2 class="section-title center text-center mb-4">Why Choose Us?</h2>
@@ -208,7 +208,7 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
+  
   <footer class="footer">
     <div class="container">
       <div class="row g-4">
@@ -254,33 +254,33 @@
   <script src="js/auth.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. Initial Navbar Logic
+      
       initNavbar();
 
-      // 2. Strict Navbar Override
+      
       const userEmail = sessionStorage.getItem('userEmail');
       const navGuest = document.getElementById('navGuest');
       const navGuest2 = document.getElementById('navGuest2');
       const navUser = document.getElementById('navUser');
       const navBookings = document.getElementById('navBookings');
 
-      // Find the Explore link (usually the first child of the navbar)
+      
       const navLinks = document.querySelector('.navbar-nav');
       const exploreLi = navLinks.querySelector('li:first-child');
 
       if (userEmail) {
-        // LOGGED IN: Show Explore + Dashboard (role-based) + Logout
+        
         const userRole = sessionStorage.getItem('userRole') || '';
 
-        // Hide guest-only links
+       
         if (navGuest) navGuest.style.setProperty('display', 'none', 'important');
         if (navGuest2) navGuest2.style.setProperty('display', 'none', 'important');
         if (navBookings) navBookings.style.setProperty('display', 'none', 'important');
 
-        // Ensure Explore is visible
+        
         if (exploreLi) exploreLi.style.setProperty('display', 'block', 'important');
 
-        // Determine dashboard URL & label based on role
+        
         let dashUrl = 'user-profile.html';
         let dashLabel = 'Dashboard';
         let dashIcon = 'fa-user';
@@ -298,7 +298,7 @@
           dashIcon = 'fa-gauge';
         }
 
-        // Replace user dropdown with Dashboard + Logout buttons
+        
         if (navUser) {
           navUser.innerHTML = `
             <a href="${dashUrl}"
@@ -320,7 +320,7 @@
           navUser.style.setProperty('display', 'flex', 'important');
           navUser.style.alignItems = 'center';
 
-          // Logout click
+          
           document.getElementById('directLogout').onclick = (e) => {
             e.preventDefault();
             sessionStorage.clear();
@@ -328,7 +328,7 @@
           };
         }
       } else {
-        // NOT LOGGED IN: Show Explore, Sign In, and Register
+        
         if (exploreLi) exploreLi.style.display = 'block';
         if (navGuest) navGuest.style.display = 'block';
         if (navGuest2) navGuest2.style.display = 'block';
@@ -346,7 +346,7 @@
       if (loc) {
         p.set('location', loc);
         try {
-          // Pre-validate: call search API so hotels.html already has results
+          
           const data = await API.get(`/hotels/search/${loc}`);
           console.log('Search results:', data);
         } catch (err) {

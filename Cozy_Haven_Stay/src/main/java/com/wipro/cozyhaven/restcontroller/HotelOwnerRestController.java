@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/owners")
 public class HotelOwnerRestController {
 
-	@Autowired
+	
     private final HotelOwnerService ownerService;
     
     @Autowired
@@ -54,9 +54,9 @@ public class HotelOwnerRestController {
             throw new RuntimeException("Only users with ROLE_OWNER can create hotel owner record");
         }
 
-        // Map DTO → Entity
+        
         HotelOwner owner = new HotelOwner();
-        owner.setUser(user); // assign the logged-in user automatically
+        owner.setUser(user); 
         owner.setBuisnessName(dto.getBuisnessName());
         owner.setGstNumber(dto.getGstNumber());
         owner.setAddress(dto.getAddress());
@@ -94,14 +94,14 @@ public class HotelOwnerRestController {
         return ResponseEntity.ok(ownerService.activateOwner(ownerId));
     }
 
-    // ================= PENDING OWNERS =================
+   
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/pending")
     public ResponseEntity<List<HotelOwner>> getPendingOwners() {
         return ResponseEntity.ok(ownerService.getPendingsOwners());
     }
 
-    // ================= DTO → ENTITY =================
+    
     private HotelOwner mapToEntity(HotelOwnerDTO dto) {
 
         HotelOwner owner = new HotelOwner();

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/hotels")
-@CrossOrigin(origins = "*") 
+
 public class HotelRestController {
 
     private final HotelService hotelService;
@@ -76,7 +76,7 @@ public class HotelRestController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        // Map to DTO
+       
         HotelDTO dto = new HotelDTO();
         dto.setHotelId(hotel.getHotelId());
         dto.setName(hotel.getName());

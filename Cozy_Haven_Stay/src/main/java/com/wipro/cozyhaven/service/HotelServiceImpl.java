@@ -13,7 +13,7 @@ import com.wipro.cozyhaven.repository.HotelRepository;
 @Service
 
 public class HotelServiceImpl implements HotelService {
-@Autowired
+
     private final HotelRepository hotelRepository;
     
 

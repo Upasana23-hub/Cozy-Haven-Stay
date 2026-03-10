@@ -125,7 +125,7 @@ class HotelServiceImplTest {
         user = userRepository.save(user);
 
         HotelOwner owner = new HotelOwner();
-        owner.setUser(user); // FK
+        owner.setUser(user); 
         owner.setBuisnessName("JW Marriot");
         owner.setGstNumber("GST" + System.currentTimeMillis());
         owner.setAddress("Kolkata");
