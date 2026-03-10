@@ -159,7 +159,6 @@ class PaymentServiceImplTest {
         List<PaymentDTO> paymentsBefore = paymentService.getAllPayments();
         assertNotNull(paymentsBefore);
 
-        // Add a payment
         User ownerUser = createUser("Owner3", "owner3@test.com");
         HotelOwner owner = createOwner(ownerUser);
         Hotel hotel = createHotel(owner);

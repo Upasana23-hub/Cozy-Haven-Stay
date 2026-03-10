@@ -18,6 +18,8 @@ import com.wipro.cozyhaven.repository.HotelRepository;
 import com.wipro.cozyhaven.repository.PaymentRepository;
 import com.wipro.cozyhaven.repository.RoomRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class RoomServiceImpl implements RoomService {
 
@@ -153,28 +155,26 @@ public class RoomServiceImpl implements RoomService {
 	        return dto;
 	    }
 
+	    @Transactional
 	    @Override
 	    public void deleteRoom(Long roomId) {
 
 	        Room room = roomRepository.findById(roomId)
 	                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
-	       
-	        List<Bookings> bookings = bookingsRepository.findAll();
+	        // Get only bookings related to this room
+	        List<Bookings> bookings = bookingsRepository.findByRoomRoomId(roomId);
 
 	        for (Bookings booking : bookings) {
 
-	            if (booking.getRoom().getRoomId().equals(roomId)) {
+	            // Delete payment related to this booking
+	            paymentRepository.deleteByBookingBookingId(booking.getBookingId());
 
-	                // Delete payment first
-	                paymentRepository.deleteByBookingBookingId(booking.getBookingId());
-
-	                // Delete booking
-	                bookingsRepository.delete(booking);
-	            }
+	            // Delete booking
+	            bookingsRepository.delete(booking);
 	        }
 
-	        // Finally delete room
+	        // Finally delete the room
 	        roomRepository.delete(room);
 	    }
 
@@ -212,6 +212,7 @@ public class RoomServiceImpl implements RoomService {
 
 	        return dtos;
 	    }
+	    
 	    
 	    @Override
 	    public void deleteRoomByUser(Long roomId, Long userId, String role) {

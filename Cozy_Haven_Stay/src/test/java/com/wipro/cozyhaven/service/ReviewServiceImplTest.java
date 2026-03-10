@@ -2,6 +2,7 @@ package com.wipro.cozyhaven.service;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -100,7 +101,7 @@ class ReviewServiceImplTest {
 
         List<ReviewDTO> reviews = reviewService.getReviewsByHotel(hotel.getHotelId());
         assertNotNull(reviews, "Review list should not be null");
-        assert(reviews.size() > 0);
+        assertTrue(reviews.size() > 0);
     }
 
     @Test
@@ -119,7 +120,7 @@ class ReviewServiceImplTest {
 
         List<ReviewDTO> reviews = reviewService.getReviewsByUser(reviewUser.getUserId());
         assertNotNull(reviews, "Review list should not be null");
-        assert(reviews.size() > 0);
+        assertTrue(reviews.size() > 0);
     }
 
     @Test
