@@ -139,7 +139,7 @@
     const container = document.getElementById('reviewsList');
 
     try {
-      // ✅ Step 1: Get userId from email using existing endpoint
+      
       const userRes = await fetch(
         `${BASE_URL}/users/email/${encodeURIComponent(userEmail)}`,
         { credentials: 'include', headers: getAuthHeaders() }
@@ -148,7 +148,7 @@
       const userData = await userRes.json();
       const userId   = userData.userId ?? userData.user_id;
 
-      // ✅ Step 2: Fetch reviews directly by userId — /api/reviews/user/{userId}
+     
       const revRes = await fetch(`${BASE_URL}/reviews/user/${userId}`, {
         credentials: 'include',
         headers: getAuthHeaders()

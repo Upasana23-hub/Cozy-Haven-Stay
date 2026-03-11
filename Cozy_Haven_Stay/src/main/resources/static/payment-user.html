@@ -145,7 +145,7 @@
     <script>
         const BASE_URL = 'http://localhost:8080/api';
 
-        // ✅ Fixed template literals — was broken in original
+       
         function getAuthHeaders() {
             const email    = sessionStorage.getItem('userEmail');
             const password = sessionStorage.getItem('userPassword');
@@ -211,10 +211,10 @@
             const container = document.getElementById('paymentsList');
 
             try {
-                // ✅ Fixed template literal in fetch URL
+                
                 const bookings = await apiFetch(`/bookings/user/${userId}`);
 
-                // ── Summary stats ──
+                
                 const paidBookings    = bookings.filter(b => (b.paymentStatus ?? '').toUpperCase() === 'PAID');
                 const pendingBookings = bookings.filter(b => (b.paymentStatus ?? '').toUpperCase() === 'PENDING');
                 const totalPaid       = paidBookings.reduce((sum, b) => sum + parseFloat(b.totalAmount ?? 0), 0);
@@ -236,7 +236,7 @@
                     return;
                 }
 
-                // Sort newest first
+                
                 bookings.sort((a, b) =>
                     new Date(b.bookedAt ?? b.checkIn ?? 0) - new Date(a.bookedAt ?? a.checkIn ?? 0)
                 );
@@ -257,7 +257,7 @@
                                    : paymentStatus === 'REFUNDED' ? 'payment-refunded'
                                    : 'payment-pending';
 
-                    // ✅ Fixed template literals in button/badge rendering
+                    
                     const actionBtn = paymentStatus === 'PENDING'
                         ? `<button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold"
                                 onclick="payNow(${bookingId})">
@@ -358,11 +358,9 @@
             }
         }
 
-        // Pay Now — extend this when you add a payment gateway
         async function payNow(bookingId) {
             if (!confirm(`Proceed to payment for Booking #${bookingId}?`)) return;
-            // 🔧 Replace this with your payment gateway integration
-            alert(`Payment gateway integration needed for Booking #${bookingId}`);
+            alert(`You need to pay at hotel for Booking #${bookingId}`);
         }
     </script>
 </body>

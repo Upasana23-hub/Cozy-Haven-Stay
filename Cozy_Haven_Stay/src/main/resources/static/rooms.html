@@ -508,10 +508,10 @@
             return new URLSearchParams(window.location.search).get('hotelId');
         }
 
-        // ── ON PAGE LOAD ──
+        
         document.addEventListener('DOMContentLoaded', () => {
 
-            // ✅ Save hotelId to sessionStorage so booking page can use it
+            
             const hotelId = getHotelIdFromUrl();
             if (hotelId) {
                 sessionStorage.setItem('bookingHotelId', hotelId);
@@ -600,7 +600,7 @@
                     const available = room.availability ?? true;
                     const image     = room.image ?? 'images/room.png';
 
-                    // ✅ No hotelId needed in URL — it's stored in sessionStorage
+                   
                     const bookUrl = `my-bookings.html?roomId=${roomId}&room=${encodeURIComponent(roomSize)}&bed=${encodeURIComponent(bedType)}&price=${baseFare}`;
 
                     return `
@@ -641,7 +641,7 @@
             }
         }
 
-        // ── LOAD REVIEWS ──
+        
         async function loadReviews() {
             const hotelId   = getHotelIdFromUrl();
             const container = document.getElementById('reviewsList');

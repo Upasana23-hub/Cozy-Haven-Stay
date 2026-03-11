@@ -157,7 +157,7 @@
     <script>
         const BASE_URL = 'http://localhost:8080/api';
 
-        // ── Same Basic Auth pattern as all other owner pages ──
+        
         function getAuthHeaders() {
             const email    = sessionStorage.getItem('userEmail');
             const password = sessionStorage.getItem('userPassword');
@@ -201,7 +201,7 @@
             const container = document.getElementById('paymentsList');
 
             try {
-                // STEP 1 — get userId
+                
                 let userId = sessionStorage.getItem('userId');
                 if (!userId) {
                     const u = await apiFetch(`/users/email/${encodeURIComponent(email)}`);
@@ -210,7 +210,7 @@
                 }
                 if (!userId) throw new Error('Could not resolve your user account.');
 
-                // STEP 2 — get ownerId
+                
                 let ownerId = sessionStorage.getItem('ownerId');
                 if (!ownerId) {
                     const o = await apiFetch(`/owners/user/${userId}`);
@@ -219,7 +219,7 @@
                 }
                 if (!ownerId) throw new Error('Owner profile not found. Please complete Owner Details first.');
 
-                // STEP 3 — get this owner's hotels
+                
                 const allHotels = await apiFetch('/hotels/getall');
                 const myHotels  = allHotels.filter(h =>
                     String(h.ownerId ?? h.owner?.ownerId ?? h.owner_id) === String(ownerId)
@@ -238,8 +238,7 @@
                     return;
                 }
 
-                // STEP 4 — fetch bookings per hotel using ROLE_OWNER-accessible endpoint
-                // ✅ /bookings/hotel/{hotelId} — same fix as booking-owner.html
+                
                 let allBookings = [];
                 await Promise.all(myHotels.map(async hotel => {
                     const hotelId = hotel.hotelId ?? hotel.id;
@@ -265,7 +264,7 @@
                     return;
                 }
 
-                // Calculate total revenue from PAID bookings
+                
                 let revenueSum = 0;
                 allBookings.forEach(b => {
                     const status = (b.paymentStatus ?? '').toUpperCase();
